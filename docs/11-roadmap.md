@@ -45,7 +45,7 @@ live site in the side panel.
 
 ## M3 — Headers, CSP, trackers, libraries
 
-*Gated on spike S1.*
+_Gated on spike S1._
 
 - Vendored Observatory sources under `analyzers/headers/vendor/` (MPL-2.0), with
   our own `mapping.ts` to `Finding`.
@@ -59,7 +59,7 @@ page, and fixture tests assert expected `ruleId`s.
 
 ## M4 — WebLLM provider and explanations
 
-*Gated on spike S2.*
+_Gated on spike S2._
 
 - `providers/webllm` as a browser-only entry point (docs/04).
 - Engine lifecycle in a Web Worker; model manager UI with download progress.
@@ -104,7 +104,7 @@ so comparisons are part of the repo's history.
 
 ## M8 — Offscreen, auto-audit, polish
 
-*Gated on spike S3.*
+_Gated on spike S3._
 
 - Move the runtime from the side panel to an offscreen document so audits
   survive the panel closing.

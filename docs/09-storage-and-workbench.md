@@ -77,7 +77,7 @@ Views:
 2. **History** — all audits for a host, with diffing between two runs of the
    same site.
 3. **Trace** — step-by-step view of model calls and tool calls with token usage
-   and timings. *This is the main research payoff — make it good.* It gets a
+   and timings. _This is the main research payoff — make it good._ It gets a
    full tab precisely because a side panel could not do it justice.
 4. **Models** — list available WebLLM models with size and context window,
    download with progress, show what is cached, evict.

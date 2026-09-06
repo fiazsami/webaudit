@@ -8,6 +8,7 @@ The builder is shared: the CLI's fixtures and the extension's live captures come
 from the same function, so what ships and what is tested cannot drift.
 
 Principles:
+
 - Record what was **observed**, not conclusions. Analyzers draw conclusions.
 - Record what **could not** be observed (`limitations`) so analyzers can say
   "unknown" instead of "missing".
@@ -19,16 +20,16 @@ Principles:
 import { z } from "zod";
 
 export const ScriptRef = z.object({
-  src: z.string().url().optional(),        // external
-  inlineSha256: z.string().optional(),     // inline (hash only, not content)
+  src: z.string().url().optional(), // external
+  inlineSha256: z.string().optional(), // inline (hash only, not content)
   inlineLength: z.number().int().optional(),
   attrs: z.record(z.string()).default({}), // async, defer, type, nonce, integrity
 });
 
 export const FormRef = z.object({
-  action: z.string(),                      // resolved absolute URL
+  action: z.string(), // resolved absolute URL
   method: z.enum(["GET", "POST", "other"]),
-  fieldTypes: z.array(z.string()),         // input types: password, email, ...
+  fieldTypes: z.array(z.string()), // input types: password, email, ...
   hasPasswordField: z.boolean(),
   autocompleteOff: z.boolean(),
 });
@@ -62,27 +63,38 @@ export const PageSnapshot = z.object({
   // What the content script can see
   scripts: z.array(ScriptRef),
   forms: z.array(FormRef),
-  iframes: z.array(z.object({ src: z.string().optional(), sandbox: z.string().optional() })),
+  iframes: z.array(
+    z.object({ src: z.string().optional(), sandbox: z.string().optional() }),
+  ),
   links: z.array(LinkRef),
-  metaTags: z.record(z.string()),           // name/property → content
-  hasMixedContent: z.boolean().optional(),  // http subresources on https page
-  textExcerpt: z.string().max(20000),       // readable text, truncated
+  metaTags: z.record(z.string()), // name/property → content
+  hasMixedContent: z.boolean().optional(), // http subresources on https page
+  textExcerpt: z.string().max(20000), // readable text, truncated
 
   // From extension APIs (background worker)
   cookies: z.array(CookieRef),
-  thirdPartyRequests: z.array(z.object({    // via webRequest if permitted
-    url: z.string().url(),
-    type: z.string(),                        // script, image, xhr, ...
-    initiator: z.string().optional(),
-  })).default([]),
+  thirdPartyRequests: z
+    .array(
+      z.object({
+        // via webRequest if permitted
+        url: z.string().url(),
+        type: z.string(), // script, image, xhr, ...
+        initiator: z.string().optional(),
+      }),
+    )
+    .default([]),
 
   // Honesty about gaps
-  limitations: z.array(z.enum([
-    "no-webrequest-permission",
-    "no-cookie-flags",
-    "text-truncated",
-    "csp-blocked-inline-collection",
-  ])).default([]),
+  limitations: z
+    .array(
+      z.enum([
+        "no-webrequest-permission",
+        "no-cookie-flags",
+        "text-truncated",
+        "csp-blocked-inline-collection",
+      ]),
+    )
+    .default([]),
 });
 
 export type PageSnapshot = z.infer<typeof PageSnapshot>;
@@ -108,9 +120,10 @@ where relevant.
 ## Fixtures
 
 `fixtures/snapshots/*.json` — one per test site. Include at least:
+
 - a well-configured site (baseline, few findings)
 - a site with many third-party scripts
 - an http-only site
 - a site with a login form
-Snapshots may be hand-edited to create specific conditions; mark those files
-with a `_synthetic` suffix.
+  Snapshots may be hand-edited to create specific conditions; mark those files
+  with a `_synthetic` suffix.

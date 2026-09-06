@@ -6,11 +6,11 @@ browser.
 
 ## Model runtime
 
-| Package / repo | Use | Notes |
-|----------------|-----|-------|
-| `@mlc-ai/web-llm` (`mlc-ai/web-llm`) | The model. WebGPU inference in the browser | Apache-2.0. Grammar-constrained JSON in the WASM runtime. `tools`/`tool_choice` are WIP — we use the JSON action protocol instead |
-| `zod` + `zod-to-json-schema` | All schemas; JSON Schema for constrained output | |
-| `gpt-tokenizer` | Token estimates for chunking and budgets | Browser-safe. Reconcile against WebLLM's returned `usage` |
+| Package / repo                       | Use                                             | Notes                                                                                                                             |
+| ------------------------------------ | ----------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
+| `@mlc-ai/web-llm` (`mlc-ai/web-llm`) | The model. WebGPU inference in the browser      | Apache-2.0. Grammar-constrained JSON in the WASM runtime. `tools`/`tool_choice` are WIP — we use the JSON action protocol instead |
+| `zod` + `zod-to-json-schema`         | All schemas; JSON Schema for constrained output |                                                                                                                                   |
+| `gpt-tokenizer`                      | Token estimates for chunking and budgets        | Browser-safe. Reconcile against WebLLM's returned `usage`                                                                         |
 
 Model weights come from the HuggingFace CDN at first use, cached by WebLLM
 (Cache API by default; IndexedDB and OPFS are configurable). Pin the per-model
@@ -24,13 +24,13 @@ unadopted — the hand-written loop is the point (docs/06).
 
 ## Deterministic analyzers
 
-| Package / repo | Use | Licence note |
-|----------------|-----|--------------|
-| `csp_evaluator` (`google/csp-evaluator`) | CSP strength scoring | Apache-2.0, v1.1.8, **zero runtime deps**, pure TS. Note the npm name uses an underscore |
-| `retire.js` (`RetireJS/retire.js`) | Vulnerable JS library fingerprints | Apache-2.0; use its data files, not the scanner |
-| `duckduckgo/tracker-radar` | Third-party domain classification | **CC BY-NC-SA 4.0** — non-commercial. Fine for research; flag in README. Build a JSON subset at build time |
-| `easylist/easylist` (EasyPrivacy) | Alternative tracker source | GPL-3 / CC BY-SA; via `@ghostery/adblocker` parser |
-| `tldts` | eTLD+1 and first/third-party classification | MIT, browser-safe |
+| Package / repo                           | Use                                         | Licence note                                                                                               |
+| ---------------------------------------- | ------------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
+| `csp_evaluator` (`google/csp-evaluator`) | CSP strength scoring                        | Apache-2.0, v1.1.8, **zero runtime deps**, pure TS. Note the npm name uses an underscore                   |
+| `retire.js` (`RetireJS/retire.js`)       | Vulnerable JS library fingerprints          | Apache-2.0; use its data files, not the scanner                                                            |
+| `duckduckgo/tracker-radar`               | Third-party domain classification           | **CC BY-NC-SA 4.0** — non-commercial. Fine for research; flag in README. Build a JSON subset at build time |
+| `easylist/easylist` (EasyPrivacy)        | Alternative tracker source                  | GPL-3 / CC BY-SA; via `@ghostery/adblocker` parser                                                         |
+| `tldts`                                  | eTLD+1 and first/third-party classification | MIT, browser-safe                                                                                          |
 
 Ship a build script that can generate the tracker DB from either source; default
 to Tracker Radar for richer metadata, document the licence.
@@ -63,22 +63,22 @@ from Observatory's published scoring table, fully MIT.
 
 ## Content extraction (ToS pipeline)
 
-| Package / repo | Use |
-|----------------|-----|
-| `@mozilla/readability` | Main-content extraction from policy pages |
-| `turndown` | HTML → markdown |
-| `linkedom` | DOM for Readability **in the CLI host only** — the extension uses native `DOMParser` |
+| Package / repo         | Use                                                                                  |
+| ---------------------- | ------------------------------------------------------------------------------------ |
+| `@mozilla/readability` | Main-content extraction from policy pages                                            |
+| `turndown`             | HTML → markdown                                                                      |
+| `linkedom`             | DOM for Readability **in the CLI host only** — the extension uses native `DOMParser` |
 
 `linkedom` is injected via `Capabilities.dom`, so it never enters the extension
 bundle.
 
 ## Extension
 
-| Package | Use |
-|---------|-----|
-| `wxt` (`wxt-dev/wxt`) | MV3 framework, HMR, cross-browser builds |
-| `idb` | Thin typed wrapper over IndexedDB (docs/09) |
-| React | Side panel, workbench, evals UI |
+| Package               | Use                                         |
+| --------------------- | ------------------------------------------- |
+| `wxt` (`wxt-dev/wxt`) | MV3 framework, HMR, cross-browser builds    |
+| `idb`                 | Thin typed wrapper over IndexedDB (docs/09) |
+| React                 | Side panel, workbench, evals UI             |
 
 ### Removed
 
@@ -87,19 +87,19 @@ bundle.
 
 ## Testing and evals
 
-| Package | Use |
-|---------|-----|
-| `vitest` | Unit tests across packages |
-| `linkedom` | HTML fixtures for snapshot builder tests |
-| `fake-indexeddb` | Store tests without a browser |
+| Package          | Use                                      |
+| ---------------- | ---------------------------------------- |
+| `vitest`         | Unit tests across packages               |
+| `linkedom`       | HTML fixtures for snapshot builder tests |
+| `fake-indexeddb` | Store tests without a browser            |
 
 `promptfoo` is removed: it is a Node harness and cannot drive WebGPU. Model
 comparison runs in the browser (docs/04, docs/11 M7).
 
 ## Optional, later
 
-| Package | Use |
-|---------|-----|
+| Package                     | Use                                            |
+| --------------------------- | ---------------------------------------------- |
 | `@modelcontextprotocol/sdk` | Expose analyzers as MCP tools for other agents |
 
 ## Licensing summary for the README

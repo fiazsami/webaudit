@@ -10,18 +10,29 @@ system and should catch the majority of security issues on their own.
 export const Severity = z.enum(["info", "low", "medium", "high", "critical"]);
 
 export const Finding = z.object({
-  id: z.string(),                    // stable: `${analyzerId}:${ruleId}:${hash(evidence)}`
+  id: z.string(), // stable: `${analyzerId}:${ruleId}:${hash(evidence)}`
   analyzerId: z.string(),
-  ruleId: z.string(),                // e.g. "hsts-missing"
+  ruleId: z.string(), // e.g. "hsts-missing"
   severity: Severity,
   confidence: z.enum(["low", "medium", "high"]),
   title: z.string().max(120),
-  summary: z.string().max(500),      // deterministic, written by the analyzer
-  evidence: z.array(z.object({       // what we actually saw
-    kind: z.enum(["header", "cookie", "script", "form", "request", "policy-text", "other"]),
-    value: z.string().max(1000),
-    location: z.string().optional(), // URL, selector, line ref
-  })),
+  summary: z.string().max(500), // deterministic, written by the analyzer
+  evidence: z.array(
+    z.object({
+      // what we actually saw
+      kind: z.enum([
+        "header",
+        "cookie",
+        "script",
+        "form",
+        "request",
+        "policy-text",
+        "other",
+      ]),
+      value: z.string().max(1000),
+      location: z.string().optional(), // URL, selector, line ref
+    }),
+  ),
   references: z.array(z.string().url()).default([]),
   // Filled later by the model, never by the analyzer:
   explanation: z.string().optional(),
@@ -36,8 +47,8 @@ deterministic so tests can assert exact output.
 
 ```ts
 export interface AnalyzerContext {
-  headers?: Record<string, string>;   // from fetchHeaders tool, if run
-  trackerDb?: TrackerDatabase;         // loaded once, injected
+  headers?: Record<string, string>; // from fetchHeaders tool, if run
+  trackerDb?: TrackerDatabase; // loaded once, injected
   logger: Logger;
 }
 
@@ -58,17 +69,17 @@ and returns a de-duplicated, severity-sorted list.
 
 ## Initial analyzer set
 
-| id | Source | Rules |
-|----|--------|-------|
-| `transport` | snapshot | http protocol, mixed content, forms posting to http |
-| `headers` | vendored Observatory sources (MPL-2.0) | HSTS, CSP presence, X-Content-Type-Options, X-Frame-Options, Referrer-Policy, CORS, cookie flags from Set-Cookie |
-| `csp` | `csp_evaluator` | CSP strength: unsafe-inline, unsafe-eval, wildcard sources, missing base-uri/object-src |
-| `cookies` | snapshot cookies | Missing Secure/HttpOnly/SameSite, long-lived session cookies |
-| `forms` | snapshot forms | Password fields without autocomplete guidance, login forms on http, cross-origin form actions |
-| `scripts` | snapshot scripts | External scripts without SRI, scripts from unexpected TLDs, excessive inline scripts |
-| `trackers` | tracker DB | Third-party domains classified by category (advertising, analytics, fingerprinting) |
-| `libraries` | retire.js data | Known-vulnerable JS library versions from script URLs |
-| `policy-presence` | snapshot links | No detectable privacy policy or terms link |
+| id                | Source                                 | Rules                                                                                                            |
+| ----------------- | -------------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
+| `transport`       | snapshot                               | http protocol, mixed content, forms posting to http                                                              |
+| `headers`         | vendored Observatory sources (MPL-2.0) | HSTS, CSP presence, X-Content-Type-Options, X-Frame-Options, Referrer-Policy, CORS, cookie flags from Set-Cookie |
+| `csp`             | `csp_evaluator`                        | CSP strength: unsafe-inline, unsafe-eval, wildcard sources, missing base-uri/object-src                          |
+| `cookies`         | snapshot cookies                       | Missing Secure/HttpOnly/SameSite, long-lived session cookies                                                     |
+| `forms`           | snapshot forms                         | Password fields without autocomplete guidance, login forms on http, cross-origin form actions                    |
+| `scripts`         | snapshot scripts                       | External scripts without SRI, scripts from unexpected TLDs, excessive inline scripts                             |
+| `trackers`        | tracker DB                             | Third-party domains classified by category (advertising, analytics, fingerprinting)                              |
+| `libraries`       | retire.js data                         | Known-vulnerable JS library versions from script URLs                                                            |
+| `policy-presence` | snapshot links                         | No detectable privacy policy or terms link                                                                       |
 
 ## Header analysis: vendored, not depended on
 
@@ -113,7 +124,9 @@ Tracker Radar or EasyPrivacy (see docs/10 for licensing). Interface:
 
 ```ts
 interface TrackerDatabase {
-  lookup(hostname: string): { owner: string; categories: string[]; prevalence?: number } | null;
+  lookup(
+    hostname: string,
+  ): { owner: string; categories: string[]; prevalence?: number } | null;
 }
 ```
 

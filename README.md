@@ -51,21 +51,21 @@ See `docs/01-architecture.md`.
 
 ## Documents
 
-| File | Contents |
-|------|----------|
-| `CLAUDE.md` | Rules and conventions for AI-assisted development |
-| `docs/01-architecture.md` | Packages, `Capabilities`, data flow, key decisions |
-| `docs/02-page-snapshot.md` | The `PageSnapshot` schema the content script produces |
-| `docs/03-analyzers.md` | Deterministic checks and the `Finding` type |
-| `docs/04-model-provider.md` | `ModelProvider` interface; the WebLLM adapter |
-| `docs/05-tos-pipeline.md` | Chunk → extract → merge pipeline for policies |
-| `docs/06-agent-loop.md` | Orchestrator, tools, budgets, trace |
-| `docs/07-extension-runtime.md` | Extension contexts, ownership, and messaging |
-| `docs/08-extension.md` | Extension design |
-| `docs/09-storage-and-workbench.md` | IndexedDB stores and the workbench tab |
-| `docs/10-dependencies.md` | Third-party repositories and licensing notes |
-| `docs/11-roadmap.md` | Milestones in build order, and spikes |
-| `docs/12-threat-model.md` | What we are defending against |
+| File                               | Contents                                              |
+| ---------------------------------- | ----------------------------------------------------- |
+| `CLAUDE.md`                        | Rules and conventions for AI-assisted development     |
+| `docs/01-architecture.md`          | Packages, `Capabilities`, data flow, key decisions    |
+| `docs/02-page-snapshot.md`         | The `PageSnapshot` schema the content script produces |
+| `docs/03-analyzers.md`             | Deterministic checks and the `Finding` type           |
+| `docs/04-model-provider.md`        | `ModelProvider` interface; the WebLLM adapter         |
+| `docs/05-tos-pipeline.md`          | Chunk → extract → merge pipeline for policies         |
+| `docs/06-agent-loop.md`            | Orchestrator, tools, budgets, trace                   |
+| `docs/07-extension-runtime.md`     | Extension contexts, ownership, and messaging          |
+| `docs/08-extension.md`             | Extension design                                      |
+| `docs/09-storage-and-workbench.md` | IndexedDB stores and the workbench tab                |
+| `docs/10-dependencies.md`          | Third-party repositories and licensing notes          |
+| `docs/11-roadmap.md`               | Milestones in build order, and spikes                 |
+| `docs/12-threat-model.md`          | What we are defending against                         |
 
 ## Status
 

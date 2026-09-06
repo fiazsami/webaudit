@@ -11,30 +11,30 @@ already exist and be tested.
 export interface ToolContext {
   snapshot: PageSnapshot;
   budget: BudgetTracker;
-  caps: Capabilities;         // docs/01 — http, store, provider, dom,
-                              // progress, clock, logger
+  caps: Capabilities; // docs/01 — http, store, provider, dom,
+  // progress, clock, logger
 }
 
 export interface Tool<I extends z.ZodTypeAny, O> {
   name: string;
-  description: string;        // shown to the model
+  description: string; // shown to the model
   input: I;
   run(input: z.infer<I>, ctx: ToolContext): Promise<O>;
-  sideEffects: "none" | "network";   // network tools consume fetch budget
+  sideEffects: "none" | "network"; // network tools consume fetch budget
 }
 ```
 
 ## Initial tools
 
-| name | input | does |
-|------|-------|------|
-| `fetchHeaders` | `{ url }` | HEAD/GET the page URL via `caps.http`; returns response headers. Enables header/csp analyzers. |
-| `runAnalyzers` | `{ ids?: string[] }` | Runs analyzers whose `needs` are now satisfied. Returns new findings. |
-| `discoverPolicies` | `{}` | Stage 1 of docs/05. Returns candidate URLs. |
-| `analyzePolicies` | `{ urls: string[] }` | Stages 2–8 of docs/05. Returns `TosReport`. |
-| `explainFinding` | `{ findingId }` | Model writes `explanation` for one finding, given its evidence. |
-| `lookupDomain` | `{ hostname }` | Tracker DB lookup. |
-| `finish` | `{ summary }` | Ends the loop. |
+| name               | input                | does                                                                                           |
+| ------------------ | -------------------- | ---------------------------------------------------------------------------------------------- |
+| `fetchHeaders`     | `{ url }`            | HEAD/GET the page URL via `caps.http`; returns response headers. Enables header/csp analyzers. |
+| `runAnalyzers`     | `{ ids?: string[] }` | Runs analyzers whose `needs` are now satisfied. Returns new findings.                          |
+| `discoverPolicies` | `{}`                 | Stage 1 of docs/05. Returns candidate URLs.                                                    |
+| `analyzePolicies`  | `{ urls: string[] }` | Stages 2–8 of docs/05. Returns `TosReport`.                                                    |
+| `explainFinding`   | `{ findingId }`      | Model writes `explanation` for one finding, given its evidence.                                |
+| `lookupDomain`     | `{ hostname }`       | Tracker DB lookup.                                                                             |
+| `finish`           | `{ summary }`        | Ends the loop.                                                                                 |
 
 All URLs passed to network tools are checked against the budget's allowed domain
 list before any request is made. The tool, not the model, enforces this — and in
@@ -45,11 +45,11 @@ enforcement belongs with the capability rather than with its caller (docs/12 T2)
 
 ```ts
 export interface Budget {
-  maxSteps: number;           // default 12
-  maxNetworkFetches: number;  // default 6
-  maxInputTokens: number;     // derived from capabilities().contextTokens
-  maxWallMs: number;          // derived from measured model throughput
-  allowedDomains: string[];   // page eTLD+1 by default; user can extend
+  maxSteps: number; // default 12
+  maxNetworkFetches: number; // default 6
+  maxInputTokens: number; // derived from capabilities().contextTokens
+  maxWallMs: number; // derived from measured model throughput
+  allowedDomains: string[]; // page eTLD+1 by default; user can extend
 }
 ```
 
@@ -79,6 +79,7 @@ records it in the trace, and forces a `finish`.
 ```
 
 Rules:
+
 - Tool results are summarised before being fed back (e.g. findings become
   `id | severity | title`, not full JSON). Full results live in the store.
 - Untrusted text (policy content, page text) is never placed in the message
@@ -110,17 +111,25 @@ Keep it in `agent/prompts/orchestrator.md` so it's reviewable:
 export const AuditTrace = z.object({
   auditId: z.string(),
   modelId: z.string(),
-  startedAt: z.string(), endedAt: z.string(),
-  steps: z.array(z.object({
-    index: z.number(),
-    kind: z.enum(["model", "tool", "budget", "error"]),
-    name: z.string().optional(),
-    input: z.unknown(),
-    output: z.unknown(),
-    usage: z.object({ inputTokens: z.number(), outputTokens: z.number() }).optional(),
-    durationMs: z.number(),
-  })),
-  budgetUsed: z.object({ steps: z.number(), fetches: z.number(), inputTokens: z.number(), wallMs: z.number() }),
+  startedAt: z.string(),
+  endedAt: z.string(),
+  steps: z.array(
+    z.object({
+      index: z.number(),
+      kind: z.enum(["model", "tool", "budget", "error"]),
+      name: z.string().optional(),
+      input: z.unknown(),
+      output: z.unknown(),
+      usage: z.object({ inputTokens: z.number(), outputTokens: z.number() }).optional(),
+      durationMs: z.number(),
+    }),
+  ),
+  budgetUsed: z.object({
+    steps: z.number(),
+    fetches: z.number(),
+    inputTokens: z.number(),
+    wallMs: z.number(),
+  }),
 });
 ```
 

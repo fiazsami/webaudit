@@ -10,13 +10,13 @@ dance. That was ~85 lines of protocol serving a process that no longer exists.
 
 ## Contexts and ownership
 
-| Context | Owns | Does not have |
-|---|---|---|
-| content script | DOM reading; builds `PageSnapshot` via core's pure builder | any `chrome.*` beyond `runtime.sendMessage`; no network |
-| background service worker | `chrome.cookies`, cross-origin `fetch` with host permissions, `webRequest` (optional), allowed-domain enforcement | any analysis logic; any long-running work |
-| side panel | the audit run: `core.audit()`, the WebLLM engine, `Capabilities` assembly, per-page findings UI | host permissions of its own |
-| workbench tab | dashboard, history, trace view, model manager | anything the side panel needs to run an audit |
-| IndexedDB | audits, policy cache, ToS reports — shared across all extension contexts | — |
+| Context                   | Owns                                                                                                              | Does not have                                           |
+| ------------------------- | ----------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------- |
+| content script            | DOM reading; builds `PageSnapshot` via core's pure builder                                                        | any `chrome.*` beyond `runtime.sendMessage`; no network |
+| background service worker | `chrome.cookies`, cross-origin `fetch` with host permissions, `webRequest` (optional), allowed-domain enforcement | any analysis logic; any long-running work               |
+| side panel                | the audit run: `core.audit()`, the WebLLM engine, `Capabilities` assembly, per-page findings UI                   | host permissions of its own                             |
+| workbench tab             | dashboard, history, trace view, model manager                                                                     | anything the side panel needs to run an audit           |
+| IndexedDB                 | audits, policy cache, ToS reports — shared across all extension contexts                                          | —                                                       |
 
 Two rules follow, and they are the whole design:
 
@@ -42,11 +42,11 @@ streams (progress, model download).
 
 ### Side panel → background
 
-| type | payload | reply |
-|------|---------|-------|
-| `snapshot.capture` | `{ tabId }` | `snapshot.ready { PageSnapshot }` |
-| `http.fetch` | `{ url, method, auditId }` | `http.response { status, headers, body }` |
-| `cookies.get` | `{ url }` | `cookies.list { CookieRef[] }` |
+| type               | payload                    | reply                                     |
+| ------------------ | -------------------------- | ----------------------------------------- |
+| `snapshot.capture` | `{ tabId }`                | `snapshot.ready { PageSnapshot }`         |
+| `http.fetch`       | `{ url, method, auditId }` | `http.response { status, headers, body }` |
+| `cookies.get`      | `{ url }`                  | `cookies.list { CookieRef[] }`            |
 
 `http.fetch` is the only network path in the system. The worker checks `url`
 against the audit's allowed-domain list **itself** — it does not trust the
@@ -55,8 +55,8 @@ not with the requester. See docs/12 T2.
 
 ### Background → content script
 
-| type | payload | reply |
-|------|---------|-------|
+| type             | payload      | reply                                            |
+| ---------------- | ------------ | ------------------------------------------------ |
 | `snapshot.build` | `{ limits }` | `snapshot.partial { PageSnapshot }` (pre-cookie) |
 
 ### Side panel → workbench (via storage)
@@ -66,9 +66,9 @@ UI contexts. Fewer channels, fewer schemas, less to get wrong.
 
 ### Streams (via `chrome.runtime.connect`)
 
-| channel | events |
-|---|---|
-| `audit.progress` | `{ auditId, stage, message, step?, maxSteps? }` |
+| channel          | events                                                             |
+| ---------------- | ------------------------------------------------------------------ |
+| `audit.progress` | `{ auditId, stage, message, step?, maxSteps? }`                    |
 | `model.progress` | `{ modelId, loaded, total, text }` — WebLLM `initProgressCallback` |
 
 `model.progress` is new and has no analogue in the old design: a first run

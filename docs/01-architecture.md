@@ -57,25 +57,25 @@ lets identical code run in the extension and in Node.
 
 ```ts
 export interface Capabilities {
-  http: Http;               // fetch(url, opts) -> { status, headers, body }
-  store: AuditStore;        // audits, policy cache, tos reports
-  provider: ModelProvider;  // docs/04
-  dom: DomParser;           // parse(html, url) -> Document
-  progress: ProgressSink;   // stage/step events for the UI
-  clock: Clock;             // now() — traces and deterministic tests
+  http: Http; // fetch(url, opts) -> { status, headers, body }
+  store: AuditStore; // audits, policy cache, tos reports
+  provider: ModelProvider; // docs/04
+  dom: DomParser; // parse(html, url) -> Document
+  progress: ProgressSink; // stage/step events for the UI
+  clock: Clock; // now() — traces and deterministic tests
   logger: Logger;
 }
 
-core.audit(snapshot, { capabilities, budget })
+core.audit(snapshot, { capabilities, budget });
 ```
 
-| Capability | Extension host | CLI host |
-|---|---|---|
-| `http` | background worker (host permissions: no CORS, full headers) | `fetch` |
-| `store` | IndexedDB | filesystem under `./out/` |
-| `provider` | WebLLM over WebGPU | `RecordingProvider` in replay mode only |
-| `dom` | native `DOMParser` | `linkedom` |
-| `clock` | `Date.now` | injectable fake in tests |
+| Capability | Extension host                                              | CLI host                                |
+| ---------- | ----------------------------------------------------------- | --------------------------------------- |
+| `http`     | background worker (host permissions: no CORS, full headers) | `fetch`                                 |
+| `store`    | IndexedDB                                                   | filesystem under `./out/`               |
+| `provider` | WebLLM over WebGPU                                          | `RecordingProvider` in replay mode only |
+| `dom`      | native `DOMParser`                                          | `linkedom`                              |
+| `clock`    | `Date.now`                                                  | injectable fake in tests                |
 
 The CLI cannot run a live model. That is a real limitation, accepted
 deliberately: it keeps `core` honest about its dependencies, and replay mode
@@ -114,18 +114,18 @@ makes that a change of host, not a change of code.
 
 ## Key decisions
 
-| Decision | Choice | Why |
-|----------|--------|-----|
-| Shell | Browser extension only | The extension is the only component that *must* exist — it alone sees response headers, cookie flags, and third-party requests |
-| Model runtime | WebLLM (WebGPU, in-browser) | Removes the native process that was the sole reason for a desktop app |
-| Host abstraction | `Capabilities` injected into `core` | One runtime, two hosts; makes replay-mode CI possible |
-| Header collection | Background worker refetches the URL | Host permissions bypass CORS and expose full response headers |
-| Deterministic vs LLM | Rules first, model second | Testable, fast, free; model adds judgment not detection |
-| Agent framework | Hand-written loop | Learning goal; the loop is the research artifact |
-| Tool calling | JSON action protocol | WebLLM's `tools`/`tool_choice` are upstream WIP — this is the only path, not a fallback |
-| Storage | IndexedDB | Available in every extension context, no native dependency |
-| Trace view | Full-page workbench tab | It is the main research payoff and deserves more than a side panel |
-| Schemas | zod everywhere | Validation at every boundary |
+| Decision             | Choice                              | Why                                                                                                                            |
+| -------------------- | ----------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| Shell                | Browser extension only              | The extension is the only component that _must_ exist — it alone sees response headers, cookie flags, and third-party requests |
+| Model runtime        | WebLLM (WebGPU, in-browser)         | Removes the native process that was the sole reason for a desktop app                                                          |
+| Host abstraction     | `Capabilities` injected into `core` | One runtime, two hosts; makes replay-mode CI possible                                                                          |
+| Header collection    | Background worker refetches the URL | Host permissions bypass CORS and expose full response headers                                                                  |
+| Deterministic vs LLM | Rules first, model second           | Testable, fast, free; model adds judgment not detection                                                                        |
+| Agent framework      | Hand-written loop                   | Learning goal; the loop is the research artifact                                                                               |
+| Tool calling         | JSON action protocol                | WebLLM's `tools`/`tool_choice` are upstream WIP — this is the only path, not a fallback                                        |
+| Storage              | IndexedDB                           | Available in every extension context, no native dependency                                                                     |
+| Trace view           | Full-page workbench tab             | It is the main research payoff and deserves more than a side panel                                                             |
+| Schemas              | zod everywhere                      | Validation at every boundary                                                                                                   |
 
 ## Package boundaries
 

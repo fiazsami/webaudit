@@ -15,19 +15,19 @@ Unchanged from the desktop design.
 
 ```ts
 export interface ModelCapabilities {
-  contextTokens: number;        // usable context window
-  supportsJsonSchema: boolean;  // constrained structured output
-  supportsToolCalls: boolean;   // native tool/function calling
+  contextTokens: number; // usable context window
+  supportsJsonSchema: boolean; // constrained structured output
+  supportsToolCalls: boolean; // native tool/function calling
   supportsStreaming: boolean;
-  costPer1kInput?: number;      // undefined for local
+  costPer1kInput?: number; // undefined for local
   costPer1kOutput?: number;
 }
 
 export interface CompletionRequest {
   system: string;
   messages: Array<{ role: "user" | "assistant"; content: string }>;
-  schema?: z.ZodTypeAny;         // if set, response must be JSON matching this
-  tools?: ToolSpec[];            // optional; see docs/06
+  schema?: z.ZodTypeAny; // if set, response must be JSON matching this
+  tools?: ToolSpec[]; // optional; see docs/06
   maxTokens: number;
   temperature?: number;
   signal?: AbortSignal;
@@ -35,17 +35,17 @@ export interface CompletionRequest {
 
 export interface CompletionResponse {
   text?: string;
-  json?: unknown;                // parsed + validated against `schema` if given
+  json?: unknown; // parsed + validated against `schema` if given
   toolCalls?: Array<{ id: string; name: string; input: unknown }>;
   usage: { inputTokens: number; outputTokens: number };
-  raw?: unknown;                 // provider response, for the trace
+  raw?: unknown; // provider response, for the trace
 }
 
 export interface ModelProvider {
-  id: string;                    // "webllm:Llama-3.1-8B-Instruct-q4f32_1-MLC"
+  id: string; // "webllm:Llama-3.1-8B-Instruct-q4f32_1-MLC"
   capabilities(): Promise<ModelCapabilities>;
   complete(req: CompletionRequest): Promise<CompletionResponse>;
-  countTokens(text: string): number;   // approximate is fine
+  countTokens(text: string): number; // approximate is fine
 }
 ```
 
@@ -58,17 +58,17 @@ Because it needs WebGPU, this adapter **cannot live in `packages/core`'s Node
 path** (hard rule 1). It ships as a browser-only entry point that the extension
 imports and Node never touches.
 
-| Interface member | WebLLM |
-|---|---|
-| `id` | `webllm:<mlc model id>` |
-| `capabilities().contextTokens` | the model record's `context_window_size` override |
-| `supportsJsonSchema` | `true` — grammar-constrained in the WASM runtime, not prompt-coaxed |
-| `supportsToolCalls` | `false` — `tools`/`tool_choice` are upstream WIP |
-| `supportsStreaming` | `true` |
-| `costPer1k*` | `undefined` |
-| `complete({ schema })` | `response_format` with the JSON Schema from `zod-to-json-schema` |
-| `complete({ signal })` | `interruptGenerate()` — **verify: not in the published API reference. Spike S2.** |
-| `countTokens` | `gpt-tokenizer` estimate, reconciled against the `usage` the response returns |
+| Interface member               | WebLLM                                                                            |
+| ------------------------------ | --------------------------------------------------------------------------------- |
+| `id`                           | `webllm:<mlc model id>`                                                           |
+| `capabilities().contextTokens` | the model record's `context_window_size` override                                 |
+| `supportsJsonSchema`           | `true` — grammar-constrained in the WASM runtime, not prompt-coaxed               |
+| `supportsToolCalls`            | `false` — `tools`/`tool_choice` are upstream WIP                                  |
+| `supportsStreaming`            | `true`                                                                            |
+| `costPer1k*`                   | `undefined`                                                                       |
+| `complete({ schema })`         | `response_format` with the JSON Schema from `zod-to-json-schema`                  |
+| `complete({ signal })`         | `interruptGenerate()` — **verify: not in the published API reference. Spike S2.** |
+| `countTokens`                  | `gpt-tokenizer` estimate, reconciled against the `usage` the response returns     |
 
 Engine construction runs in a Web Worker (`CreateWebWorkerMLCEngine`) so a long
 prefill does not freeze the side panel UI.
@@ -90,8 +90,8 @@ When `schema` is provided:
 1. `supportsJsonSchema` is true, so always pass the JSON Schema via
    `response_format`. The runtime constrains generation; malformed JSON is not
    a failure mode we have to handle.
-2. Validate with zod regardless. Grammar constraint guarantees *shape*, not
-   *sense* — enum values and string contents still need checking.
+2. Validate with zod regardless. Grammar constraint guarantees _shape_, not
+   _sense_ — enum values and string contents still need checking.
 3. On validation failure, retry once with the error appended. On second failure
    throw `SchemaViolationError`; the caller decides whether to degrade.
 
@@ -113,7 +113,7 @@ Expressed as a zod schema and passed through `response_format`, so the grammar
 enforces it. This is a meaningful advantage over the old prompt-and-hope
 fallback: a small model cannot emit a syntactically invalid action.
 
-Small models still choose *badly* — wrong tool, wrong arguments — which is why
+Small models still choose _badly_ — wrong tool, wrong arguments — which is why
 docs/06 validates every tool input separately and why budgets are hard limits.
 
 ## Recording provider (`providers/recording.ts`)
