@@ -16,6 +16,9 @@ Options:
   --hsts-preload <path>
                   HSTS preload list from \`pnpm build-hsts-preload\`
                   (default: data/hsts-preload.json if present).
+  --library-db <path>
+                  Vulnerable-library database from \`pnpm build-library-db\`
+                  (default: data/library-db.json if present).
   --verbose       Print progress and debug output to stderr.
   -h, --help      Show this message.
 

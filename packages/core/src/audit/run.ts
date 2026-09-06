@@ -1,5 +1,6 @@
 import { analyzers as defaultAnalyzers } from "../analyzers/index.js";
 import { runAnalyzers } from "../analyzers/run.js";
+import type { LibraryDatabase } from "../analyzers/libraries/schema.js";
 import type { Analyzer, AnalyzerContext, TrackerDatabase } from "../analyzers/types.js";
 import type { Capabilities } from "../capabilities.js";
 import { stableHash } from "../hash.js";
@@ -23,6 +24,8 @@ export interface AuditOptions {
   /** Response headers, if a host already fetched them (docs/06 `fetchHeaders`). */
   headers?: Record<string, string>;
   trackerDb?: TrackerDatabase;
+  /** Built by `pnpm build-library-db` (docs/10). */
+  libraryDb?: LibraryDatabase;
 }
 
 export async function audit(
@@ -54,6 +57,7 @@ export async function audit(
     logger: capabilities.logger,
     ...(options.headers === undefined ? {} : { headers: options.headers }),
     ...(options.trackerDb === undefined ? {} : { trackerDb: options.trackerDb }),
+    ...(options.libraryDb === undefined ? {} : { libraryDb: options.libraryDb }),
   };
 
   const findings = await runAnalyzers(validated, ctx, list);

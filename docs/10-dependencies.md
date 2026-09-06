@@ -44,6 +44,16 @@ a clean result.
 | Script                    | Source                                          | Size                                       | Licence      |
 | ------------------------- | ----------------------------------------------- | ------------------------------------------ | ------------ |
 | `pnpm build-hsts-preload` | Chromium `transport_security_state_static.json` | 94,644 entries; 6.2 MB raw, 740 KB gzipped | BSD-3-Clause |
+| `pnpm build-library-db`   | `RetireJS/retire.js` `jsrepository-v4.json`     | 60 libraries; 166 KB raw, 30 KB gzipped    | Apache-2.0   |
+
+The library database is downloaded rather than committed for a different
+reason: retire.js publishes advisories continuously, and a checked-in copy would
+go stale while still looking authoritative. Only the `uri` and `filename`
+extractors are kept — a snapshot records where scripts came from, not what is in
+them, so the `func` and `filecontent` extractors have nothing to match against.
+That limitation is reported in every run as an `info` finding, because a clean
+result means "no vulnerable version was named in a script URL", which is much
+weaker than "no vulnerable library is loaded".
 
 The HSTS list is not bundled by default, and the reason is worth recording. It
 changes the outcome in exactly one case: a site on the browser preload list that

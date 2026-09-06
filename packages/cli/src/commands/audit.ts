@@ -4,6 +4,7 @@ import { audit, PageSnapshotSchema, type AuditResult } from "core";
 
 import { createNodeCapabilities } from "../capabilities/index.js";
 import { loadHstsPreloadList } from "../hsts-preload.js";
+import { loadLibraryDb } from "../library-db.js";
 import { formatReport } from "../report.js";
 
 export interface AuditCommandOptions {
@@ -14,6 +15,8 @@ export interface AuditCommandOptions {
   verbose: boolean;
   /** Built by `pnpm build-hsts-preload`; absent is fine (docs/03). */
   hstsPreloadPath?: string;
+  /** Built by `pnpm build-library-db`; absent skips the analyzer (docs/03). */
+  libraryDbPath?: string;
   outDir?: string;
   /** Skip writing the result to the store. */
   noStore: boolean;
@@ -56,7 +59,15 @@ export async function runAuditCommand(
     ...(options.outDir === undefined ? {} : { outDir: options.outDir }),
   });
 
-  const result = await audit(snapshot, { capabilities, noAgent: true });
+  const libraryDb = await loadLibraryDb(
+    options.libraryDbPath ?? "data/library-db.json",
+  );
+
+  const result = await audit(snapshot, {
+    capabilities,
+    noAgent: true,
+    ...(libraryDb === undefined ? {} : { libraryDb }),
+  });
 
   if (!options.noStore) {
     await capabilities.store.putAudit(result);

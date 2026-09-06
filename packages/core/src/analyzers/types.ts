@@ -1,5 +1,6 @@
 import type { Finding } from "../findings/schema.js";
 import type { Logger } from "../logger.js";
+import type { LibraryDatabase } from "./libraries/schema.js";
 import type { PageSnapshot } from "../snapshot/schema.js";
 
 /**
@@ -15,12 +16,14 @@ export interface TrackerDatabase {
 }
 
 /** External inputs an analyzer may declare a need for. */
-export type AnalyzerNeed = "headers" | "trackerDb";
+export type AnalyzerNeed = "headers" | "trackerDb" | "libraryDb";
 
 export interface AnalyzerContext {
   /** Response headers, lowercased keys. Populated by the fetchHeaders tool. */
   headers?: Record<string, string>;
   trackerDb?: TrackerDatabase;
+  /** Built by `pnpm build-library-db` (docs/10); absent means the checks skip. */
+  libraryDb?: LibraryDatabase;
   logger: Logger;
 }
 

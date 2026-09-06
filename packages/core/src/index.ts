@@ -91,11 +91,14 @@ export {
   cspAnalyzer,
   formsAnalyzer,
   headersAnalyzer,
+  librariesAnalyzer,
   policyPresenceAnalyzer,
   scriptsAnalyzer,
   transportAnalyzer,
 } from "./analyzers/index.js";
 export { setHstsPreloadList } from "./analyzers/headers/index.js";
+export { LibraryDatabaseSchema } from "./analyzers/libraries/schema.js";
+export type { LibraryDatabase } from "./analyzers/libraries/schema.js";
 export { HEADER_RULES } from "./analyzers/headers/mapping.js";
 export { runAnalyzers } from "./analyzers/run.js";
 export type {

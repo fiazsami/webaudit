@@ -2,6 +2,7 @@ import { cookiesAnalyzer } from "./cookies/index.js";
 import { cspAnalyzer } from "./csp/index.js";
 import { formsAnalyzer } from "./forms/index.js";
 import { headersAnalyzer } from "./headers/index.js";
+import { librariesAnalyzer } from "./libraries/index.js";
 import { policyPresenceAnalyzer } from "./policy-presence/index.js";
 import { scriptsAnalyzer } from "./scripts/index.js";
 import { transportAnalyzer } from "./transport/index.js";
@@ -23,6 +24,7 @@ export const analyzers: readonly Analyzer[] = [
   cookiesAnalyzer,
   formsAnalyzer,
   scriptsAnalyzer,
+  librariesAnalyzer,
   policyPresenceAnalyzer,
 ];
 
@@ -31,6 +33,7 @@ export {
   cspAnalyzer,
   formsAnalyzer,
   headersAnalyzer,
+  librariesAnalyzer,
   policyPresenceAnalyzer,
   scriptsAnalyzer,
   transportAnalyzer,

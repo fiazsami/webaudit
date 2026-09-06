@@ -73,11 +73,13 @@ describe("snapshot fixtures", () => {
 
     // The CLI has no privileged refetch, so the headers analyzer cannot run.
     // Reporting nothing would read as a clean bill of health.
-    const skipped = result.findings.find(
+    const skipped = result.findings.filter(
       (finding) => finding.ruleId === "analyzer-skipped",
     );
-    expect(skipped?.summary).toContain("headers");
-    expect(skipped?.summary).toContain("not passing");
+    const headers = skipped.find((finding) => finding.title.includes("headers"));
+
+    expect(headers?.summary).toContain("headers");
+    expect(headers?.summary).toContain("not passing");
   });
 
   it("says the cookie flags are unknown, not missing, when they were not read", async () => {

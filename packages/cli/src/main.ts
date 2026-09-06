@@ -27,6 +27,7 @@ async function main(argv: readonly string[]): Promise<number> {
       verbose: { type: "boolean", default: false },
       out: { type: "string" },
       "hsts-preload": { type: "string" },
+      "library-db": { type: "string" },
       help: { type: "boolean", short: "h", default: false },
     },
   });
@@ -52,6 +53,9 @@ async function main(argv: readonly string[]): Promise<number> {
     ...(values["hsts-preload"] === undefined
       ? {}
       : { hstsPreloadPath: values["hsts-preload"] }),
+    ...(values["library-db"] === undefined
+      ? {}
+      : { libraryDbPath: values["library-db"] }),
   });
 
   return 0;

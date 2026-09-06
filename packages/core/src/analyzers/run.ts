@@ -52,6 +52,8 @@ function isSatisfied(need: AnalyzerNeed, ctx: AnalyzerContext): boolean {
       return ctx.headers !== undefined;
     case "trackerDb":
       return ctx.trackerDb !== undefined;
+    case "libraryDb":
+      return ctx.libraryDb !== undefined;
   }
 }
 
