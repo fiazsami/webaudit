@@ -60,8 +60,8 @@ export default tseslint.config(
     languageOptions: {
       parserOptions: {
         projectService: {
-          // Root-level config files sit outside every package tsconfig.
-          allowDefaultProject: ["eslint.config.js"],
+          // Root-level files that sit outside every package tsconfig.
+          allowDefaultProject: ["eslint.config.js", "scripts/*.mjs"],
         },
         tsconfigRootDir: import.meta.dirname,
       },
@@ -174,9 +174,10 @@ export default tseslint.config(
     rules: { "no-restricted-imports": "off", "no-restricted-globals": "off" },
   },
   {
-    // This file is not part of any package tsconfig, so type-aware rules have
-    // no types to work from.
-    files: ["eslint.config.js"],
+    // Outside any package tsconfig, so type-aware rules have no types to work
+    // from. The build scripts are plain Node, run by hand, never bundled.
+    files: ["eslint.config.js", "scripts/*.mjs"],
+    languageOptions: { globals: globals.node },
     extends: [tseslint.configs.disableTypeChecked],
   },
   {

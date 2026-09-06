@@ -35,6 +35,24 @@ unadopted — the hand-written loop is the point (docs/06).
 Ship a build script that can generate the tracker DB from either source; default
 to Tracker Radar for richer metadata, document the licence.
 
+### Optional build-time data
+
+Both of these are downloaded by a script into `data/`, which is gitignored.
+Neither is required: an analyzer without its data says so rather than reporting
+a clean result.
+
+| Script                    | Source                                          | Size                                       | Licence      |
+| ------------------------- | ----------------------------------------------- | ------------------------------------------ | ------------ |
+| `pnpm build-hsts-preload` | Chromium `transport_security_state_static.json` | 94,644 entries; 6.2 MB raw, 740 KB gzipped | BSD-3-Clause |
+
+The HSTS list is not bundled by default, and the reason is worth recording. It
+changes the outcome in exactly one case: a site on the browser preload list that
+sends a short, malformed, or missing HSTS header is protected regardless, and
+would otherwise be reported as a problem. Without the list those findings carry a
+caveat and medium confidence; with it they are stated plainly. Trading 740 KB for
+one sentence is a judgement, so it is opt-in — the CLI picks it up from
+`data/hsts-preload.json` automatically, and the extension does not bundle it.
+
 ### Header analysis — vendored, not depended on
 
 `@mdn/mdn-http-observatory` **is not a library**. It is a server application:

@@ -3,6 +3,7 @@ import { readFile } from "node:fs/promises";
 import { audit, PageSnapshotSchema, type AuditResult } from "core";
 
 import { createNodeCapabilities } from "../capabilities/index.js";
+import { loadHstsPreloadList } from "../hsts-preload.js";
 import { formatReport } from "../report.js";
 
 export interface AuditCommandOptions {
@@ -11,6 +12,8 @@ export interface AuditCommandOptions {
   noAgent: boolean;
   json: boolean;
   verbose: boolean;
+  /** Built by `pnpm build-hsts-preload`; absent is fine (docs/03). */
+  hstsPreloadPath?: string;
   outDir?: string;
   /** Skip writing the result to the store. */
   noStore: boolean;
@@ -36,6 +39,17 @@ export async function runAuditCommand(
   const raw = await readFile(options.snapshotPath, "utf8");
   // A file on disk is untrusted input like any other (hard rule 2).
   const snapshot = PageSnapshotSchema.parse(JSON.parse(raw));
+
+  const preloaded = await loadHstsPreloadList(
+    options.hstsPreloadPath ?? "data/hsts-preload.json",
+  );
+  if (options.verbose) {
+    process.stderr.write(
+      preloaded === 0
+        ? "no HSTS preload list; HSTS findings will carry a caveat\n"
+        : `loaded ${String(preloaded)} preloaded hosts\n`,
+    );
+  }
 
   const capabilities = createNodeCapabilities({
     verbose: options.verbose,

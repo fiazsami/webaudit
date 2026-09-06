@@ -26,6 +26,7 @@ async function main(argv: readonly string[]): Promise<number> {
       "no-store": { type: "boolean", default: false },
       verbose: { type: "boolean", default: false },
       out: { type: "string" },
+      "hsts-preload": { type: "string" },
       help: { type: "boolean", short: "h", default: false },
     },
   });
@@ -48,6 +49,9 @@ async function main(argv: readonly string[]): Promise<number> {
     noStore: values["no-store"],
     verbose: values.verbose,
     ...(values.out === undefined ? {} : { outDir: values.out }),
+    ...(values["hsts-preload"] === undefined
+      ? {}
+      : { hstsPreloadPath: values["hsts-preload"] }),
   });
 
   return 0;

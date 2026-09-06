@@ -13,6 +13,9 @@ Options:
   --json          Emit the AuditResult as JSON instead of a report.
   --out <dir>     Where to write stored audits (default: ./out).
   --no-store      Do not write the result to the store.
+  --hsts-preload <path>
+                  HSTS preload list from \`pnpm build-hsts-preload\`
+                  (default: data/hsts-preload.json if present).
   --verbose       Print progress and debug output to stderr.
   -h, --help      Show this message.
 

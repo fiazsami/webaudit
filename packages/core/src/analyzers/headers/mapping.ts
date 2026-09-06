@@ -24,6 +24,28 @@ export interface HeaderRule {
 
 const MDN = "https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers";
 
+/**
+ * Appended to HSTS findings when no preload list was loaded, and absent once
+ * one is.
+ *
+ * The list is 94,644 entries — 6.2 MB, 740 KB gzipped — so it is not bundled by
+ * default (`pnpm build-hsts-preload`, then `setHstsPreloadList`). Without it the
+ * HSTS check is correct except in one case: a preloaded site sending a short,
+ * malformed, or missing header is reported as a problem when browsers force
+ * HTTPS for it anyway. Saying so costs a sentence; the alternative costs 740 KB
+ * or a wrong finding.
+ */
+export const PRELOAD_CAVEAT =
+  " If this site is on the browser preload list, HTTPS is enforced regardless; " +
+  "this audit did not load that list.";
+
+/** HSTS rules whose accuracy depends on having the preload list. */
+export const PRELOAD_SENSITIVE_RULES = new Set([
+  "hsts-max-age-short",
+  "hsts-missing",
+  "hsts-invalid",
+]);
+
 /** `null` means "correctly configured" — nothing to report. */
 export const HEADER_RULES: Record<string, HeaderRule | null> = {
   // --- Strict-Transport-Security ---------------------------------------

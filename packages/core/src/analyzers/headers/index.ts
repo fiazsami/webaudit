@@ -1,8 +1,14 @@
 import { createFinding, type Finding } from "../../findings/schema.js";
 import type { PageSnapshot } from "../../snapshot/schema.js";
 import type { Analyzer, AnalyzerContext } from "../types.js";
-import { HEADER_RULES, VERDICT_HEADER, type HeaderRule } from "./mapping.js";
-import { setHstsPreloadList } from "./vendor/hsts.js";
+import {
+  HEADER_RULES,
+  PRELOAD_CAVEAT,
+  PRELOAD_SENSITIVE_RULES,
+  VERDICT_HEADER,
+  type HeaderRule,
+} from "./mapping.js";
+import { setHstsPreloadList as setVendorHstsPreloadList } from "./vendor/hsts.js";
 import { crossOriginEmbedderPolicyTest } from "./vendor/tests/cross-origin-embedder-policy.js";
 import { crossOriginOpenerPolicyTest } from "./vendor/tests/cross-origin-opener-policy.js";
 import { crossOriginResourcePolicyTest } from "./vendor/tests/cross-origin-resource-policy.js";
@@ -136,13 +142,17 @@ function toFinding(
   const headerName = VERDICT_HEADER[testName];
   const observed = headerName === undefined ? undefined : headers[headerName];
 
+  // Said at construction time rather than in the table, so supplying the list
+  // actually removes the caveat instead of leaving a stale sentence behind.
+  const needsCaveat = !preloadListLoaded && PRELOAD_SENSITIVE_RULES.has(rule.ruleId);
+
   return createFinding({
     analyzerId: ANALYZER_ID,
     ruleId: rule.ruleId,
     severity: rule.severity,
-    confidence: rule.confidence,
+    confidence: needsCaveat ? "medium" : rule.confidence,
     title: rule.title,
-    summary: rule.summary,
+    summary: needsCaveat ? rule.summary + PRELOAD_CAVEAT : rule.summary,
     evidence: [
       observed === undefined
         ? { kind: "header", value: verdict, location: headerName ?? testName }
@@ -215,4 +225,16 @@ function hostnameOf(url: string): string {
   }
 }
 
-export { setHstsPreloadList };
+let preloadListLoaded = false;
+
+/**
+ * Supply the HSTS preload list (`pnpm build-hsts-preload`). Without it, HSTS
+ * findings carry a caveat and medium confidence, because a preloaded site with a
+ * bad header is protected anyway. With it, they say what they mean.
+ */
+export function setHstsPreloadList(
+  map: ReadonlyMap<string, { mode: string; includeSubDomains: boolean }>,
+): void {
+  setVendorHstsPreloadList(map as never);
+  preloadListLoaded = map.size > 0;
+}

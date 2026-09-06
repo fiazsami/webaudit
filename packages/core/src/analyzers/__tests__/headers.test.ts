@@ -2,7 +2,7 @@ import { describe, expect, it, vi } from "vitest";
 
 import type { Finding } from "../../findings/schema.js";
 import { silentLogger } from "../../logger.js";
-import { headersAnalyzer } from "../headers/index.js";
+import { headersAnalyzer, setHstsPreloadList } from "../headers/index.js";
 import { HEADER_RULES } from "../headers/mapping.js";
 import { snapshotWith } from "./snapshot-factory.js";
 
@@ -16,6 +16,8 @@ const GOOD: Record<string, string> = {
   "cross-origin-opener-policy": "same-origin",
   "content-type": "text/html; charset=utf-8",
 };
+
+const MODE_FORCE = { mode: "force-https", includeSubDomains: true };
 
 async function rules(
   headers: Record<string, string>,
@@ -122,6 +124,50 @@ describe("headers analyzer", () => {
     expect(warn).toHaveBeenCalledWith(
       expect.stringContaining("no mapping for verdict"),
     );
+  });
+
+  it("admits it has not loaded the preload list", async () => {
+    const findings = await headersAnalyzer.run(snapshotWith(), {
+      headers: { ...GOOD, "strict-transport-security": "max-age=100" },
+      logger: silentLogger,
+    });
+    const hsts = findings.find((finding) => finding.ruleId === "hsts-max-age-short");
+
+    // A preloaded site with a short max-age is protected anyway, so without the
+    // list this finding is a maybe, and says so.
+    expect(hsts?.summary).toContain("preload list");
+    expect(hsts?.confidence).toBe("medium");
+  });
+
+  it("drops the caveat once the preload list is supplied", async () => {
+    setHstsPreloadList(new Map([["other.example", MODE_FORCE]]));
+    try {
+      const findings = await headersAnalyzer.run(snapshotWith(), {
+        headers: { ...GOOD, "strict-transport-security": "max-age=100" },
+        logger: silentLogger,
+      });
+      const hsts = findings.find((f) => f.ruleId === "hsts-max-age-short");
+
+      expect(hsts?.summary).not.toContain("preload list");
+      expect(hsts?.confidence).toBe("high");
+    } finally {
+      setHstsPreloadList(new Map());
+    }
+  });
+
+  it("reports nothing for a site that is on the preload list", async () => {
+    setHstsPreloadList(new Map([["example.com", MODE_FORCE]]));
+    try {
+      const findings = await headersAnalyzer.run(snapshotWith(), {
+        headers: { ...GOOD, "strict-transport-security": "max-age=100" },
+        logger: silentLogger,
+      });
+
+      // hsts-preloaded overrides the short max-age, and is not a problem.
+      expect(findings.map((f) => f.ruleId)).not.toContain("hsts-max-age-short");
+    } finally {
+      setHstsPreloadList(new Map());
+    }
   });
 
   it("maps every verdict the wired tests can return", async () => {
