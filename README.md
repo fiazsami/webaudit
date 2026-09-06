@@ -105,6 +105,13 @@ Code: MIT (proposed), with one exception:
 [mdn-http-observatory](https://github.com/mdn/mdn-http-observatory) and kept in
 its own directory (MPL is file-level copyleft).
 
-Some data sets we consume have non-commercial licences — DuckDuckGo Tracker
-Radar is CC BY-NC-SA 4.0 and is downloaded at build time rather than vendored.
-See `docs/10-dependencies.md`.
+Some data sets we consume have non-commercial licences. **DuckDuckGo Tracker
+Radar is CC BY-NC-SA 4.0 — non-commercial.** It is downloaded at build time by
+`pnpm build-tracker-db` and never vendored into this repository, so nothing in
+the tree carries that restriction. The tracker analyzer is skipped, with an
+explicit finding, when the database is absent.
+
+The other build-time downloads are permissive: the Chromium HSTS preload list
+(`pnpm build-hsts-preload`, BSD-3-Clause) and the retire.js advisory data
+(`pnpm build-library-db`, Apache-2.0). All three land in `data/`, which is
+gitignored. See `docs/10-dependencies.md`.

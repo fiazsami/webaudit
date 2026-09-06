@@ -13,6 +13,7 @@
     "serve-fixture": "python3 -m http.server 8787 --directory fixtures/site",
     "build-hsts-preload": "node scripts/build-hsts-preload.mjs",
     "build-library-db": "node scripts/build-library-db.mjs",
+    "build-tracker-db": "node scripts/build-tracker-db.mjs",
     "typecheck": "pnpm -r typecheck",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",

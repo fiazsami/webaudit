@@ -28,6 +28,7 @@ async function main(argv: readonly string[]): Promise<number> {
       out: { type: "string" },
       "hsts-preload": { type: "string" },
       "library-db": { type: "string" },
+      "tracker-db": { type: "string" },
       help: { type: "boolean", short: "h", default: false },
     },
   });
@@ -56,6 +57,9 @@ async function main(argv: readonly string[]): Promise<number> {
     ...(values["library-db"] === undefined
       ? {}
       : { libraryDbPath: values["library-db"] }),
+    ...(values["tracker-db"] === undefined
+      ? {}
+      : { trackerDbPath: values["tracker-db"] }),
   });
 
   return 0;

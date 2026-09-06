@@ -41,10 +41,22 @@ Both of these are downloaded by a script into `data/`, which is gitignored.
 Neither is required: an analyzer without its data says so rather than reporting
 a clean result.
 
-| Script                    | Source                                          | Size                                       | Licence      |
-| ------------------------- | ----------------------------------------------- | ------------------------------------------ | ------------ |
-| `pnpm build-hsts-preload` | Chromium `transport_security_state_static.json` | 94,644 entries; 6.2 MB raw, 740 KB gzipped | BSD-3-Clause |
-| `pnpm build-library-db`   | `RetireJS/retire.js` `jsrepository-v4.json`     | 60 libraries; 166 KB raw, 30 KB gzipped    | Apache-2.0   |
+| Script                    | Source                                           | Size                                       | Licence             |
+| ------------------------- | ------------------------------------------------ | ------------------------------------------ | ------------------- |
+| `pnpm build-hsts-preload` | Chromium `transport_security_state_static.json`  | 94,644 entries; 6.2 MB raw, 740 KB gzipped | BSD-3-Clause        |
+| `pnpm build-library-db`   | `RetireJS/retire.js` `jsrepository-v4.json`      | 60 libraries; 166 KB raw, 30 KB gzipped    | Apache-2.0          |
+| `pnpm build-tracker-db`   | DuckDuckGo Tracker Data Set (from tracker-radar) | 1,028 trackers; 116 KB raw, 18 KB gzipped  | **CC BY-NC-SA 4.0** |
+
+The tracker database is the one with a licence constraint. CC BY-NC-SA 4.0 is
+non-commercial, which is fine for research and is exactly why it is downloaded
+rather than vendored — nothing in this tree carries the restriction. The
+`licence` field is written into the built file so the constraint travels with
+the data rather than living only here.
+
+We take DuckDuckGo's compiled Tracker Data Set rather than the tracker-radar
+repository directly: the repo's aggregate `domain_map.json` has owners but no
+categories, and the per-domain files that do carry them number in the thousands.
+The TDS has owner, categories, prevalence, and fingerprinting in one file.
 
 The library database is downloaded rather than committed for a different
 reason: retire.js publishes advisories continuously, and a checked-in copy would

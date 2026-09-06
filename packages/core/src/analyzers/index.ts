@@ -5,6 +5,7 @@ import { headersAnalyzer } from "./headers/index.js";
 import { librariesAnalyzer } from "./libraries/index.js";
 import { policyPresenceAnalyzer } from "./policy-presence/index.js";
 import { scriptsAnalyzer } from "./scripts/index.js";
+import { trackersAnalyzer } from "./trackers/index.js";
 import { transportAnalyzer } from "./transport/index.js";
 import type { Analyzer } from "./types.js";
 
@@ -25,6 +26,7 @@ export const analyzers: readonly Analyzer[] = [
   formsAnalyzer,
   scriptsAnalyzer,
   librariesAnalyzer,
+  trackersAnalyzer,
   policyPresenceAnalyzer,
 ];
 
@@ -36,5 +38,6 @@ export {
   librariesAnalyzer,
   policyPresenceAnalyzer,
   scriptsAnalyzer,
+  trackersAnalyzer,
   transportAnalyzer,
 };

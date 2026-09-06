@@ -19,6 +19,9 @@ Options:
   --library-db <path>
                   Vulnerable-library database from \`pnpm build-library-db\`
                   (default: data/library-db.json if present).
+  --tracker-db <path>
+                  Tracker database from \`pnpm build-tracker-db\`
+                  (default: data/tracker-db.json if present).
   --verbose       Print progress and debug output to stderr.
   -h, --help      Show this message.
 

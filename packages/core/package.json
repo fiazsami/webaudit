@@ -22,6 +22,7 @@
   "dependencies": {
     "csp_evaluator": "^1.1.8",
     "structured-headers": "^2.0.3",
+    "tldts": "^7.4.11",
     "zod": "catalog:"
   },
   "devDependencies": {
