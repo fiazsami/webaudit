@@ -1,9 +1,10 @@
 # CLAUDE.md — WebAudit
 
-Local-first website auditing agent. A browser extension captures a page snapshot,
-sends it to an Electron desktop app over a localhost WebSocket, and a TypeScript
-agent runtime produces security findings and a plain-language reading of the
-site's terms of service.
+Local-first website auditing agent, shipped as a browser extension. A content
+script captures a page snapshot; a TypeScript agent runtime running inside the
+extension produces security findings and a plain-language reading of the site's
+terms of service. The model runs in the browser over WebGPU via WebLLM. There is
+no desktop app and no server.
 
 This is a research project. The goal is to learn how to build a local agent for a
 moderately complex system. Prefer simple, inspectable code over frameworks until a
@@ -14,14 +15,14 @@ framework's value is obvious.
 - `README.md` — project overview and current status
 - `docs/01-architecture.md` — package layout and data flow
 - `docs/11-roadmap.md` — milestones; work on the lowest incomplete milestone
-- The doc for the subsystem you are touching (`docs/02`–`docs/10`)
+- The doc for the subsystem you are touching (`docs/02`–`docs/12`)
 
 ## Repository layout
 
 ```
-packages/core        agent runtime — NO electron, browser, or DOM imports
-packages/desktop     Electron app: main (bridge, sqlite), preload, renderer
-packages/extension   MV3 extension built with WXT
+packages/core        agent runtime — pure TypeScript, no host APIs of any kind
+packages/extension   MV3 extension built with WXT — this is the product
+packages/cli         Node host: analyzers, non-model stages, replay-mode runs
 fixtures/            saved PageSnapshot JSON + policy texts for tests and evals
 docs/                design docs (this set)
 ```
@@ -30,10 +31,12 @@ Package manager: pnpm workspaces. Language: TypeScript everywhere, strict mode.
 
 ## Hard rules
 
-1. `packages/core` must run in plain Node with no Electron or browser globals.
-   Everything in it should be runnable from a CLI against `fixtures/`.
-2. All data crossing a boundary (extension → app, app → model, model → app) is
-   validated with a zod schema. No `any` at boundaries.
+1. `packages/core` must run **unmodified in both Node and a browser**. No Node
+   built-ins (`fs`, `path`, `node:*`), no DOM globals, no `chrome.*`. Everything
+   external — HTTP, storage, the model, DOM parsing, the clock — arrives through
+   the `Capabilities` object passed in by the host. See `docs/01`.
+2. All data crossing a boundary (page → snapshot, host → core, core → model,
+   model → core) is validated with a zod schema. No `any` at boundaries.
 3. Deterministic analyzers never call a model. Model calls only happen in
    `core/providers` via the `ModelProvider` interface.
 4. Page content, policy text, and anything fetched from the web is untrusted
@@ -42,10 +45,17 @@ Package manager: pnpm workspaces. Language: TypeScript everywhere, strict mode.
    See `docs/12-threat-model.md`.
 5. The agent loop enforces budgets (max steps, max fetches, max tokens, allowed
    domains). Budgets are constructor arguments, not constants buried in code.
+   Defaults are derived from the active model, not hardcoded.
 6. Every model call is recorded in an `AuditTrace` so runs are reproducible.
-7. No telemetry. Nothing leaves the machine except calls to the model provider
-   the user explicitly selected, and fetches of policy pages the agent was
+   Replay through `RecordingProvider` is how the agent loop is tested — CI has
+   no GPU.
+7. No telemetry. Two things leave the machine, both visible and bounded: model
+   weights, downloaded once from the HuggingFace CDN and verified with WebLLM's
+   per-model SRI `integrity` field; and fetches of policy pages the agent was
    permitted to follow.
+8. Only the background worker holds privilege (`chrome.cookies`, host
+   permissions, cross-origin fetch). It stays thin and short-lived. The audit
+   runtime lives in the side panel, which has no special permissions of its own.
 
 ## Conventions
 
@@ -54,8 +64,9 @@ Package manager: pnpm workspaces. Language: TypeScript everywhere, strict mode.
 - Analyzers export `{ id, run(snapshot, ctx): Promise<Finding[]> }`. See docs/03.
 - Tools export `{ name, description, input: ZodSchema, run(input, ctx) }`. See docs/06.
 - Tests: vitest. Analyzer tests use fixtures, never the network.
-- Prompt evals: promptfoo configs under `packages/core/evals/`.
-- Commit messages: `scope: summary` where scope is core/desktop/extension/docs.
+- Prompt evals: an in-browser runner page under `packages/extension/entrypoints/evals/`.
+  Node-based eval harnesses cannot drive WebGPU.
+- Commit messages: `scope: summary` where scope is core/extension/cli/docs.
 
 ## Commands (once scaffolded)
 
@@ -63,16 +74,14 @@ Package manager: pnpm workspaces. Language: TypeScript everywhere, strict mode.
 pnpm install
 pnpm -r build
 pnpm --filter core test
-pnpm --filter core cli audit fixtures/snapshots/example.json   # run agent on a fixture
-pnpm --filter desktop dev
-pnpm --filter extension dev                                     # WXT dev server
+pnpm --filter cli audit fixtures/snapshots/example.json   # analyzers + replay
+pnpm --filter extension dev                               # WXT dev server
 ```
 
 ## When unsure
 
 Check `docs/` before inventing a new shape. If a design doc is wrong or missing,
 update the doc in the same change as the code.
-
 
 <!-- BEGIN BEADS INTEGRATION v:1 profile:minimal hash:7510c1e2 -->
 ## Beads Issue Tracker
