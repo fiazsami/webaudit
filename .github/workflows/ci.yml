@@ -24,10 +24,14 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
 
+      # Build first, and the order matters. The hosts resolve `core` through its
+      # exports map to dist/*.d.ts, so on a clean checkout there are no types to
+      # lint or typecheck against until core has been built once.
+      - run: pnpm -r build
+
       - run: pnpm format:check
       - run: pnpm lint
       - run: pnpm -r typecheck
-      - run: pnpm -r build
 
       # CI has no GPU, so nothing here runs live inference. The agent loop is
       # covered by RecordingProvider replay instead (CLAUDE.md hard rule 6).

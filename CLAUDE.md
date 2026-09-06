@@ -72,7 +72,7 @@ Package manager: pnpm workspaces. Language: TypeScript everywhere, strict mode.
 
 ```
 pnpm install
-pnpm -r build
+pnpm -r build                                             # run first: lint and typecheck need core's dist
 pnpm -r test
 pnpm -r typecheck
 pnpm lint                                                 # includes the core boundary rules
