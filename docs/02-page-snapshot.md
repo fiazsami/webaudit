@@ -16,17 +16,22 @@ Principles:
 
 ## Schema (zod, in `packages/core/src/snapshot/schema.ts`)
 
+Names follow the CLAUDE.md convention — `FooSchema` for the schema, `Foo` for
+the inferred type — rather than reusing one name for both. The syntax is zod 4:
+`z.url()` and `z.iso.datetime()` replace the chained `z.string().url()`, and
+`z.record` takes an explicit key schema.
+
 ```ts
 import { z } from "zod";
 
-export const ScriptRef = z.object({
-  src: z.string().url().optional(), // external
+export const ScriptRefSchema = z.object({
+  src: z.url().optional(), // external
   inlineSha256: z.string().optional(), // inline (hash only, not content)
-  inlineLength: z.number().int().optional(),
-  attrs: z.record(z.string()).default({}), // async, defer, type, nonce, integrity
+  inlineLength: z.number().int().nonnegative().optional(),
+  attrs: z.record(z.string(), z.string()).default({}), // async, defer, type, nonce, integrity
 });
 
-export const FormRef = z.object({
+export const FormRefSchema = z.object({
   action: z.string(), // resolved absolute URL
   method: z.enum(["GET", "POST", "other"]),
   fieldTypes: z.array(z.string()), // input types: password, email, ...
@@ -34,7 +39,7 @@ export const FormRef = z.object({
   autocompleteOff: z.boolean(),
 });
 
-export const CookieRef = z.object({
+export const CookieRefSchema = z.object({
   name: z.string(),
   domain: z.string().optional(),
   // Flags are only visible via chrome.cookies API, not document.cookie
@@ -45,39 +50,39 @@ export const CookieRef = z.object({
   expires: z.number().optional(),
 });
 
-export const LinkRef = z.object({
-  href: z.string().url(),
+export const LinkRefSchema = z.object({
+  href: z.url(),
   text: z.string().max(200),
   rel: z.string().optional(),
-  // heuristic tag assigned by the content script, e.g. "terms", "privacy", "cookies"
+  // heuristic tag assigned during capture, e.g. "terms", "privacy", "cookies"
   policyHint: z.enum(["terms", "privacy", "cookies", "other"]).optional(),
 });
 
-export const PageSnapshot = z.object({
+export const PageSnapshotSchema = z.object({
   schemaVersion: z.literal(1),
-  capturedAt: z.string().datetime(),
-  url: z.string().url(),
+  capturedAt: z.iso.datetime(),
+  url: z.url(),
   title: z.string().max(500),
   protocol: z.enum(["http:", "https:"]),
 
   // What the content script can see
-  scripts: z.array(ScriptRef),
-  forms: z.array(FormRef),
+  scripts: z.array(ScriptRefSchema),
+  forms: z.array(FormRefSchema),
   iframes: z.array(
     z.object({ src: z.string().optional(), sandbox: z.string().optional() }),
   ),
-  links: z.array(LinkRef),
-  metaTags: z.record(z.string()), // name/property → content
+  links: z.array(LinkRefSchema),
+  metaTags: z.record(z.string(), z.string()), // name/property/http-equiv → content
   hasMixedContent: z.boolean().optional(), // http subresources on https page
   textExcerpt: z.string().max(20000), // readable text, truncated
 
   // From extension APIs (background worker)
-  cookies: z.array(CookieRef),
+  cookies: z.array(CookieRefSchema),
   thirdPartyRequests: z
     .array(
       z.object({
         // via webRequest if permitted
-        url: z.string().url(),
+        url: z.url(),
         type: z.string(), // script, image, xhr, ...
         initiator: z.string().optional(),
       }),
@@ -91,14 +96,58 @@ export const PageSnapshot = z.object({
         "no-webrequest-permission",
         "no-cookie-flags",
         "text-truncated",
+        "links-truncated",
+        "third-party-requests-truncated",
         "csp-blocked-inline-collection",
       ]),
     )
     .default([]),
 });
 
-export type PageSnapshot = z.infer<typeof PageSnapshot>;
+export type PageSnapshot = z.infer<typeof PageSnapshotSchema>;
 ```
+
+`links-truncated` and `third-party-requests-truncated` are not in the original
+sketch; the size budget below caps both lists, and a cap that is not recorded is
+exactly the silent gap this schema exists to prevent.
+
+## The builder and its DOM port
+
+`buildSnapshot(doc, options)` lives in `snapshot/build.ts`. It cannot name
+`Document` or `Element`: core omits the DOM lib entirely, which is how hard rule
+1 is enforced by the compiler rather than by discipline. So `snapshot/dom.ts`
+declares the slice of a document the builder actually reads:
+
+```ts
+export interface DomElementLike {
+  getAttribute(name: string): string | null;
+  readonly textContent: string | null;
+  querySelectorAll(selectors: string): Iterable<DomElementLike>;
+}
+
+export interface DomDocumentLike {
+  readonly title: string;
+  readonly body: DomElementLike | null;
+  querySelectorAll(selectors: string): Iterable<DomElementLike>;
+}
+```
+
+A browser `Document` and a linkedom document both satisfy these structurally,
+with no adapter. That claim is a claim about types, so it is asserted at compile
+time — `packages/extension` checks the browser half, `packages/cli` the linkedom
+half — and `pnpm -r typecheck` fails if either stops holding. Keep the port
+minimal: every member added is a new obligation on every host.
+
+Two things the builder takes as options rather than reaching for:
+
+- `capturedAt`, because core has no clock (docs/01).
+- `hashInlineScript`, because SHA-256 needs SubtleCrypto, which is a host API.
+  Without it a snapshot records `inlineLength` and no hash.
+
+Whether `cookies` and `thirdPartyRequests` were supplied at all is the signal
+for the `no-cookie-flags` and `no-webrequest-permission` limitations. Passing an
+empty array means "looked, found none"; omitting the option means "could not
+look". The distinction matters to every analyzer downstream.
 
 ## What is NOT in the snapshot
 
@@ -113,9 +162,11 @@ export type PageSnapshot = z.infer<typeof PageSnapshot>;
 
 ## Size budget
 
-Target < 200 KB per snapshot. Truncate `links` to the first 500 and
-`thirdPartyRequests` to 1000, adding `text-truncated` style limitation flags
-where relevant.
+Target < 200 KB per snapshot. `links` truncates to the first 500,
+`thirdPartyRequests` to 1000, and `textExcerpt` to 20000 characters. Each cap
+that actually bites adds its limitation flag — `links-truncated`,
+`third-party-requests-truncated`, `text-truncated` — so a short list is never
+mistaken for a complete one.
 
 ## Fixtures
 
