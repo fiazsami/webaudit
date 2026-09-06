@@ -88,6 +88,7 @@ export type {
 export { analyzers } from "./analyzers/index.js";
 export {
   cookiesAnalyzer,
+  cspAnalyzer,
   formsAnalyzer,
   headersAnalyzer,
   policyPresenceAnalyzer,

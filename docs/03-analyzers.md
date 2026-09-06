@@ -73,7 +73,7 @@ and returns a de-duplicated, severity-sorted list.
 | ----------------- | -------------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
 | `transport`       | snapshot                               | http protocol, mixed content                                                                                     |
 | `headers`         | vendored Observatory sources (MPL-2.0) | HSTS, CSP presence, X-Content-Type-Options, X-Frame-Options, Referrer-Policy, CORS, cookie flags from Set-Cookie |
-| `csp`             | `csp_evaluator`                        | CSP strength: unsafe-inline, unsafe-eval, wildcard sources, missing base-uri/object-src                          |
+| `csp`             | `csp_evaluator`                        | Directive-level structure: missing base-uri/object-src, wildcards, allowlist bypasses, nonce quality, syntax     |
 | `cookies`         | snapshot cookies                       | Missing Secure/HttpOnly/SameSite, long-lived session cookies                                                     |
 | `forms`           | snapshot forms                         | Insecure form actions, login forms on http, cross-origin form actions, autocomplete on password forms            |
 | `scripts`         | snapshot scripts                       | Third-party scripts without SRI, excessive inline scripts                                                        |
@@ -89,6 +89,21 @@ which meant one insecure login form produced two findings saying nearly the same
 thing. One rule, one owner: `transport` covers the page's own transport —
 protocol and mixed content — and `forms` covers everything about where a form
 sends what the user typed.
+
+**CSP is analysed twice, on purpose, without saying anything twice.** The
+vendored Observatory sources score a policy as a whole and report the headline
+verdict — missing, report-only, unsafe-inline, unsafe-eval, insecure scheme.
+`csp_evaluator` reports directive-level structure that a single verdict cannot
+express: `object-src` and `base-uri` missing where they do not fall back,
+wildcards, known allowlist bypasses, nonce quality, syntax errors. The `csp`
+analyzer's mapping table deliberately omits every type the `headers` analyzer
+already covers, so one problem never produces two findings.
+
+`csp_evaluator` also distinguishes certainty, and we keep that distinction. It
+reports `'self'` in `script-src` as a _possible_ allowlist bypass, since the
+origin might host JSONP or user uploads — which it cannot know. Its `_MAYBE`
+severities cost one severity step and drop confidence to medium. Reported at
+face value, that one check alone would flag most of the web.
 
 **"Scripts from unexpected TLDs" is not implemented.** To mean anything it needs
 a reputation source, and a hand-written TLD blocklist would produce confident

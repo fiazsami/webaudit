@@ -20,6 +20,7 @@
     "clean": "rm -rf dist"
   },
   "dependencies": {
+    "csp_evaluator": "^1.1.8",
     "structured-headers": "^2.0.3",
     "zod": "catalog:"
   },
