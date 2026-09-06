@@ -68,15 +68,22 @@ Package manager: pnpm workspaces. Language: TypeScript everywhere, strict mode.
   Node-based eval harnesses cannot drive WebGPU.
 - Commit messages: `scope: summary` where scope is core/extension/cli/docs.
 
-## Commands (once scaffolded)
+## Commands
 
 ```
 pnpm install
 pnpm -r build
+pnpm -r test
+pnpm -r typecheck
+pnpm lint                                                 # includes the core boundary rules
+pnpm format                                               # Prettier, in place
 pnpm --filter core test
-pnpm --filter cli audit fixtures/snapshots/example.json   # analyzers + replay
+pnpm --filter cli audit fixtures/snapshots/example.json   # analyzers + replay (M1)
 pnpm --filter extension dev                               # WXT dev server
 ```
+
+Tool versions live in the `catalog:` block of `pnpm-workspace.yaml`, not in the
+package manifests. CI (`.github/workflows/ci.yml`) runs exactly this list.
 
 ## When unsure
 

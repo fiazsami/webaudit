@@ -69,8 +69,16 @@ See `docs/01-architecture.md`.
 
 ## Status
 
-Design phase. No code yet. Start with Milestone 0 in `docs/11-roadmap.md`.
-Work is tracked in [beads](https://github.com/gastownhall/beads) — `bd ready`.
+Milestone 0 done: the pnpm workspace builds, typechecks, lints, and tests, and
+`core` imports cleanly from both hosts. Everything it exports is still a
+placeholder — the real surface lands in M1. Milestones are in
+`docs/11-roadmap.md`; work is tracked in
+[beads](https://github.com/gastownhall/beads) — `bd ready`.
+
+```
+pnpm install
+pnpm -r build && pnpm -r test
+```
 
 ## Requirements
 
