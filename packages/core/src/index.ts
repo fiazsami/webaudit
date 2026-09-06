@@ -9,6 +9,31 @@
 
 export const VERSION = "0.0.0";
 
+// The seam (docs/01)
+export type {
+  AuditStore,
+  Capabilities,
+  Clock,
+  DomParser,
+  Http,
+  HttpRequestInit,
+  HttpResponse,
+  ProgressEvent,
+  ProgressSink,
+} from "./capabilities.js";
+export type { Logger } from "./logger.js";
+export { silentLogger } from "./logger.js";
+
+// Model access (docs/04). Types only in core; the WebLLM adapter is M4.
+export type {
+  CompletionRequest,
+  CompletionResponse,
+  ModelCapabilities,
+  ModelProvider,
+  ToolSpec,
+} from "./providers/types.js";
+
+// Snapshot (docs/02)
 export {
   CookieRefSchema,
   FormRefSchema,
@@ -36,9 +61,40 @@ export type {
   ThirdPartyRequest,
 } from "./snapshot/schema.js";
 
-export type { DomDocumentLike, DomElementLike } from "./snapshot/dom.js";
-
 export { buildSnapshot } from "./snapshot/build.js";
 export type { BuildSnapshotOptions } from "./snapshot/build.js";
-
+export type { DomDocumentLike, DomElementLike } from "./snapshot/dom.js";
 export { isSameOrigin, parseUrl, resolveUrl } from "./snapshot/url.js";
+
+// Findings and analyzers (docs/03)
+export {
+  ConfidenceSchema,
+  createFinding,
+  dedupeFindings,
+  EvidenceSchema,
+  FindingSchema,
+  SEVERITY_ORDER,
+  SeveritySchema,
+  sortFindings,
+} from "./findings/schema.js";
+export type {
+  Confidence,
+  Evidence,
+  Finding,
+  FindingInput,
+  Severity,
+} from "./findings/schema.js";
+
+export { runAnalyzers } from "./analyzers/run.js";
+export type {
+  Analyzer,
+  AnalyzerContext,
+  AnalyzerNeed,
+  TrackerDatabase,
+} from "./analyzers/types.js";
+
+// Audit results (docs/01, docs/09)
+export { AuditResultSchema, AuditSummarySchema } from "./audit/schema.js";
+export type { AuditResult, AuditSummary } from "./audit/schema.js";
+
+export { stableHash } from "./hash.js";

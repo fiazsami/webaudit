@@ -22,3 +22,6 @@
 {"id":"int-c00114fe","kind":"field_change","created_at":"2026-09-06T22:47:09.081718Z","actor":"Fiaz Sami","issue_id":"web-3ot.7","extra":{"field":"status","new_value":"closed","old_value":"open","reason":"Closed"}}
 {"id":"int-59ea8879","kind":"field_change","created_at":"2026-09-06T22:47:09.319767Z","actor":"Fiaz Sami","issue_id":"web-3ot.8","extra":{"field":"status","new_value":"closed","old_value":"in_progress","reason":"Closed"}}
 {"id":"int-db4ef02e","kind":"field_change","created_at":"2026-09-06T22:47:09.900892Z","actor":"Fiaz Sami","issue_id":"web-3ot","extra":{"field":"status","new_value":"closed","old_value":"open","reason":"pnpm -r build && pnpm -r test pass; CI mirrors the local gate"}}
+{"id":"int-206ceee3","kind":"field_change","created_at":"2026-09-06T22:53:02.819209Z","actor":"Fiaz Sami","issue_id":"web-dmg.1","extra":{"field":"status","new_value":"closed","old_value":"in_progress","reason":"Closed"}}
+{"id":"int-bbc36be5","kind":"field_change","created_at":"2026-09-06T22:53:03.069218Z","actor":"Fiaz Sami","issue_id":"web-dmg.2","extra":{"field":"status","new_value":"closed","old_value":"in_progress","reason":"Closed"}}
+{"id":"int-41536871","kind":"field_change","created_at":"2026-09-06T22:53:03.325229Z","actor":"Fiaz Sami","issue_id":"web-dmg.3","extra":{"field":"status","new_value":"closed","old_value":"in_progress","reason":"Closed"}}

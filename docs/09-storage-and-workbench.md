@@ -43,6 +43,14 @@ minutes, not cents. See docs/05.
 `AuditStore` in `core` is the interface over this. The CLI implements the same
 interface against the filesystem.
 
+As of M1 it carries audit history only — `putAudit`, `getAudit`, `listAudits`
+(docs/01) — because that is all there is to store. The policy cache, keyed by
+content hash and model, and the ToS report store arrive with the pipeline that
+fills them (M5). `AuditResult` grows the same way: `tosReport` in M5, `trace` in
+M6. Widening the schema before the producer exists would mean either an
+unvalidated `unknown` crossing a boundary, which hard rule 2 forbids, or a
+guess at a shape we would then have to change.
+
 ### Eviction
 
 IndexedDB has no size guarantee. Request persistence with

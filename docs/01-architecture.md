@@ -57,10 +57,10 @@ lets identical code run in the extension and in Node.
 
 ```ts
 export interface Capabilities {
-  http: Http; // fetch(url, opts) -> { status, headers, body }
-  store: AuditStore; // audits, policy cache, tos reports
+  http: Http; // the only way out to the network
+  store: AuditStore; // audit history; policy cache joins it in M5
   provider: ModelProvider; // docs/04
-  dom: DomParser; // parse(html, url) -> Document
+  dom: DomParser; // parse(html, url) -> DomDocumentLike
   progress: ProgressSink; // stage/step events for the UI
   clock: Clock; // now() — traces and deterministic tests
   logger: Logger;
@@ -68,6 +68,64 @@ export interface Capabilities {
 
 core.audit(snapshot, { capabilities, budget });
 ```
+
+The members, in `packages/core/src/capabilities.ts`:
+
+```ts
+export interface Http {
+  fetch(url: string, init?: HttpRequestInit): Promise<HttpResponse>;
+}
+
+export interface HttpResponse {
+  url: string; // final URL, after any redirects the host followed
+  status: number;
+  headers: Record<string, string>; // names lowercased
+  body: string;
+}
+
+export interface DomParser {
+  parse(html: string, url: string): DomDocumentLike; // the port from docs/02
+}
+
+export interface AuditStore {
+  putAudit(result: AuditResult): Promise<void>;
+  getAudit(auditId: string): Promise<AuditResult | undefined>;
+  listAudits(): Promise<AuditSummary[]>; // most recent first
+}
+
+export interface ProgressSink {
+  emit(event: {
+    stage: string; // "analyzers", "tos", "agent"
+    step?: string; // finer step, e.g. an analyzer id
+    current?: number;
+    total?: number;
+    message?: string;
+  }): void;
+}
+
+export interface Clock {
+  now(): number; // milliseconds since the epoch
+}
+
+export interface Logger {
+  debug(message: string, detail?: unknown): void;
+  info(message: string, detail?: unknown): void;
+  warn(message: string, detail?: unknown): void;
+  error(message: string, detail?: unknown): void;
+}
+```
+
+`DomParser` returns core's structural DOM port rather than a `Document`, because
+core has no DOM types to name one with (docs/02).
+
+`AuditStore` covers audit history only. The policy cache and ToS report stores
+in docs/09 join it in M5, when there is something to put in them.
+
+`Http` returns a plain object rather than a `Response`: core would have to await
+the body anyway, the header map is easier to read than `Headers`, and a snapshot
+of a response serialises into a trace where a live stream does not. Note that
+the allowed-domain check lives behind this interface, in the host — a tool that
+checks the budget before calling is doing so as well, not instead (docs/12 T2).
 
 | Capability | Extension host                                              | CLI host                                |
 | ---------- | ----------------------------------------------------------- | --------------------------------------- |
