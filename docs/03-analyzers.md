@@ -115,8 +115,56 @@ analyzers/headers/
 
 MPL-2.0 is file-level copyleft, so those files stay MPL with headers intact and
 the rest of the repo stays MIT. Keep them unmodified where possible so upstream
-fixes can be merged. Confirming the import prune is spike S1 (docs/11); the
-fallback is ~10 header rules written from Observatory's published scoring table.
+fixes can be merged.
+
+### S1 result: viable, with three prunes
+
+Spike S1 (docs/11) ran the experiment against `@mdn/mdn-http-observatory@1.7.1`.
+The vendored analyzer bundles for a browser in **24 modules, 60 kB (13 kB
+gzipped), with one runtime dependency — `structured-headers`**. No Fastify, no
+`pg`, no Sentry, no axios, no Node built-in is reachable. Nine tests run and
+return correct Observatory verdicts from a fixed headers object; feeding them
+deliberately bad headers changes every verdict, so they are evaluating rather
+than defaulting.
+
+Three files are dropped or edited, and only one is an edit to upstream logic:
+
+1. **`hsts.js` — edited.** Upstream reads `conf/hsts-preload.json` through
+   `node:fs`. The host injects the map instead (`setHstsPreloadList`). This is
+   forced regardless of the browser question: that JSON is not in the npm
+   tarball at all, being generated at build time by `retrieve-hsts.js`. So the
+   HSTS preload list becomes a build-time download, like the tracker database
+   (docs/10).
+2. **`subresource-integrity.js` — dropped.** The only file needing
+   `htmlparser2`, and our own `scripts` analyzer already reports SRI from the
+   snapshot.
+3. **`redirection.js` — dropped.** The only file needing `site.js`, which pulls
+   in `node:url` and `tldts`. It also needs a full redirect chain, which a
+   single worker fetch does not produce. Not in the rule list above either.
+
+A fourth, `cookies.js`, is kept out of the wired set: it reads a `tough-cookie`
+jar off the session rather than `Set-Cookie` headers, and returns
+`cookies-not-found` even when the header is present. We get cookie attributes
+from `chrome.cookies` and already have a `cookies` analyzer.
+
+That leaves nine usable tests: HSTS, CSP, X-Content-Type-Options,
+X-Frame-Options, Referrer-Policy, CORS, COEP, COOP, CORP.
+
+**The adapter's job.** The tests read `requests.responses.auto` and
+`.https`, `requests.session.url`, and `requests.site.hostname` — an axios-shaped
+object our background worker does not produce. `mapping.ts` builds one from a
+single fetch. One assumption in that mapping is worth stating: `verified: true`,
+which HSTS requires, is set for any successful HTTPS fetch, on the grounds that
+the browser would have refused a bad certificate chain before we saw a response.
+
+**Do not typecheck the vendor directory.** `types.js` carries JSDoc references
+to `import("axios").AxiosResponse` and `import("tough-cookie").SerializedCookie`.
+They have no runtime effect, but they would drag two type-only dependencies into
+the build. Keep the vendored JS out of `tsconfig` and put the types on
+`mapping.ts`, which is ours.
+
+The fallback — ~10 header rules written from Observatory's published scoring
+table — is not needed.
 
 ## Wrapping third-party scanners
 

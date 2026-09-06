@@ -48,7 +48,8 @@ live site in the side panel.
 
 ## M3 — Headers, CSP, trackers, libraries
 
-_Gated on spike S1._
+_Spike S1 is done and cleared this: see docs/03 for what to vendor and what to
+drop._
 
 - Vendored Observatory sources under `analyzers/headers/vendor/` (MPL-2.0), with
   our own `mapping.ts` to `Finding`.
@@ -121,9 +122,13 @@ _Gated on spike S3._
 
 Timeboxed. Each writes its result back into the doc it affects.
 
-- **S1 — Observatory vendor viability** (before M3). Copy `src/analyzer/`, prune
-  imports, confirm a browser bundle with only browser-safe deps. Fallback: ~10
-  header rules from the published scoring table, fully MIT.
+- **S1 — Observatory vendor viability** (before M3). **Done: viable.** The
+  vendored analyzer bundles for a browser in 24 modules / 60 kB with one runtime
+  dependency (`structured-headers`); nine tests return correct verdicts and no
+  server dependency is reachable. Three prunes are needed — `hsts.js` takes an
+  injected preload map instead of reading it with `node:fs`, and
+  `subresource-integrity.js` and `redirection.js` are dropped. The fallback is
+  not needed. Full result in docs/03.
 - **S2 — WebLLM in a side panel** (run during M0/M1). Confirm WebGPU in that
   context; verify `response_format` JSON-schema output against a real zod
   schema; **verify the cancellation API** — `interruptGenerate()` is not in the
