@@ -15,9 +15,12 @@
   },
   "dependencies": {
     "core": "workspace:*",
+    "idb": "^8.0.3",
     "zod": "catalog:"
   },
   "devDependencies": {
+    "fake-indexeddb": "^6.2.5",
+    "happy-dom": "^20.14.0",
     "typescript": "catalog:",
     "vitest": "catalog:",
     "wxt": "^0.21.4"

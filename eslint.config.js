@@ -77,7 +77,7 @@ export default tseslint.config(
       // make each exception argue for itself.
       "@typescript-eslint/no-explicit-any": "error",
       eqeqeq: ["error", "always", { null: "ignore" }],
-      "no-console": ["warn", { allow: ["warn", "error", "info"] }],
+      "no-console": ["warn", { allow: ["debug", "info", "warn", "error"] }],
     },
   },
 

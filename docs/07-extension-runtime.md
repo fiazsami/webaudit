@@ -42,22 +42,50 @@ streams (progress, model download).
 
 ### Side panel → background
 
-| type               | payload                    | reply                                     |
-| ------------------ | -------------------------- | ----------------------------------------- |
-| `snapshot.capture` | `{ tabId }`                | `snapshot.ready { PageSnapshot }`         |
-| `http.fetch`       | `{ url, method, auditId }` | `http.response { status, headers, body }` |
-| `cookies.get`      | `{ url }`                  | `cookies.list { CookieRef[] }`            |
+| type               | payload                    | reply                                          |
+| ------------------ | -------------------------- | ---------------------------------------------- |
+| `snapshot.capture` | `{ tabId, auditId }`       | `snapshot.ready { PageSnapshot }`              |
+| `http.fetch`       | `{ url, method, auditId }` | `http.response { url, status, headers, body }` |
+| `cookies.get`      | `{ url }`                  | `cookies.list { CookieRef[] }`                 |
 
-`http.fetch` is the only network path in the system. The worker checks `url`
-against the audit's allowed-domain list **itself** — it does not trust the
-caller's claim that a URL is permitted. Enforcement lives with the capability,
-not with the requester. See docs/12 T2.
+`http.fetch` is the only network path in the system, and its payload has no
+`allowedDomains` field. That absence is the design.
+
+The worker reads the tab URL itself during `snapshot.capture`, derives the
+audit's allowlist from it, and stores it under `auditId` (`lib/audit-registry.ts`).
+A later `http.fetch` names its audit but does not describe its permissions — the
+worker looks up the allowlist it recorded. A caller able to state its own
+allowlist would be authorising itself, which is the exact failure docs/12 T2 is
+about. Enforcement lives with the capability, not with the requester.
+
+Three consequences worth stating:
+
+- **No grant, no fetch.** An audit the worker has no record of authorising is
+  refused with `domain-not-allowed`. The grant lives in `chrome.storage.session`,
+  so it survives the worker being evicted mid-audit — but if it is ever gone, the
+  answer is no and the side panel must re-capture. Failing closed is the only
+  safe direction.
+- **Redirects are re-checked.** The allowlist is applied to the URL the response
+  actually came from, not only the one requested, so a redirect cannot walk off
+  the list.
+- **Only extension pages may ask.** The worker ignores messages carrying a
+  `sender.tab`, so a content script — which runs inside a page the audited site
+  controls — cannot drive the privileged fetch.
 
 ### Background → content script
 
-| type             | payload      | reply                                            |
-| ---------------- | ------------ | ------------------------------------------------ |
-| `snapshot.build` | `{ limits }` | `snapshot.partial { PageSnapshot }` (pre-cookie) |
+| type             | payload   | reply                                          |
+| ---------------- | --------- | ---------------------------------------------- |
+| `snapshot.build` | `{ url }` | `snapshot.ready { PageSnapshot }` (pre-cookie) |
+
+The content script is **not** in the manifest. The worker injects it with
+`scripting.executeScript` when an audit of that tab begins, so nothing of ours
+runs in a page until the user asks for an audit of it. Holding `<all_urls>` and
+exercising it on every page load are different things (docs/08).
+
+The snapshot that comes back carries the `no-cookie-flags` limitation, because a
+content script cannot see cookie attributes. The worker clears it when it adds
+the flags — the one place in the system allowed to.
 
 ### Side panel → workbench (via storage)
 

@@ -7,6 +7,9 @@ export default defineConfig({
   manifest: {
     name: "WebAudit",
     description: "Local website auditing. Nothing leaves your machine.",
+    // Gives the extension a toolbar button; setPanelBehavior needs one to open
+    // the side panel from.
+    action: { default_title: "Audit this page" },
     permissions: ["activeTab", "sidePanel", "storage", "cookies", "scripting"],
     host_permissions: ["<all_urls>"],
     content_security_policy: {

@@ -4,12 +4,31 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>WebAudit</title>
+    <link rel="stylesheet" href="./style.css" />
   </head>
   <body>
-    <main id="app">
-      <h1>WebAudit</h1>
-      <p>Scaffold only. The audit runtime arrives in M2 (docs/11).</p>
-    </main>
+    <header>
+      <div class="site">
+        <h1>WebAudit</h1>
+        <p id="site-url" class="url">No page selected</p>
+      </div>
+      <div class="controls">
+        <button id="audit" type="button">Audit this page</button>
+        <p id="engine" class="engine">Model: not loaded (analyzers only)</p>
+      </div>
+    </header>
+
+    <p id="status" class="status" role="status" aria-live="polite"></p>
+
+    <main id="findings" aria-label="Findings"></main>
+
+    <footer>
+      <details id="raw">
+        <summary>Raw snapshot</summary>
+        <pre id="raw-json"></pre>
+      </details>
+    </footer>
+
     <script type="module" src="./main.ts"></script>
   </body>
 </html>

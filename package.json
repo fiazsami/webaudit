@@ -10,6 +10,7 @@
     "build": "pnpm -r build",
     "test": "pnpm -r test",
     "scan": "node packages/cli/dist/main.js audit",
+    "serve-fixture": "python3 -m http.server 8787 --directory fixtures/site",
     "typecheck": "pnpm -r typecheck",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",

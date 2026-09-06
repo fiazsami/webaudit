@@ -69,15 +69,26 @@ See `docs/01-architecture.md`.
 
 ## Status
 
-Milestone 0 done: the pnpm workspace builds, typechecks, lints, and tests, and
-`core` imports cleanly from both hosts. Everything it exports is still a
-placeholder — the real surface lands in M1. Milestones are in
-`docs/11-roadmap.md`; work is tracked in
+Milestones 0–2. `core` has the snapshot schema and builder, five deterministic
+analyzers, and `audit()`. The CLI runs them over saved snapshots. The extension
+captures a page, stores results in IndexedDB, and renders findings in the side
+panel. No model yet — the WebLLM provider and explanations are M4, the ToS
+pipeline M5, and the agent loop M6.
+
+Milestones are in `docs/11-roadmap.md`; work is tracked in
 [beads](https://github.com/gastownhall/beads) — `bd ready`.
 
 ```
 pnpm install
 pnpm -r build && pnpm -r test
+
+# Audit a saved snapshot from the terminal
+pnpm scan fixtures/snapshots/http-only_synthetic.json --no-agent
+
+# Or load the extension: build, then load packages/extension/.output/chrome-mv3
+# as an unpacked extension in a Chromium browser.
+pnpm --filter extension build
+pnpm serve-fixture   # a deliberately misconfigured page at localhost:8787
 ```
 
 ## Requirements

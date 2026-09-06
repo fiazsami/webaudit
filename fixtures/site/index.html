@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Fixture Shop — Sign in</title>
+    <meta name="description" content="A deliberately misconfigured page for auditing." />
+  </head>
+  <body>
+    <h1>Fixture Shop</h1>
+    <p>
+      A deliberately misconfigured page. It exists so WebAudit can be exercised
+      against a real browser without auditing somebody else's site.
+    </p>
+
+    <!-- Third-party script with no integrity hash: scripts/third-party-script-without-sri -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.js"></script>
+
+    <!-- A password form posting to another origin over http:
+         forms/login-form-insecure-action and forms/cross-origin-form-action -->
+    <h2>Sign in</h2>
+    <form action="http://auth.fixture-shop.invalid/session" method="post" autocomplete="off">
+      <label>Email <input type="email" name="email" /></label>
+      <label>Password <input type="password" name="password" /></label>
+      <button type="submit">Sign in</button>
+    </form>
+
+    <!-- No privacy or terms link anywhere: policy-presence/no-privacy-policy-link
+         and policy-presence/no-terms-link -->
+    <nav>
+      <a href="/about">About</a>
+      <a href="/contact">Contact</a>
+    </nav>
+
+    <script>
+      document.title = document.title;
+    </script>
+    <script>
+      void 0;
+    </script>
+  </body>
+</html>
