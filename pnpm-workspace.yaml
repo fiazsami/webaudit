@@ -1,0 +1,26 @@
+packages:
+  - "packages/*"
+
+# One version per tool across the workspace. Packages reference these with
+# "catalog:" so a bump happens in exactly one place.
+catalog:
+  "@eslint/js": ^10.0.1
+  "@types/node": ^22.20.1
+  eslint: ^10.10.0
+  globals: ^17.12.0
+  prettier: ^3.9.6
+  typescript: ^6.0.3
+  typescript-eslint: ^8.69.0
+  vitest: ^5.0.0
+  zod: ^4.5.4
+
+# WXT and its browser tooling need postinstall scripts; nothing else does.
+onlyBuiltDependencies:
+  - esbuild
+  - wxt
+
+# Keep the dependency graph honest: a package may only import what it declares.
+# This is what stops packages/core from resolving a host dependency it never
+# listed. (pnpm settings live here rather than .npmrc so npm/npx don't warn.)
+hoist: false
+strictPeerDependencies: false

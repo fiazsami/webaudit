@@ -1,0 +1,14 @@
+{
+  // WXT generates .wxt/tsconfig.json with the browser globals and the
+  // auto-imported entrypoint types. Run `wxt prepare` before typechecking.
+  "extends": "./.wxt/tsconfig.json",
+  "compilerOptions": {
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "exactOptionalPropertyTypes": true,
+    "noImplicitOverride": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUnusedLocals": true,
+    "noEmit": true
+  }
+}

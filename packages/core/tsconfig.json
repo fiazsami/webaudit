@@ -1,0 +1,12 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    // No "DOM" and no "types": ["node"]. This is CLAUDE.md hard rule 1 enforced
+    // by the compiler — core cannot name `window`, `document`, `chrome`, or any
+    // Node global, because those types are not in scope here.
+    "lib": ["ES2023"],
+    "types": [],
+    "noEmit": true
+  },
+  "include": ["src/**/*.ts", "vitest.config.ts"]
+}

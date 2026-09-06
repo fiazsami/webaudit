@@ -1,0 +1,25 @@
+{
+  "name": "extension",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "wxt",
+    "dev:firefox": "wxt -b firefox",
+    "build": "wxt build",
+    "zip": "wxt zip",
+    "typecheck": "tsc -p tsconfig.json",
+    "test": "vitest run",
+    "postinstall": "wxt prepare",
+    "clean": "rm -rf .output .wxt"
+  },
+  "dependencies": {
+    "core": "workspace:*",
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "typescript": "catalog:",
+    "vitest": "catalog:",
+    "wxt": "^0.21.4"
+  }
+}

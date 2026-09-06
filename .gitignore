@@ -4,3 +4,16 @@
 *.db
 .beads-credential-key
 .beads/proxieddb/
+
+# Build output
+node_modules/
+dist/
+.output/
+.wxt/
+coverage/
+
+# CLI host storage (docs/01: the CLI AuditStore writes here)
+out/
+
+# Tracker database, downloaded at build time (docs/10: CC BY-NC-SA, not vendored)
+packages/core/src/analyzers/trackers/data/
