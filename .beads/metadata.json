@@ -1,0 +1,7 @@
+{
+  "database": "dolt",
+  "backend": "dolt",
+  "dolt_mode": "embedded",
+  "dolt_database": "webaudit",
+  "project_id": "068e10a0-2582-4420-a981-2a0a81b98039"
+}
