@@ -1,6 +1,7 @@
-import { audit, PageSnapshotSchema, type PageSnapshot } from "core";
+import { audit, PageSnapshotSchema, type Capabilities, type PageSnapshot } from "core";
 
 import { createExtensionCapabilities } from "../../lib/capabilities.js";
+import { loadAnalyzerDatabases } from "../../lib/databases.js";
 import {
   envelope,
   MessageError,
@@ -59,7 +60,6 @@ async function runAudit(): Promise<void> {
     const snapshot = await captureSnapshot(tab.id, auditId);
     rawJson.textContent = JSON.stringify(snapshot, null, 2);
 
-    setStatus("Running analyzers…");
     const store = createIdbStore(await openWebAuditDb());
     const capabilities = createExtensionCapabilities({
       auditId,
@@ -69,7 +69,17 @@ async function runAudit(): Promise<void> {
       },
     });
 
-    const result = await audit(snapshot, { capabilities, noAgent: true });
+    setStatus("Fetching response headers…");
+    const headers = await fetchHeaders(capabilities, snapshot.url);
+
+    setStatus("Running analyzers…");
+    const databases = await loadAnalyzerDatabases();
+    const result = await audit(snapshot, {
+      capabilities,
+      noAgent: true,
+      ...databases,
+      ...(headers === undefined ? {} : { headers }),
+    });
     await store.putAudit(result);
 
     findingsEl.append(renderFindings(result.findings));
@@ -109,6 +119,31 @@ async function captureSnapshot(tabId: number, auditId: string): Promise<PageSnap
   }
   // Validated again on arrival: it crossed a boundary (hard rule 2).
   return PageSnapshotSchema.parse(parsed.data.payload);
+}
+
+/**
+ * Refetch the page for its response headers.
+ *
+ * A content script cannot see main-document response headers (docs/02), so the
+ * background worker fetches the URL again with host permissions, which bypasses
+ * CORS and exposes the full set. This is the only reason the `headers` and `csp`
+ * analyzers can run in the extension and not in the CLI.
+ *
+ * A failure here is not a failed audit. The analyzers that need headers are
+ * skipped with an explicit finding, which is the honest outcome — better than
+ * losing the deterministic findings that do not need them.
+ */
+async function fetchHeaders(
+  capabilities: Capabilities,
+  url: string,
+): Promise<Record<string, string> | undefined> {
+  try {
+    const response = await capabilities.http.fetch(url, { method: "GET" });
+    return response.headers;
+  } catch (error) {
+    capabilities.logger.warn("could not refetch the page for headers", error);
+    return undefined;
+  }
 }
 
 async function activeTab(): Promise<

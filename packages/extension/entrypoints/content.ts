@@ -1,4 +1,4 @@
-import { buildSnapshot, type Limitation, type PageSnapshot } from "core";
+import { buildSnapshot, type Limitation, type PageSnapshot } from "core/snapshot";
 
 import { BuildSnapshotRequestSchema, replyEnvelope } from "../lib/messaging.js";
 import { sha256Base64 } from "../lib/sha256.js";

@@ -1,4 +1,4 @@
-import { type CookieRef, type PageSnapshot, PageSnapshotSchema } from "core";
+import { type CookieRef, type PageSnapshot, PageSnapshotSchema } from "core/snapshot";
 
 import { getGrant, grantAudit, type SessionStore } from "../lib/audit-registry.js";
 import { checkUrlAllowed } from "../lib/domain-policy.js";

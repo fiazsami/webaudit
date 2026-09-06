@@ -1,4 +1,4 @@
-import { CookieRefSchema, PageSnapshotSchema } from "core";
+import { CookieRefSchema, PageSnapshotSchema } from "core/snapshot";
 import { z } from "zod";
 
 /**

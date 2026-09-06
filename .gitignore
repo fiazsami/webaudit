@@ -20,3 +20,4 @@ packages/core/src/analyzers/trackers/data/
 
 # Optional, downloaded by scripts/ (see docs/10)
 data/
+packages/extension/public/data/

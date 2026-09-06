@@ -11,7 +11,9 @@
     "typecheck": "tsc -p tsconfig.json",
     "test": "vitest run",
     "postinstall": "wxt prepare",
-    "clean": "rm -rf .output .wxt"
+    "clean": "rm -rf .output .wxt",
+    "prebuild": "node ../../scripts/copy-data-to-extension.mjs",
+    "predev": "node ../../scripts/copy-data-to-extension.mjs"
   },
   "dependencies": {
     "core": "workspace:*",

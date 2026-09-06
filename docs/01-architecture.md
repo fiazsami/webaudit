@@ -190,6 +190,12 @@ makes that a change of host, not a change of code.
 - `core` exports `audit()`, `runAnalyzers()`, `runTosPipeline()`, the snapshot
   builder, schemas, the `ModelProvider` and `Capabilities` interfaces, and
   adapters. It imports nothing from `extension` or `cli`.
+- `core/snapshot` is a second entry point carrying the builder and its schemas
+  alone. It exists for a bundling reason worth recording: `csp_evaluator` is
+  CommonJS, so a bundler cannot tree-shake it out of the package root, and a
+  content script importing `core` for the builder ended up shipping the entire
+  analyzer suite — 300 KB injected into every audited page instead of 96 KB.
+  The content script and the background worker import from here.
 - `extension` depends on `core` and implements `Capabilities` against browser
   and `chrome.*` APIs.
 - `cli` depends on `core` and implements `Capabilities` against Node.

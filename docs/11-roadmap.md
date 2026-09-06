@@ -61,6 +61,11 @@ drop._
 Done when: header, CSP, and tracker findings appear on fixtures and on a live
 page, and fixture tests assert expected `ruleId`s.
 
+Status: the analyzers, the mapping tables, and the three build scripts are done
+and covered by tests, and the side panel now refetches headers through the
+worker and loads the staged databases so all four run in the extension. The
+"on a live page" half is the browser check that M2 also needs (web-rhp.7).
+
 ## M4 — WebLLM provider and explanations
 
 _Gated on spike S2._

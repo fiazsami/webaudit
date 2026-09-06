@@ -69,11 +69,15 @@ See `docs/01-architecture.md`.
 
 ## Status
 
-Milestones 0–2. `core` has the snapshot schema and builder, five deterministic
-analyzers, and `audit()`. The CLI runs them over saved snapshots. The extension
-captures a page, stores results in IndexedDB, and renders findings in the side
-panel. No model yet — the WebLLM provider and explanations are M4, the ToS
-pipeline M5, and the agent loop M6.
+Milestones 0–3, pending a browser check. `core` has the snapshot schema and
+builder, nine deterministic analyzers, and `audit()`. The CLI runs them over
+saved snapshots; the extension captures a page, refetches its headers through
+the background worker, stores results in IndexedDB, and renders findings in the
+side panel.
+
+No model yet — the WebLLM provider and explanations are M4, the ToS pipeline M5,
+and the agent loop M6. M4 is gated on spike S2, which needs a machine with a
+WebGPU browser.
 
 Milestones are in `docs/11-roadmap.md`; work is tracked in
 [beads](https://github.com/gastownhall/beads) — `bd ready`.
@@ -84,6 +88,11 @@ pnpm -r build && pnpm -r test
 
 # Audit a saved snapshot from the terminal
 pnpm scan fixtures/snapshots/http-only_synthetic.json --no-agent
+
+# Optional analyzer data (gitignored; analyzers say so when absent)
+pnpm build-tracker-db      # CC BY-NC-SA 4.0 — non-commercial
+pnpm build-library-db
+pnpm build-hsts-preload
 
 # Or load the extension: build, then load packages/extension/.output/chrome-mv3
 # as an unpacked extension in a Chromium browser.
