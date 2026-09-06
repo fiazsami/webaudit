@@ -1,0 +1,58 @@
+{
+  "schemaVersion": 1,
+  "capturedAt": "2026-09-06T12:00:00.000Z",
+  "url": "https://well-configured.example/",
+  "title": "Well Configured — Home",
+  "protocol": "https:",
+  "scripts": [
+    {
+      "src": "https://well-configured.example/static/app.js",
+      "attrs": { "defer": "" }
+    },
+    {
+      "src": "https://cdn.example.net/lib/preact.min.js",
+      "attrs": {
+        "integrity": "sha384-oqVuAfXRKap7fdgcCY5uykM6+R9GqQ8K/uxy9rx7HNQlGYl1kPzQho1wx4JwY8wC",
+        "crossorigin": "anonymous"
+      }
+    }
+  ],
+  "forms": [
+    {
+      "action": "https://well-configured.example/search",
+      "method": "GET",
+      "fieldTypes": ["search"],
+      "hasPasswordField": false,
+      "autocompleteOff": false
+    }
+  ],
+  "iframes": [],
+  "links": [
+    {
+      "href": "https://well-configured.example/privacy",
+      "text": "Privacy Policy",
+      "policyHint": "privacy"
+    },
+    {
+      "href": "https://well-configured.example/terms",
+      "text": "Terms of Service",
+      "policyHint": "terms"
+    },
+    { "href": "https://well-configured.example/about", "text": "About" }
+  ],
+  "metaTags": { "viewport": "width=device-width, initial-scale=1" },
+  "hasMixedContent": false,
+  "textExcerpt": "Well Configured is an example site used as an audit baseline.",
+  "cookies": [
+    {
+      "name": "session",
+      "domain": "well-configured.example",
+      "secure": true,
+      "httpOnly": true,
+      "sameSite": "lax",
+      "session": true
+    }
+  ],
+  "thirdPartyRequests": [],
+  "limitations": []
+}

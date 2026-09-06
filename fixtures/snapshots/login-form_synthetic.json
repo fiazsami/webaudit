@@ -1,0 +1,56 @@
+{
+  "schemaVersion": 1,
+  "capturedAt": "2026-09-06T12:00:00.000Z",
+  "url": "https://app.saas-vendor.example/login",
+  "title": "SaaS Vendor \u2014 Sign in",
+  "protocol": "https:",
+  "scripts": [
+    {
+      "src": "https://app.saas-vendor.example/static/login.js",
+      "attrs": {
+        "defer": ""
+      }
+    },
+    {
+      "src": "https://cdn.thirdparty.example/captcha.js",
+      "attrs": {
+        "async": ""
+      }
+    }
+  ],
+  "forms": [
+    {
+      "action": "https://auth.identity-provider.example/session",
+      "method": "POST",
+      "fieldTypes": [
+        "email",
+        "password"
+      ],
+      "hasPasswordField": true,
+      "autocompleteOff": true
+    }
+  ],
+  "iframes": [],
+  "links": [
+    {
+      "href": "https://app.saas-vendor.example/legal/terms",
+      "text": "Terms",
+      "policyHint": "terms"
+    },
+    {
+      "href": "https://app.saas-vendor.example/support",
+      "text": "Support"
+    }
+  ],
+  "metaTags": {
+    "referrer": "no-referrer"
+  },
+  "hasMixedContent": false,
+  "textExcerpt": "Sign in to your SaaS Vendor account.",
+  "cookies": [],
+  "limitations": [
+    "no-cookie-flags",
+    "no-webrequest-permission"
+  ],
+  "thirdPartyRequests": []
+}

@@ -1,0 +1,266 @@
+{
+  "schemaVersion": 1,
+  "capturedAt": "2026-09-06T12:00:00.000Z",
+  "url": "https://news-portal.example/article/2026/audit-tools",
+  "title": "News Portal \u2014 Audit tools reviewed",
+  "protocol": "https:",
+  "scripts": [
+    {
+      "src": "https://news-portal.example/static/bundle.js",
+      "attrs": {
+        "defer": ""
+      }
+    },
+    {
+      "src": "http://ads.tracker-one.example/tag.js",
+      "attrs": {}
+    },
+    {
+      "src": "https://analytics.metrics-co.example/loader.js",
+      "attrs": {
+        "async": ""
+      }
+    },
+    {
+      "src": "https://cdn.adnetwork.example/loader.js",
+      "attrs": {
+        "async": ""
+      }
+    },
+    {
+      "src": "https://pixel.socialgraph.example/loader.js",
+      "attrs": {
+        "async": ""
+      }
+    },
+    {
+      "src": "https://tag.datamgmt.example/loader.js",
+      "attrs": {
+        "async": ""
+      }
+    },
+    {
+      "src": "https://widgets.commentco.example/loader.js",
+      "attrs": {
+        "async": ""
+      }
+    },
+    {
+      "src": "https://beacon.abtesting.example/loader.js",
+      "attrs": {
+        "async": ""
+      }
+    },
+    {
+      "src": "https://sdk.chatvendor.example/loader.js",
+      "attrs": {
+        "async": ""
+      }
+    },
+    {
+      "src": "https://rum.perfmonitor.example/loader.js",
+      "attrs": {
+        "async": ""
+      }
+    },
+    {
+      "src": "https://fp.deviceid.example/loader.js",
+      "attrs": {
+        "async": ""
+      }
+    },
+    {
+      "src": "https://px.retargeting.example/loader.js",
+      "attrs": {
+        "async": ""
+      }
+    },
+    {
+      "inlineLength": 260,
+      "attrs": {}
+    },
+    {
+      "inlineLength": 260,
+      "attrs": {}
+    },
+    {
+      "inlineLength": 260,
+      "attrs": {}
+    },
+    {
+      "inlineLength": 260,
+      "attrs": {}
+    },
+    {
+      "inlineLength": 260,
+      "attrs": {}
+    },
+    {
+      "inlineLength": 260,
+      "attrs": {}
+    },
+    {
+      "inlineLength": 260,
+      "attrs": {}
+    },
+    {
+      "inlineLength": 260,
+      "attrs": {}
+    },
+    {
+      "inlineLength": 260,
+      "attrs": {}
+    },
+    {
+      "inlineLength": 260,
+      "attrs": {}
+    },
+    {
+      "inlineLength": 260,
+      "attrs": {}
+    },
+    {
+      "inlineLength": 260,
+      "attrs": {}
+    },
+    {
+      "inlineLength": 260,
+      "attrs": {}
+    },
+    {
+      "inlineLength": 260,
+      "attrs": {}
+    },
+    {
+      "inlineLength": 260,
+      "attrs": {}
+    },
+    {
+      "inlineLength": 260,
+      "attrs": {}
+    },
+    {
+      "inlineLength": 260,
+      "attrs": {}
+    },
+    {
+      "inlineLength": 260,
+      "attrs": {}
+    }
+  ],
+  "forms": [
+    {
+      "action": "https://newsletter.mailvendor.example/subscribe",
+      "method": "POST",
+      "fieldTypes": [
+        "email"
+      ],
+      "hasPasswordField": false,
+      "autocompleteOff": false
+    }
+  ],
+  "iframes": [
+    {
+      "src": "https://player.videohost.example/embed/abc"
+    },
+    {
+      "src": "https://cdn.adnetwork.example/frame.html",
+      "sandbox": "allow-scripts"
+    }
+  ],
+  "links": [
+    {
+      "href": "https://news-portal.example/privacy",
+      "text": "Privacy",
+      "policyHint": "privacy"
+    },
+    {
+      "href": "https://news-portal.example/cookie-policy",
+      "text": "Cookie Policy",
+      "policyHint": "cookies"
+    },
+    {
+      "href": "https://news-portal.example/section/tech",
+      "text": "Technology"
+    }
+  ],
+  "metaTags": {
+    "viewport": "width=device-width, initial-scale=1",
+    "og:title": "Audit tools reviewed"
+  },
+  "hasMixedContent": true,
+  "textExcerpt": "A survey of website auditing tools, with third parties on every corner.",
+  "cookies": [
+    {
+      "name": "consent",
+      "domain": "news-portal.example",
+      "secure": true,
+      "httpOnly": false,
+      "sameSite": "lax",
+      "session": false,
+      "expires": 1946289600
+    },
+    {
+      "name": "_ga",
+      "domain": ".news-portal.example",
+      "secure": false,
+      "httpOnly": false,
+      "sameSite": "unspecified",
+      "session": false,
+      "expires": 1820000000
+    }
+  ],
+  "thirdPartyRequests": [
+    {
+      "url": "https://analytics.metrics-co.example/collect?id=1",
+      "type": "script",
+      "initiator": "https://news-portal.example/"
+    },
+    {
+      "url": "https://cdn.adnetwork.example/collect?id=1",
+      "type": "script",
+      "initiator": "https://news-portal.example/"
+    },
+    {
+      "url": "https://pixel.socialgraph.example/collect?id=1",
+      "type": "script",
+      "initiator": "https://news-portal.example/"
+    },
+    {
+      "url": "https://tag.datamgmt.example/collect?id=1",
+      "type": "script",
+      "initiator": "https://news-portal.example/"
+    },
+    {
+      "url": "https://widgets.commentco.example/collect?id=1",
+      "type": "script",
+      "initiator": "https://news-portal.example/"
+    },
+    {
+      "url": "https://beacon.abtesting.example/collect?id=1",
+      "type": "script",
+      "initiator": "https://news-portal.example/"
+    },
+    {
+      "url": "https://sdk.chatvendor.example/collect?id=1",
+      "type": "script",
+      "initiator": "https://news-portal.example/"
+    },
+    {
+      "url": "https://rum.perfmonitor.example/collect?id=1",
+      "type": "script",
+      "initiator": "https://news-portal.example/"
+    },
+    {
+      "url": "https://fp.deviceid.example/collect?id=1",
+      "type": "script",
+      "initiator": "https://news-portal.example/"
+    },
+    {
+      "url": "https://px.retargeting.example/collect?id=1",
+      "type": "script",
+      "initiator": "https://news-portal.example/"
+    }
+  ],
+  "limitations": []
+}

@@ -85,6 +85,14 @@ export type {
   Severity,
 } from "./findings/schema.js";
 
+export { analyzers } from "./analyzers/index.js";
+export {
+  cookiesAnalyzer,
+  formsAnalyzer,
+  policyPresenceAnalyzer,
+  scriptsAnalyzer,
+  transportAnalyzer,
+} from "./analyzers/index.js";
 export { runAnalyzers } from "./analyzers/run.js";
 export type {
   Analyzer,
@@ -94,6 +102,8 @@ export type {
 } from "./analyzers/types.js";
 
 // Audit results (docs/01, docs/09)
+export { audit } from "./audit/run.js";
+export type { AuditOptions } from "./audit/run.js";
 export { AuditResultSchema, AuditSummarySchema } from "./audit/schema.js";
 export type { AuditResult, AuditSummary } from "./audit/schema.js";
 

@@ -71,15 +71,30 @@ and returns a de-duplicated, severity-sorted list.
 
 | id                | Source                                 | Rules                                                                                                            |
 | ----------------- | -------------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
-| `transport`       | snapshot                               | http protocol, mixed content, forms posting to http                                                              |
+| `transport`       | snapshot                               | http protocol, mixed content                                                                                     |
 | `headers`         | vendored Observatory sources (MPL-2.0) | HSTS, CSP presence, X-Content-Type-Options, X-Frame-Options, Referrer-Policy, CORS, cookie flags from Set-Cookie |
 | `csp`             | `csp_evaluator`                        | CSP strength: unsafe-inline, unsafe-eval, wildcard sources, missing base-uri/object-src                          |
 | `cookies`         | snapshot cookies                       | Missing Secure/HttpOnly/SameSite, long-lived session cookies                                                     |
-| `forms`           | snapshot forms                         | Password fields without autocomplete guidance, login forms on http, cross-origin form actions                    |
-| `scripts`         | snapshot scripts                       | External scripts without SRI, scripts from unexpected TLDs, excessive inline scripts                             |
+| `forms`           | snapshot forms                         | Insecure form actions, login forms on http, cross-origin form actions, autocomplete on password forms            |
+| `scripts`         | snapshot scripts                       | Third-party scripts without SRI, excessive inline scripts                                                        |
 | `trackers`        | tracker DB                             | Third-party domains classified by category (advertising, analytics, fingerprinting)                              |
 | `libraries`       | retire.js data                         | Known-vulnerable JS library versions from script URLs                                                            |
 | `policy-presence` | snapshot links                         | No detectable privacy policy or terms link                                                                       |
+
+### Two corrections to the table above
+
+**Form rules live in `forms`, not split with `transport`.** The first draft gave
+"forms posting to http" to `transport` and "login forms on http" to `forms`,
+which meant one insecure login form produced two findings saying nearly the same
+thing. One rule, one owner: `transport` covers the page's own transport —
+protocol and mixed content — and `forms` covers everything about where a form
+sends what the user typed.
+
+**"Scripts from unexpected TLDs" is not implemented.** To mean anything it needs
+a reputation source, and a hand-written TLD blocklist would produce confident
+false positives about ordinary sites — the opposite of what a deterministic
+analyzer is for. Classifying third-party script origins is the `trackers`
+analyzer's job in M3, which has actual data behind it.
 
 ## Header analysis: vendored, not depended on
 
@@ -135,5 +150,15 @@ a request is first- or third-party relative to the page URL.
 
 ## Tests
 
-`packages/core/src/analyzers/__tests__/` — one file per analyzer, each running
-against fixtures and asserting on `ruleId` and `severity`, not on prose.
+Split across two packages, because core cannot read a file.
+
+`packages/core/src/analyzers/__tests__/` holds the unit tests. They build
+snapshots from a factory that returns a clean page and override only the field
+under test, so a failure points at the rule rather than at incidental fixture
+noise. They assert on `ruleId` and `severity`, never on prose.
+
+`packages/cli/src/__tests__/` holds the corpus tests, since the CLI is the host
+with a filesystem. Those walk `fixtures/snapshots/`, validate every fixture
+against `PageSnapshotSchema`, and run a full audit over each — including the
+assertion that the well-configured baseline still produces zero findings. A
+baseline that reports findings has stopped being one.

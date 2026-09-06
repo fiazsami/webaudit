@@ -78,12 +78,17 @@ pnpm -r typecheck
 pnpm lint                                                 # includes the core boundary rules
 pnpm format                                               # Prettier, in place
 pnpm --filter core test
-pnpm --filter cli audit fixtures/snapshots/example.json   # analyzers + replay (M1)
+pnpm scan fixtures/snapshots/baseline_synthetic.json --no-agent
 pnpm --filter extension dev                               # WXT dev server
 ```
 
 Tool versions live in the `catalog:` block of `pnpm-workspace.yaml`, not in the
 package manifests. CI (`.github/workflows/ci.yml`) runs exactly this list.
+
+The audit command is `pnpm scan`, not `pnpm audit`: `audit` is a pnpm builtin
+and shadows any script of that name. Inside `packages/cli` the script is still
+called `audit`, reachable as `pnpm --filter cli run audit` — note the explicit
+`run`, needed for the same reason.
 
 ## When unsure
 

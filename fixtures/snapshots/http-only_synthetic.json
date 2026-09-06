@@ -1,0 +1,46 @@
+{
+  "schemaVersion": 1,
+  "capturedAt": "2026-09-06T12:00:00.000Z",
+  "url": "http://legacy-shop.example/login",
+  "title": "Legacy Shop — Sign in",
+  "protocol": "http:",
+  "scripts": [
+    { "src": "http://legacy-shop.example/js/jquery-1.7.1.min.js", "attrs": {} },
+    { "inlineLength": 412, "attrs": {} }
+  ],
+  "forms": [
+    {
+      "action": "http://legacy-shop.example/session",
+      "method": "POST",
+      "fieldTypes": ["text", "password"],
+      "hasPasswordField": true,
+      "autocompleteOff": true
+    }
+  ],
+  "iframes": [],
+  "links": [{ "href": "http://legacy-shop.example/help", "text": "Help" }],
+  "metaTags": {},
+  "hasMixedContent": false,
+  "textExcerpt": "Sign in to Legacy Shop.",
+  "cookies": [
+    {
+      "name": "PHPSESSID",
+      "domain": "legacy-shop.example",
+      "secure": false,
+      "httpOnly": false,
+      "sameSite": "unspecified",
+      "session": true
+    },
+    {
+      "name": "remember_me",
+      "domain": "legacy-shop.example",
+      "secure": false,
+      "httpOnly": false,
+      "sameSite": "none",
+      "session": false,
+      "expires": 1946289600
+    }
+  ],
+  "thirdPartyRequests": [],
+  "limitations": []
+}

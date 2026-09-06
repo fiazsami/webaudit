@@ -133,10 +133,20 @@ export interface DomDocumentLike {
 ```
 
 A browser `Document` and a linkedom document both satisfy these structurally,
-with no adapter. That claim is a claim about types, so it is asserted at compile
-time — `packages/extension` checks the browser half, `packages/cli` the linkedom
-half — and `pnpm -r typecheck` fails if either stops holding. Keep the port
-minimal: every member added is a new obligation on every host.
+with no adapter. The two halves of that claim are verified differently, and the
+asymmetry is worth knowing about:
+
+- **Browser.** `packages/extension` has `lib.dom`, so it asserts
+  `Document extends DomDocumentLike` at compile time. `pnpm -r typecheck` fails
+  if it stops holding.
+- **linkedom.** `packages/cli` has no DOM lib, and linkedom types `parseHTML` as
+  returning `Window & typeof globalThis` — so the return type resolves to
+  nothing the compiler can check. The claim is verified at runtime instead, by a
+  port-conformance test that exercises every member. The compiler will not catch
+  drift here; that test is the only thing that will.
+
+Keep the port minimal: every member added is a new obligation on every host, and
+one of them is checked only by a test.
 
 Two things the builder takes as options rather than reaching for:
 

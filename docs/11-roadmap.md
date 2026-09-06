@@ -28,8 +28,11 @@ Done when: `pnpm -r build && pnpm -r test` passes on an empty project.
   `policy-presence`.
 - Three hand-written snapshot fixtures in `fixtures/snapshots/`.
 
-Done when: `pnpm --filter cli audit fixtures/snapshots/example.json --no-agent`
+Done when: `pnpm scan fixtures/snapshots/baseline_synthetic.json --no-agent`
 prints findings, and tests assert on `ruleId` and `severity` rather than prose.
+
+(The command is `pnpm scan`, not `pnpm audit` as first drafted: `audit` is a
+pnpm builtin and shadows a script of that name.)
 
 ## M2 — Extension: capture, store, UI shell
 

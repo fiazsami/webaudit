@@ -25,3 +25,5 @@
 {"id":"int-206ceee3","kind":"field_change","created_at":"2026-09-06T22:53:02.819209Z","actor":"Fiaz Sami","issue_id":"web-dmg.1","extra":{"field":"status","new_value":"closed","old_value":"in_progress","reason":"Closed"}}
 {"id":"int-bbc36be5","kind":"field_change","created_at":"2026-09-06T22:53:03.069218Z","actor":"Fiaz Sami","issue_id":"web-dmg.2","extra":{"field":"status","new_value":"closed","old_value":"in_progress","reason":"Closed"}}
 {"id":"int-41536871","kind":"field_change","created_at":"2026-09-06T22:53:03.325229Z","actor":"Fiaz Sami","issue_id":"web-dmg.3","extra":{"field":"status","new_value":"closed","old_value":"in_progress","reason":"Closed"}}
+{"id":"int-d1b2b054","kind":"field_change","created_at":"2026-09-06T22:57:13.642306Z","actor":"Fiaz Sami","issue_id":"web-dmg.4","extra":{"field":"status","new_value":"closed","old_value":"in_progress","reason":"Closed"}}
+{"id":"int-9768106c","kind":"field_change","created_at":"2026-09-06T22:57:13.894253Z","actor":"Fiaz Sami","issue_id":"web-dmg.5","extra":{"field":"status","new_value":"closed","old_value":"in_progress","reason":"Closed"}}

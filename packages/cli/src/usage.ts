@@ -1,17 +1,21 @@
 /**
  * The CLI is a Node host for `core`: analyzers, the non-model ToS stages, and
  * replay-mode agent runs. It deliberately cannot run live inference — Node has
- * no WebGPU, so the only `ModelProvider` it ever holds is `RecordingProvider`
- * (docs/01).
+ * no WebGPU, so the only `ModelProvider` it ever holds is a recording (docs/01).
  */
 export const USAGE = `webaudit — local website auditing (Node host)
 
 Usage:
-  webaudit audit <snapshot.json> [--no-agent]
+  webaudit audit <snapshot.json> --no-agent [options]
 
-Commands:
-  audit    Run analyzers over a saved PageSnapshot. With a recorded trace,
-           replays the agent loop; otherwise pass --no-agent.
+Options:
+  --no-agent      Required. Run deterministic analyzers only.
+  --json          Emit the AuditResult as JSON instead of a report.
+  --out <dir>     Where to write stored audits (default: ./out).
+  --no-store      Do not write the result to the store.
+  --verbose       Print progress and debug output to stderr.
+  -h, --help      Show this message.
 
-Live inference is not available in this host. See docs/01.
+Live inference is not available in this host: Node has no WebGPU. The agent
+loop arrives in M6 and is exercised here through recorded traces. See docs/01.
 `;
