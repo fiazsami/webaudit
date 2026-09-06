@@ -6,7 +6,14 @@
     // Node global, because those types are not in scope here.
     "lib": ["ES2023"],
     "types": [],
+    // The vendored Observatory sources are JavaScript, and they have to reach
+    // dist for the hosts to import. allowJs emits them; checkJs stays off
+    // because their JSDoc references axios and tough-cookie types we will not
+    // add to the build (docs/03, S1 result).
+    "allowJs": true,
+    "checkJs": false,
+
     "noEmit": true
   },
-  "include": ["src/**/*.ts", "vitest.config.ts"]
+  "include": ["src/**/*.ts", "src/**/*.js", "vitest.config.ts"]
 }

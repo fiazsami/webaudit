@@ -1,0 +1,89 @@
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/.
+ *
+ * Copied from @mdn/mdn-http-observatory v1.7.1. See ./README.md (or ../vendor/README.md)
+ * for the list of changes. */
+
+import {
+  ACCESS_CONTROL_ALLOW_CREDENTIALS,
+  ACCESS_CONTROL_ALLOW_ORIGIN,
+  ORIGIN,
+} from "../headers.js";
+import { BaseOutput, Expectation } from "../types.js";
+import { getFirstHttpHeader } from "../utils.js";
+
+/** @import { Requests } from "../types.js" */
+
+export class CorsOutput extends BaseOutput {
+  /** @type {string | null} */
+  data = null;
+  static name = "cross-origin-resource-sharing";
+  static title = "Cross Origin Resource Sharing (CORS)";
+  static possibleResults = [
+    Expectation.CrossOriginResourceSharingNotImplemented,
+    Expectation.CrossOriginResourceSharingImplementedWithPublicAccess,
+    Expectation.CrossOriginResourceSharingImplementedWithRestrictedAccess,
+    Expectation.CrossOriginResourceSharingImplementedWithUniversalAccess,
+  ];
+}
+
+/**
+ *
+ * @param {Requests} requests
+ * @param {Expectation} expectation
+ * @returns {CorsOutput}
+ */
+export function crossOriginResourceSharingTest(
+  requests,
+  expectation = Expectation.CrossOriginResourceSharingNotImplemented
+) {
+  const output = new CorsOutput(expectation);
+  output.result = Expectation.CrossOriginResourceSharingNotImplemented;
+  const accessControlAllowOrigin = requests.responses.cors;
+
+  const acaoHeader = getFirstHttpHeader(
+    accessControlAllowOrigin,
+    ACCESS_CONTROL_ALLOW_ORIGIN
+  );
+  const originHeader = getFirstHttpHeader(
+    accessControlAllowOrigin?.request,
+    ORIGIN
+  );
+  const credentialsHeader = getFirstHttpHeader(
+    accessControlAllowOrigin,
+    ACCESS_CONTROL_ALLOW_CREDENTIALS
+  );
+
+  if (accessControlAllowOrigin && acaoHeader) {
+    output.data = acaoHeader.slice(0, 256).trim().toLowerCase();
+    if (output.data === "*") {
+      output.result =
+        Expectation.CrossOriginResourceSharingImplementedWithPublicAccess;
+    } else if (
+      originHeader &&
+      acaoHeader &&
+      originHeader === acaoHeader &&
+      credentialsHeader &&
+      credentialsHeader.toLowerCase().trim() === "true"
+    ) {
+      output.result =
+        Expectation.CrossOriginResourceSharingImplementedWithUniversalAccess;
+    } else {
+      output.result =
+        Expectation.CrossOriginResourceSharingImplementedWithRestrictedAccess;
+    }
+  }
+
+  // Check to see if the test passed or failed
+  if (
+    [
+      Expectation.CrossOriginResourceSharingImplementedWithPublicAccess,
+      Expectation.CrossOriginResourceSharingImplementedWithRestrictedAccess,
+      expectation,
+    ].includes(output.result)
+  ) {
+    output.pass = true;
+  }
+  return output;
+}

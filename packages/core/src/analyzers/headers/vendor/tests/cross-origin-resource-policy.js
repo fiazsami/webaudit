@@ -1,0 +1,111 @@
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/.
+ *
+ * Copied from @mdn/mdn-http-observatory v1.7.1. See ./README.md (or ../vendor/README.md)
+ * for the list of changes. */
+
+import { CROSS_ORIGIN_RESOURCE_POLICY } from "../headers.js";
+import { BaseOutput, Expectation } from "../types.js";
+import { getHttpHeaders } from "../utils.js";
+
+/** @import { Requests } from "../types.js" */
+
+export class CrossOriginResourcePolicyOutput extends BaseOutput {
+  /** @type {string | null} */
+  data = null;
+  http = false;
+  meta = false;
+  static name = "cross-origin-resource-policy";
+  static title = "Cross Origin Resource Policy";
+  static possibleResults = [
+    Expectation.CrossOriginResourcePolicyNotImplemented,
+    Expectation.CrossOriginResourcePolicyImplementedWithSameOrigin,
+    Expectation.CrossOriginResourcePolicyImplementedWithSameSite,
+    Expectation.CrossOriginResourcePolicyImplementedWithCrossOrigin,
+    Expectation.CrossOriginResourcePolicyHeaderInvalid,
+  ];
+}
+
+/**
+ *
+ * @param {Requests} requests
+ * @param {Expectation} expectation
+ * @returns {CrossOriginResourcePolicyOutput}
+ */
+export function crossOriginResourcePolicyTest(
+  requests,
+  expectation = Expectation.CrossOriginResourcePolicyImplementedWithSameSite
+) {
+  const output = new CrossOriginResourcePolicyOutput(expectation);
+  output.result = Expectation.CrossOriginResourcePolicyNotImplemented;
+
+  const resp = requests.responses.auto;
+  if (!resp) {
+    return output;
+  }
+
+  const httpHeaders = getHttpHeaders(resp, CROSS_ORIGIN_RESOURCE_POLICY);
+  const httpHeader = httpHeaders.join(", ");
+  const equivHeaders =
+    resp.httpEquiv?.get(CROSS_ORIGIN_RESOURCE_POLICY) ?? null;
+
+  // Store whether the header or the meta tag were present
+  output.http = !!httpHeader;
+  output.meta = equivHeaders ? equivHeaders.length > 0 : false;
+
+  // If it is both a header and a http-equiv, the header has precedence.
+  /** @type {string | undefined}  */
+  let corpHeader;
+  if (output.http && httpHeader) {
+    corpHeader = httpHeader.slice(0, 256).trim().toLowerCase();
+  } else if (
+    output.meta &&
+    equivHeaders &&
+    Array.isArray(equivHeaders) &&
+    equivHeaders.length > 0
+  ) {
+    const h = equivHeaders.at(-1);
+    if (h) {
+      corpHeader = h.slice(0, 256).trim().toLowerCase();
+    }
+  }
+
+  if (corpHeader) {
+    output.data = corpHeader;
+    switch (corpHeader) {
+      case "same-site": {
+        output.result =
+          Expectation.CrossOriginResourcePolicyImplementedWithSameSite;
+
+        break;
+      }
+      case "same-origin": {
+        output.result =
+          Expectation.CrossOriginResourcePolicyImplementedWithSameOrigin;
+
+        break;
+      }
+      case "cross-origin": {
+        output.result =
+          Expectation.CrossOriginResourcePolicyImplementedWithCrossOrigin;
+
+        break;
+      }
+      default: {
+        output.result = Expectation.CrossOriginResourcePolicyHeaderInvalid;
+      }
+    }
+  }
+
+  // Check to see if the test passed or failed
+  output.pass = [
+    expectation,
+    Expectation.CrossOriginResourcePolicyNotImplemented,
+    Expectation.CrossOriginResourcePolicyImplementedWithSameSite,
+    Expectation.CrossOriginResourcePolicyImplementedWithSameOrigin,
+    Expectation.CrossOriginResourcePolicyImplementedWithCrossOrigin,
+  ].includes(output.result ?? "");
+
+  return output;
+}

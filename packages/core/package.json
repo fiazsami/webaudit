@@ -20,6 +20,7 @@
     "clean": "rm -rf dist"
   },
   "dependencies": {
+    "structured-headers": "^2.0.3",
     "zod": "catalog:"
   },
   "devDependencies": {

@@ -7,3 +7,4 @@ pnpm-lock.yaml
 .beads/
 fixtures/
 .claude/
+packages/core/src/analyzers/headers/vendor/

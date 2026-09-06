@@ -48,6 +48,8 @@ export default tseslint.config(
       "**/node_modules/**",
       ".beads/**",
       "fixtures/**",
+      // Vendored MPL-2.0 sources, kept as close to upstream as possible.
+      "packages/core/src/analyzers/headers/vendor/**",
     ],
   },
 

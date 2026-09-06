@@ -89,10 +89,13 @@ export { analyzers } from "./analyzers/index.js";
 export {
   cookiesAnalyzer,
   formsAnalyzer,
+  headersAnalyzer,
   policyPresenceAnalyzer,
   scriptsAnalyzer,
   transportAnalyzer,
 } from "./analyzers/index.js";
+export { setHstsPreloadList } from "./analyzers/headers/index.js";
+export { HEADER_RULES } from "./analyzers/headers/mapping.js";
 export { runAnalyzers } from "./analyzers/run.js";
 export type {
   Analyzer,

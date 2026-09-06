@@ -8,8 +8,9 @@ export function formatReport(result: AuditResult): string {
   const lines: string[] = [];
 
   lines.push(`${result.url}`);
+  const count = result.findings.length;
   lines.push(
-    `${String(result.findings.length)} findings in ${String(
+    `${String(count)} ${count === 1 ? "finding" : "findings"} in ${String(
       result.finishedAt - result.startedAt,
     )}ms  ·  audit ${result.auditId}`,
   );

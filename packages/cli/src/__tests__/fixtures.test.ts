@@ -56,8 +56,28 @@ describe("snapshot fixtures", () => {
       noAgent: true,
     });
 
-    // A baseline that reports findings is a baseline that has stopped being one.
-    expect(result.findings).toEqual([]);
+    // A baseline that reports a real problem is a baseline that has stopped
+    // being one. Info findings are allowed and expected: analyzers whose inputs
+    // this host cannot collect say so rather than staying quiet.
+    const real = result.findings.filter((finding) => finding.severity !== "info");
+    expect(real).toEqual([]);
+  });
+
+  it("says the header checks did not run, rather than staying quiet", async () => {
+    const raw = await loadFixture("baseline_synthetic.json");
+    const snapshot = PageSnapshotSchema.parse(raw);
+    const result = await audit(snapshot, {
+      capabilities: createNodeCapabilities(),
+      noAgent: true,
+    });
+
+    // The CLI has no privileged refetch, so the headers analyzer cannot run.
+    // Reporting nothing would read as a clean bill of health.
+    const skipped = result.findings.find(
+      (finding) => finding.ruleId === "analyzer-skipped",
+    );
+    expect(skipped?.summary).toContain("headers");
+    expect(skipped?.summary).toContain("not passing");
   });
 
   it("says the cookie flags are unknown, not missing, when they were not read", async () => {
