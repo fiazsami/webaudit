@@ -9,12 +9,20 @@ browser.
 | Package / repo                       | Use                                             | Notes                                                                                                                             |
 | ------------------------------------ | ----------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
 | `@mlc-ai/web-llm` (`mlc-ai/web-llm`) | The model. WebGPU inference in the browser      | Apache-2.0. Grammar-constrained JSON in the WASM runtime. `tools`/`tool_choice` are WIP — we use the JSON action protocol instead |
-| `zod` + `zod-to-json-schema`         | All schemas; JSON Schema for constrained output |                                                                                                                                   |
+| `zod`                                | All schemas; JSON Schema for constrained output | **`zod-to-json-schema` is not needed** — zod 4 emits it directly with `z.toJSONSchema()`, verified against WebLLM in spike S2     |
 | `gpt-tokenizer`                      | Token estimates for chunking and budgets        | Browser-safe. Reconcile against WebLLM's returned `usage`                                                                         |
 
-Model weights come from the HuggingFace CDN at first use, cached by WebLLM
-(Cache API by default; IndexedDB and OPFS are configurable). Pin the per-model
-SRI `integrity` hashes with `onFailure: "error"` — see docs/12 T7.
+A model load fetches from **two** origins, not one — spike S2 corrected this.
+The weights come from HuggingFace, now served through its Xet backend on
+regional hosts such as `us.aws.cdn.hf.co`, and the compiled model library is a
+`.wasm` from `raw.githubusercontent.com`. Both are cached by WebLLM (Cache API
+by default; IndexedDB and OPFS are configurable). The extension's `connect-src`
+has to cover both, and no enumeration of `cdn-lfs` hostnames covers the first
+(docs/08).
+
+`ModelIntegrity` with `onFailure: "error"` exists, but **none of the 163
+prebuilt models carry integrity hashes**, so nothing is verified by default. See
+docs/12 T7.
 
 ### Removed
 

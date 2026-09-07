@@ -134,12 +134,26 @@ Timeboxed. Each writes its result back into the doc it affects.
   injected preload map instead of reading it with `node:fs`, and
   `subresource-integrity.js` and `redirection.js` are dropped. The fallback is
   not needed. Full result in docs/03.
-- **S2 — WebLLM in a side panel** (run during M0/M1). Confirm WebGPU in that
-  context; verify `response_format` JSON-schema output against a real zod
-  schema; **verify the cancellation API** — `interruptGenerate()` is not in the
-  published API reference and `AbortSignal` support depends on it; measure
-  prefill/decode on target hardware. Sets the numbers in docs/05 §4 and docs/06
-  budgets.
+- **S2 — WebLLM in a side panel** (run during M0/M1). **Done.** Harness kept at
+  `packages/extension/entrypoints/spike-s2/`, driver at
+  `scripts/run-spike-s2.mjs`. Five results, three of them corrections to what
+  this repo already claimed:
+
+  1. **WebGPU works** in an extension-CSP page (Apple M4, Metal 3, 4 GB max
+     buffer). Throughput is in docs/05 §4.
+  2. **`response_format` honours a real zod schema** — verified against the
+     clause-extraction schema on every model tried, valid first time. zod 4's
+     `z.toJSONSchema()` replaces the `zod-to-json-schema` dependency.
+  3. **Cancellation is worse than feared.** There is no `AbortSignal` in
+     WebLLM's API at all, and `interruptGenerate()` leaves the engine returning
+     empty `finish_reason: "abort"` responses forever after. Only building a new
+     engine recovers, at 5 s (0.5B) to 36 s (8B). docs/06 rewritten accordingly.
+  4. **The `connect-src` in docs/08 was wrong** and no model could have
+     downloaded under it. HuggingFace serves weights from its Xet backend, and
+     the model library is a `.wasm` from `raw.githubusercontent.com`.
+  5. **docs/12 T7 was not true.** None of WebLLM's 163 prebuilt models carry SRI
+     integrity hashes, so weights are unverified until we pin our own.
+
 - **S3 — Offscreen document lifetime** (before M8). WebGPU in an offscreen
   document, which `chrome.offscreen` reason applies (`WORKERS` is the closest;
   there is no WebGPU reason), and whether Chrome closes it on idle. Fallback:

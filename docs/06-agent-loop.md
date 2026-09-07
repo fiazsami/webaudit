@@ -53,6 +53,52 @@ export interface Budget {
 }
 ```
 
+### Cancellation is not free (spike S2)
+
+The concern this doc raised — that `interruptGenerate()` is undocumented and
+`AbortSignal` support depends on it — turned out to understate the problem.
+Measured on WebLLM 0.2.84:
+
+- **There is no `AbortSignal` anywhere in WebLLM's API.** `interruptGenerate()`
+  is the only cancellation mechanism, so `CompletionRequest.signal` (docs/04)
+  has to be implemented on top of it rather than passed through.
+- **It works.** Generation stops in 280–520 ms, and the stream's last chunk
+  carries `finish_reason: "abort"`.
+- **It poisons the engine.** Every subsequent request returns empty content with
+  `finish_reason: "abort"`. `resetChat()` does not clear it. `reload()` does not
+  clear it either, and in the Web Worker engine the next call after a reload
+  throws `Message error should not be 0`.
+- **Only a fresh engine recovers**, and the cost scales with the model. With
+  weights already cached: 5.2 s for Qwen2.5-0.5B, 12.4 s for Qwen2.5-1.5B,
+  **36 s for Llama-3.1-8B**.
+
+Confirmed identically on all three models, so it is a property of the engine
+rather than of a model or a size.
+
+Reproduced across every variation that might have been our own mistake:
+interrupting from inside the consumer loop and from a timer, awaited and
+fire-and-forget, in a Web Worker and on the main thread. It is the engine, not
+the call site.
+
+What this means for the loop:
+
+1. **A cancelled run is over.** Cancellation cannot be a step-level control that
+   the loop recovers from and continues past. `maxWallMs` and `maxSteps` have to
+   be enforced by _not starting_ the next model call, which costs nothing and is
+   where enforcement belonged anyway.
+2. **`interruptGenerate()` is for the user's stop button**, and even there the
+   price is real: pressing stop costs a 5–36 s rebuild depending on the model.
+   That is still better than waiting out a run nobody wants, but it is not a
+   control to use casually, and the UI should say the engine is restarting
+   rather than appearing frozen.
+3. **The provider owns the rebuild.** `ModelProvider` should treat an
+   interrupted engine as dead and re-create it lazily on the next call, so the
+   agent loop never sees a half-working engine. This is a constraint on the
+   WebLLM adapter (M4), not on the loop.
+4. Budgets that need to bite _during_ a single long generation have only
+   `max_tokens` to work with. Size it from the measured decode rate rather than
+   assuming a run can be stopped partway.
+
 **Defaults are derived from the active model, not hardcoded.** The old
 `maxInputTokens: 150_000` and `maxWallMs: 120_000` assumed a hosted frontier
 model. Neither survives contact with a 1.5B model doing 20 prefills over a 40k

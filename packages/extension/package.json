@@ -16,6 +16,7 @@
     "predev": "node ../../scripts/copy-data-to-extension.mjs"
   },
   "dependencies": {
+    "@mlc-ai/web-llm": "^0.2.84",
     "core": "workspace:*",
     "idb": "^8.0.3",
     "zod": "catalog:"

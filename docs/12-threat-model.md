@@ -126,12 +126,28 @@ explanation?
 First use of a model downloads gigabytes from the HuggingFace CDN. This is the
 only large network egress in the system and qualifies hard rule 7.
 
+**Spike S2 found this mitigation is not free, and does not exist by default.**
+WebLLM ships the machinery — `ModelIntegrity`, `verifyIntegrity`, and an
+`onFailure: "error"` mode — but **0 of the 163 models in `prebuiltAppConfig`
+carry an `integrity` field**. Using the prebuilt config as-is means weights are
+downloaded and executed with no verification at all. Until we compute and pin
+our own hashes, this threat is _unmitigated_, and saying otherwise would be
+false.
+
+A second correction: a model load touches **two** origins, not one. The weights
+come from HuggingFace — now through its Xet backend on regional hosts such as
+`us.aws.cdn.hf.co` — and the compiled model library is a `.wasm` fetched from
+`raw.githubusercontent.com`. The GitHub fetch is the more interesting one for
+this threat, because it is executable code rather than data.
+
 - Pin per-model SRI `integrity` hashes with `onFailure: "error"`, so a
-  substituted or corrupted weight file fails loudly rather than running.
+  substituted or corrupted weight file fails loudly rather than running. **Not
+  yet done — the hashes have to be produced by us (see the M4 issue).** Cover
+  `model_lib` as well as the weights; it is the WASM.
 - The download is visible in the UI (docs/07 `model.progress`) — it should never
   be a surprise.
-- The request goes to a CDN and reveals which model the user is fetching. It
-  reveals nothing about pages being audited.
+- The requests go to two CDNs and reveal which model the user is fetching. They
+  reveal nothing about pages being audited.
 - Self-hosting weights is possible if this becomes unacceptable.
 
 ### T8. Relaxed extension CSP _(new)_
@@ -144,8 +160,13 @@ and the same pages render audit output derived from untrusted content.
   `innerHTML`.
 - The extraction schemas cap field lengths (docs/05), which bounds what can be
   smuggled into a view.
-- `connect-src` is limited to the weight CDN; audited-site fetches happen in the
-  worker, not from a page.
+- `connect-src` is limited to the model hosts; audited-site fetches happen in the
+  background worker, not from a page. Spike S2 corrected that list: an
+  enumeration of `cdn-lfs` hostnames no longer covers where HuggingFace serves
+  weights from, so it is `https://*.hf.co` and `https://*.huggingface.co` plus
+  `https://raw.githubusercontent.com` for the model library. Wildcards over two
+  vendors' domains is a wider grant than the original list pretended to be, and
+  the honest reason to accept it is that a narrower one does not work.
 
 ## Residual risk
 

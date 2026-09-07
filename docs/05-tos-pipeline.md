@@ -44,13 +44,53 @@ Overlap ~10% to avoid cutting a clause. Each chunk records its heading path
 
 Sizing matters far more here than it did with hosted models. A 4k-context model
 leaves roughly 2.5k tokens per chunk after prompt overhead, so a 40k-token policy
-is 15–20 map calls — each a full prefill. Spike S2 (docs/11) measures actual
-throughput and sets the defaults. Two consequences:
+is 15–20 map calls — each a full prefill.
+
+### Measured throughput (spike S2)
+
+Apple M4, Chrome 152, WebGPU on Metal 3, engine in a Web Worker. Both models
+report a 4096-token context window, so the 2.5k-per-chunk estimate above stands.
+
+| Model                         | Load (cold) | VRAM    | Prefill @270 tok | @970 | @1900 | Decode     |
+| ----------------------------- | ----------- | ------- | ---------------- | ---- | ----- | ---------- |
+| Qwen2.5-0.5B-Instruct-q4f16_1 | 11 s        | 945 MB  | 1460 tok/s       | 1295 | 1378  | 40 tok/s   |
+| Qwen2.5-1.5B-Instruct-q4f16_1 | 31 s        | 1630 MB | 500 tok/s        | 486  | 426   | 20.5 tok/s |
+| Llama-3.1-8B-Instruct-q4f16_1 | 164 s       | 5001 MB | 119 tok/s        | 117  | 112   | 8.3 tok/s  |
+
+Prefill throughput falls as the prompt grows, so a chunk costs worse than
+linearly in its size. Extrapolating a 2.5k-token chunk, and a 40k-token policy
+as roughly sixteen of them:
+
+| Model | Per chunk | 40k-token policy, prefill alone |
+| ----- | --------- | ------------------------------- |
+| 0.5B  | ~1.9 s    | ~30 s                           |
+| 1.5B  | ~6 s      | **90–120 s**                    |
+| 8B    | ~22 s     | **~6 minutes**                  |
+
+The 8B row is the one that decides something. At 112 tok/s prefill it took 17
+seconds to read a single 1900-token prompt, and it decodes at 8 tok/s. Whatever
+its extraction quality turns out to be, **Llama-3.1-8B is not viable for the ToS
+pipeline** on this hardware — a single policy would take longer than anyone will
+wait, and the pipeline is meant to run several. It is worth keeping in the evals
+(docs/11 M7) as the quality ceiling to measure the small models against, not as
+something to ship as a default.
+
+Four consequences, the first two already anticipated:
 
 - The content-hash policy cache (docs/09) is load-bearing, not an optimisation.
   Re-analysing an unchanged policy costs minutes.
 - `limitations` must record truncation honestly when a policy exceeds what the
   budget allows.
+- Chunks should be sized near the context limit rather than conservatively
+  small. Prefill per token gets _worse_ with length, but a smaller chunk means
+  more chunks, and each one repays the full prompt overhead again. Fewer, larger
+  chunks win.
+
+`response_format: { type: "json_object", schema }` was verified against the real
+`ClauseExtraction` zod schema on both models: output parsed and validated first
+time. Note the schema is passed as a **JSON string**, and zod 4 emits it
+directly with `z.toJSONSchema()` — no `zod-to-json-schema` dependency is needed
+(docs/10).
 
 ### 5. Extract clauses (map)
 

@@ -1,0 +1,276 @@
+{
+  "spike": "S2",
+  "hardware": "Apple M4, macOS, Chrome 152",
+  "models": {
+    "Qwen2.5-0.5B-Instruct-q4f16_1-MLC": {
+      "load": {
+        "modelId": "Qwen2.5-0.5B-Instruct-q4f16_1-MLC",
+        "inWorker": true,
+        "loadMs": 11118,
+        "vramRequiredMB": 944.62,
+        "contextWindowSize": 4096,
+        "hasIntegrityField": false
+      },
+      "schema": {
+        "ok": true,
+        "raw": "{\n  \"clauses\": [\n    {\n      \"category\": \"licence-grant\",\n      \"severity\": \"high\",\n      \"quote\": \"By submitting content you grant us a worldwide, irrevocable, perpetual, royalty-free licence to reproduce, modify, adapt, publish and distribute that content in any media now known or later developed.\"\n    ,\n    \"plain_language\": \"English\"\n    },\n    {\n      \"category\": \"arbitration\",\n      \"severity\": \"medium\",\n      \"quote\": \"Any dispute shall be resolved by binding individual arbitration. Any right to a jury trial and participation in class action is waived.\"\n    ,\n    \"plain_language\": \"English\"\n    }\n  ]\n}",
+        "wallMs": 4385,
+        "usage": {
+          "prefillTokens": 129,
+          "decodeTokens": 161
+        },
+        "prefillTokensPerSec": 272.72727272727275,
+        "decodeTokensPerSec": 41.45317850639519,
+        "parsed": {
+          "clauses": [
+            {
+              "category": "licence-grant",
+              "severity": "high",
+              "quote": "By submitting content you grant us a worldwide, irrevocable, perpetual, royalty-free licence to reproduce, modify, adapt, publish and distribute that content in any media now known or later developed.",
+              "plain_language": "English"
+            },
+            {
+              "category": "arbitration",
+              "severity": "medium",
+              "quote": "Any dispute shall be resolved by binding individual arbitration. Any right to a jury trial and participation in class action is waived.",
+              "plain_language": "English"
+            }
+          ]
+        }
+      },
+      "prefill": [
+        {
+          "approxTokens": 267,
+          "prefillTokensPerSec": 1525.7142857142858,
+          "wallMs": 203
+        },
+        {
+          "approxTokens": 967,
+          "prefillTokensPerSec": 1296.420431734695,
+          "wallMs": 768
+        },
+        {
+          "approxTokens": 1897,
+          "prefillTokensPerSec": 1162.9475232617376,
+          "wallMs": 1657
+        }
+      ],
+      "cancel": {
+        "interrupted": true,
+        "elapsedMs": 503,
+        "finishReason": "abort",
+        "chunksBeforeInterrupt": 20,
+        "engineUsableAfter": false,
+        "engineUsableAfterReset": false,
+        "engineUsableAfterReload": false,
+        "reloadMs": 715,
+        "recoveryError": "empty response | after resetChat: Error: Message error should not be 0",
+        "probes": [
+          {
+            "label": "immediately after interrupt",
+            "content": "",
+            "finishReason": "abort"
+          },
+          {
+            "label": "after resetChat",
+            "content": "",
+            "finishReason": "abort"
+          }
+        ]
+      },
+      "recreate": {
+        "modelId": "Qwen2.5-0.5B-Instruct-q4f16_1-MLC",
+        "inWorker": true,
+        "loadMs": 974,
+        "vramRequiredMB": 944.62,
+        "contextWindowSize": 4096,
+        "hasIntegrityField": false,
+        "recoveredMs": 5245,
+        "usable": true
+      }
+    },
+    "Qwen2.5-1.5B-Instruct-q4f16_1-MLC": {
+      "load": {
+        "modelId": "Qwen2.5-1.5B-Instruct-q4f16_1-MLC",
+        "inWorker": true,
+        "loadMs": 31470,
+        "vramRequiredMB": 1629.75,
+        "contextWindowSize": 4096,
+        "hasIntegrityField": false
+      },
+      "schema": {
+        "ok": true,
+        "raw": "{\n  \"clauses\": [\n    {\n      \"category\": \"licence-grant\",\n      \"severity\": \"high\",\n      \"quote\": \"By submitting content you grant us a worldwide, irrevocable, perpetual, royalty-free licence to reproduce, modify, adapt, publish and distribute that content in any media now known or later developed.\"\n   ,\n      \"plain_language\": \"You give the company permission to use your content for anything they want.\"\n    },\n    {\n      \"category\": \"arbitration\",\n      \"severity\": \"high\",\n      \"quote\": \"Any dispute shall be resolved by binding individual arbitration. You waive any right to a jury trial and to participate in a class action.\",\n      \"plain_language\": \"If there is a problem with using their content, it will be decided by an arbitrator instead of going to court. They also don't want them to have a say if lots of people are doing something similar.\"\n    }\n  ]\n}",
+        "wallMs": 11240,
+        "usage": {
+          "prefillTokens": 129,
+          "decodeTokens": 207
+        },
+        "prefillTokensPerSec": 117.55057408675289,
+        "decodeTokensPerSec": 20.50154504600758,
+        "parsed": {
+          "clauses": [
+            {
+              "category": "licence-grant",
+              "severity": "high",
+              "quote": "By submitting content you grant us a worldwide, irrevocable, perpetual, royalty-free licence to reproduce, modify, adapt, publish and distribute that content in any media now known or later developed.",
+              "plain_language": "You give the company permission to use your content for anything they want."
+            },
+            {
+              "category": "arbitration",
+              "severity": "high",
+              "quote": "Any dispute shall be resolved by binding individual arbitration. You waive any right to a jury trial and to participate in a class action.",
+              "plain_language": "If there is a problem with using their content, it will be decided by an arbitrator instead of going to court. They also don't want them to have a say if lots of people are doing something similar."
+            }
+          ]
+        }
+      },
+      "prefill": [
+        {
+          "approxTokens": 267,
+          "prefillTokensPerSec": 500.4686035613871,
+          "wallMs": 589
+        },
+        {
+          "approxTokens": 967,
+          "prefillTokensPerSec": 485.88081598675075,
+          "wallMs": 2088
+        },
+        {
+          "approxTokens": 1897,
+          "prefillTokensPerSec": 425.79457711880417,
+          "wallMs": 4617
+        }
+      ],
+      "cancel": {
+        "interrupted": true,
+        "elapsedMs": 514,
+        "finishReason": "abort",
+        "chunksBeforeInterrupt": 13,
+        "engineUsableAfter": false,
+        "engineUsableAfterReset": false,
+        "engineUsableAfterReload": false,
+        "reloadMs": 1689,
+        "recoveryError": "empty response | after resetChat: Error: Message error should not be 0",
+        "probes": [
+          {
+            "label": "immediately after interrupt",
+            "content": "",
+            "finishReason": "abort"
+          },
+          {
+            "label": "after resetChat",
+            "content": "",
+            "finishReason": "abort"
+          }
+        ]
+      },
+      "recreate": {
+        "modelId": "Qwen2.5-1.5B-Instruct-q4f16_1-MLC",
+        "inWorker": true,
+        "loadMs": 2153,
+        "vramRequiredMB": 1629.75,
+        "contextWindowSize": 4096,
+        "hasIntegrityField": false,
+        "recoveredMs": 12401,
+        "usable": true
+      }
+    },
+    "Llama-3.1-8B-Instruct-q4f16_1-MLC": {
+      "load": {
+        "modelId": "Llama-3.1-8B-Instruct-q4f16_1-MLC",
+        "inWorker": true,
+        "loadMs": 163978,
+        "vramRequiredMB": 5001,
+        "contextWindowSize": 4096,
+        "hasIntegrityField": false
+      },
+      "schema": {
+        "ok": true,
+        "raw": "{\n  \"clauses\": [\n    {\n      \"category\": \"licence-grant\",\n      \"severity\": \"high\",\n      \"quote\": \"By submitting content you grant us a worldwide, irrevocable, perpetual, royalty-free licence to reproduce, modify, adapt, publish and distribute that content in any media now known or later developed.\"\n    ,\n    \"plain_language\": \"You grant us a worldwide, irrevocable, perpetual, royalty-free licence to reproduce, modify, adapt, publish and distribute the content you submit.\"\n  },\n  {\n    \"category\": \"arbitration\",\n    \"severity\": \"high\",\n    \"quote\": \"Any dispute shall be resolved by binding individual arbitration. You waive any right to a jury trial and to participate in a class action.\"\n  ,\n    \"plain_language\": \"Any disputes will be resolved through binding individual arbitration. You give up your right to a jury trial and to join a class action.\"\n  }\n] \n}",
+        "wallMs": 26721,
+        "usage": {
+          "prefillTokens": 130,
+          "decodeTokens": 200
+        },
+        "prefillTokensPerSec": 52.817616707641704,
+        "decodeTokensPerSec": 8.262619085046394,
+        "parsed": {
+          "clauses": [
+            {
+              "category": "licence-grant",
+              "severity": "high",
+              "quote": "By submitting content you grant us a worldwide, irrevocable, perpetual, royalty-free licence to reproduce, modify, adapt, publish and distribute that content in any media now known or later developed.",
+              "plain_language": "You grant us a worldwide, irrevocable, perpetual, royalty-free licence to reproduce, modify, adapt, publish and distribute the content you submit."
+            },
+            {
+              "category": "arbitration",
+              "severity": "high",
+              "quote": "Any dispute shall be resolved by binding individual arbitration. You waive any right to a jury trial and to participate in a class action.",
+              "plain_language": "Any disputes will be resolved through binding individual arbitration. You give up your right to a jury trial and to join a class action."
+            }
+          ]
+        }
+      },
+      "prefill": [
+        {
+          "approxTokens": 272,
+          "prefillTokensPerSec": 119.41346913313676,
+          "wallMs": 2406
+        },
+        {
+          "approxTokens": 972,
+          "prefillTokensPerSec": 116.88171137879696,
+          "wallMs": 8539
+        },
+        {
+          "approxTokens": 1902,
+          "prefillTokensPerSec": 111.6865729489087,
+          "wallMs": 17294
+        }
+      ],
+      "cancel": {
+        "interrupted": true,
+        "elapsedMs": 581,
+        "finishReason": "abort",
+        "chunksBeforeInterrupt": 2,
+        "engineUsableAfter": false,
+        "engineUsableAfterReset": false,
+        "engineUsableAfterReload": false,
+        "reloadMs": 7797,
+        "recoveryError": "empty response | after resetChat: Error: Message error should not be 0",
+        "probes": [
+          {
+            "label": "immediately after interrupt",
+            "content": "",
+            "finishReason": "abort"
+          },
+          {
+            "label": "after resetChat",
+            "content": "",
+            "finishReason": "abort"
+          }
+        ]
+      },
+      "recreate": {
+        "modelId": "Llama-3.1-8B-Instruct-q4f16_1-MLC",
+        "inWorker": true,
+        "loadMs": 8695,
+        "vramRequiredMB": 5001,
+        "contextWindowSize": 4096,
+        "hasIntegrityField": false,
+        "recoveredMs": 36081,
+        "usable": true
+      }
+    }
+  },
+  "chrome": "Chrome/152.0.7977.82",
+  "webgpu": {
+    "available": true,
+    "vendor": "apple",
+    "architecture": "metal-3",
+    "description": "",
+    "maxBufferSize": 4294967292,
+    "maxStorageBufferBindingSize": 4294967292
+  }
+}

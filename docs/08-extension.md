@@ -32,8 +32,29 @@ Document this clearly in the store listing.
 
 WebLLM's WASM runtime requires `wasm-unsafe-eval` in
 `content_security_policy.extension_pages`, plus `connect-src` entries for the
-weight CDN (`huggingface.co` and the hosts it redirects to). This is a real
-loosening of the extension's CSP and is recorded as docs/12 T8.
+model hosts. This is a real loosening of the extension's CSP and is recorded as
+docs/12 T8.
+
+Spike S2 measured what those entries actually have to be, and the first attempt
+was wrong in two ways:
+
+```
+connect-src 'self'
+  https://huggingface.co https://*.huggingface.co https://*.hf.co
+  https://raw.githubusercontent.com
+```
+
+- HuggingFace serves weights through its **Xet backend** on regional hosts like
+  `us.aws.cdn.hf.co`. No enumeration of `cdn-lfs` hostnames covers it, so the
+  wildcards are load-bearing rather than lazy.
+- The compiled **model library is a `.wasm` from `raw.githubusercontent.com`**,
+  not from HuggingFace at all. A model load touches two vendors.
+
+Worth knowing about how this failure presents: with the engine in a Web Worker,
+the blocked fetch did not surface as a CSP error in the page, and the download
+appeared to succeed. It only failed visibly when the same load ran on the main
+thread, under the document's own policy. A `connect-src` that is wrong can
+therefore look fine for a long time.
 
 ## Content script
 

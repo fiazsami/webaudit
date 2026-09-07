@@ -49,6 +49,36 @@ export interface ModelProvider {
 }
 ```
 
+## What spike S2 measured
+
+Three things the interface has to accommodate, found by running WebLLM 0.2.84
+rather than reading its docs:
+
+**There is no `AbortSignal` in WebLLM's API.** `CompletionRequest.signal` above
+cannot be passed through; the adapter has to implement it on top of
+`interruptGenerate()`.
+
+**An interrupt kills the engine.** Generation stops promptly, but every later
+request returns empty content with `finish_reason: "abort"`, and neither
+`resetChat()` nor `reload()` clears it — only building a new engine does, at
+5–12 seconds. So the adapter owns engine lifetime: an interrupted engine is
+dead, and the next call rebuilds it. Full detail and the budget consequences are
+in docs/06.
+
+**`schema` is passed as a JSON string.** WebLLM takes
+`response_format: { type: "json_object", schema: "<json schema>" }`, and zod 4
+produces that with `z.toJSONSchema()` — no `zod-to-json-schema` dependency
+(docs/10). Verified against a real clause-extraction schema on two models; both
+returned JSON that validated first time.
+
+One thing to note about `supportsToolCalls`: WebLLM no longer rejects `tools`,
+but it does not constrain them either. It injects the tool definitions into the
+system prompt via the model's own chat template, so whether anything usable
+comes back depends on the model having a function-calling template and on
+parsing its prose. That is weaker than being unsupported, because it fails
+silently. The JSON action protocol (docs/01, docs/06) remains the only
+tool-calling path, and `supportsToolCalls` should report `false` for WebLLM.
+
 ## WebLLM adapter (`providers/webllm.ts`)
 
 `@mlc-ai/web-llm`, Apache-2.0. Runs quantized models in the browser over WebGPU
