@@ -1,0 +1,36 @@
+{
+  "site": "social-app",
+  "note": "A deliberately better-behaved policy than fixture-shop: it exists to catch models that flag everything. Written for testing, not scraped.",
+  "expected": [
+    {
+      "category": "data-collection",
+      "substring": "date of birth",
+      "minConcern": "low"
+    },
+    {
+      "category": "data-collection",
+      "substring": "receive your contact details even",
+      "minConcern": "medium"
+    },
+    {
+      "category": "data-sharing",
+      "substring": "law enforcement",
+      "minConcern": "low"
+    },
+    {
+      "category": "data-retention",
+      "substring": "up to 90 days",
+      "minConcern": "low"
+    },
+    {
+      "category": "age-restriction",
+      "substring": "under 13",
+      "minConcern": "none"
+    }
+  ],
+  "shouldNotConcern": [
+    "We do not sell your personal information.",
+    "we will notify you by email at least",
+    "You can download a copy of your data"
+  ]
+}

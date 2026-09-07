@@ -17,11 +17,14 @@
   },
   "dependencies": {
     "@mlc-ai/web-llm": "^0.2.84",
+    "@mozilla/readability": "^0.6.0",
     "core": "workspace:*",
     "idb": "^8.0.3",
+    "turndown": "^7.2.4",
     "zod": "catalog:"
   },
   "devDependencies": {
+    "@types/turndown": "^5.0.6",
     "fake-indexeddb": "^6.2.5",
     "happy-dom": "^20.14.0",
     "typescript": "catalog:",

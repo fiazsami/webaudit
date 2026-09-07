@@ -76,8 +76,12 @@ sessions. The extension captures a page, refetches its headers through the
 background worker, runs the model on WebGPU through WebLLM, and renders findings
 with plain-language explanations in the side panel.
 
-Still to come: the ToS pipeline (M5), the agent loop (M6), and the workbench and
-evals (M7).
+The ToS pipeline reads a site's policies: it discovers them, extracts readable
+markdown, chunks on headings, extracts clauses into a fixed schema, and
+**verifies every quote against the source, dropping any it cannot find** — which
+is what catches both a hallucinated clause and one a page tried to inject.
+
+Still to come: the agent loop (M6), and the workbench and evals (M7).
 
 Milestones are in `docs/11-roadmap.md`; work is tracked in
 [beads](https://github.com/gastownhall/beads) — `bd ready`.

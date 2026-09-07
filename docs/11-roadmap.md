@@ -94,6 +94,14 @@ rendering in the panel is part of the browser check (web-rhp.7).
 Done when: a real site's policy produces a `TosReport` whose quotes all verify
 against the source text.
 
+Status: done and verified against three real policies — Mozilla's terms,
+Mozilla's Firefox privacy notice, and the Wikimedia Foundation's privacy policy.
+Each produced clauses with zero verification failures, and a deliberately
+fabricated clause was dropped every time. A fourth page with no readable article
+correctly reported `fetch-failed` rather than an empty policy. The ToS section
+renders in the side panel; seeing it against a live model is part of the browser
+check (web-rhp.7).
+
 ## M6 — Agent loop
 
 - Tool interface, budgets, orchestrator, trace (docs/06).

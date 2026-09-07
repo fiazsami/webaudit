@@ -1,10 +1,14 @@
 import {
   AuditResultSchema,
+  ClauseSchema,
   type AuditResult,
   type AuditStore,
   type AuditSummary,
+  type CachedExtraction,
+  type PolicyCacheKey,
 } from "core";
 import { openDB, type DBSchema, type IDBPDatabase } from "idb";
+import { z } from "zod";
 
 /**
  * `AuditStore` over IndexedDB (docs/09).
@@ -15,8 +19,17 @@ import { openDB, type DBSchema, type IDBPDatabase } from "idb";
  */
 
 const DB_NAME = "webaudit";
-const DB_VERSION = 1;
+const DB_VERSION = 2;
 const AUDITS = "audits";
+const POLICY_CACHE = "policyCache";
+
+const CachedExtractionSchema = z.object({
+  contentHash: z.string(),
+  modelId: z.string(),
+  url: z.string(),
+  clauses: z.array(ClauseSchema),
+  createdAt: z.number(),
+});
 
 /** IndexedDB has no size guarantee, so history is capped (docs/09). */
 export const DEFAULT_HISTORY_CAP = 200;
@@ -37,16 +50,27 @@ interface WebAuditDb extends DBSchema {
     value: AuditRecord;
     indexes: { "by-host": [string, number]; "by-started": number };
   };
+  /** Keyed by content hash and model: the same text read by a different model
+   * is a different result (docs/09). */
+  [POLICY_CACHE]: {
+    key: [string, string];
+    value: CachedExtraction;
+  };
 }
 
 export type WebAuditDatabase = IDBPDatabase<WebAuditDb>;
 
 export function openWebAuditDb(): Promise<WebAuditDatabase> {
   return openDB<WebAuditDb>(DB_NAME, DB_VERSION, {
-    upgrade(db) {
-      const audits = db.createObjectStore(AUDITS, { keyPath: "id" });
-      audits.createIndex("by-host", ["host", "startedAt"]);
-      audits.createIndex("by-started", "startedAt");
+    upgrade(db, oldVersion) {
+      if (oldVersion < 1) {
+        const audits = db.createObjectStore(AUDITS, { keyPath: "id" });
+        audits.createIndex("by-host", ["host", "startedAt"]);
+        audits.createIndex("by-started", "startedAt");
+      }
+      if (oldVersion < 2) {
+        db.createObjectStore(POLICY_CACHE, { keyPath: ["contentHash", "modelId"] });
+      }
     },
   });
 }
@@ -91,6 +115,20 @@ export function createIdbStore(
         finishedAt: record.finishedAt,
         findingCount: record.result.findings.length,
       }));
+    },
+
+    async getCachedExtraction(
+      key: PolicyCacheKey,
+    ): Promise<CachedExtraction | undefined> {
+      const record = await db.get(POLICY_CACHE, [key.contentHash, key.modelId]);
+      if (record === undefined) return undefined;
+      const parsed = CachedExtractionSchema.safeParse(record);
+      // An entry written by an older build counts as absent, not as an error.
+      return parsed.success ? parsed.data : undefined;
+    },
+
+    async putCachedExtraction(entry: CachedExtraction): Promise<void> {
+      await db.put(POLICY_CACHE, entry);
     },
   };
 }

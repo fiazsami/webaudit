@@ -1,0 +1,60 @@
+{
+  "site": "fixture-shop",
+  "note": "Written for testing, not scraped. See ../README.md.",
+  "expected": [
+    {
+      "category": "user-content-licence",
+      "substring": "irrevocable, perpetual",
+      "minConcern": "high"
+    },
+    {
+      "category": "data-collection",
+      "substring": "device\nidentifiers",
+      "minConcern": "low"
+    },
+    {
+      "category": "data-sharing",
+      "substring": "advertising partners",
+      "minConcern": "medium"
+    },
+    {
+      "category": "data-retention",
+      "substring": "indefinitely",
+      "minConcern": "medium"
+    },
+    {
+      "category": "auto-renewal",
+      "substring": "renew automatically",
+      "minConcern": "medium"
+    },
+    {
+      "category": "unilateral-changes",
+      "substring": "at any time without notice",
+      "minConcern": "medium"
+    },
+    {
+      "category": "arbitration",
+      "substring": "class action",
+      "minConcern": "high"
+    },
+    {
+      "category": "liability",
+      "substring": "total liability",
+      "minConcern": "low"
+    },
+    {
+      "category": "termination",
+      "substring": "terminate your account at any time",
+      "minConcern": "low"
+    },
+    {
+      "category": "age-restriction",
+      "substring": "at least 16",
+      "minConcern": "none"
+    }
+  ],
+  "shouldNotConcern": [
+    "You retain ownership of the content you upload.",
+    "Questions about these terms may be sent to"
+  ]
+}

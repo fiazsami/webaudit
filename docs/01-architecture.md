@@ -85,12 +85,20 @@ export interface HttpResponse {
 
 export interface DomParser {
   parse(html: string, url: string): DomDocumentLike; // the port from docs/02
+  // Readable article as markdown. Here rather than in core because
+  // @mozilla/readability and turndown both need a real DOM (docs/05).
+  extractArticle(html: string, url: string): ExtractedArticle | undefined;
 }
 
 export interface AuditStore {
   putAudit(result: AuditResult): Promise<void>;
   getAudit(auditId: string): Promise<AuditResult | undefined>;
   listAudits(): Promise<AuditSummary[]>; // most recent first
+
+  // The policy cache, keyed by content hash + model id (docs/09). Not an
+  // optimisation: S2 measured 90–120 s to re-read an unchanged policy.
+  getCachedExtraction(key: PolicyCacheKey): Promise<CachedExtraction | undefined>;
+  putCachedExtraction(entry: CachedExtraction): Promise<void>;
 }
 
 export interface ProgressSink {
@@ -118,8 +126,8 @@ export interface Logger {
 `DomParser` returns core's structural DOM port rather than a `Document`, because
 core has no DOM types to name one with (docs/02).
 
-`AuditStore` covers audit history only. The policy cache and ToS report stores
-in docs/09 join it in M5, when there is something to put in them.
+`AuditStore` covers audit history and, since M5, the policy cache. The ToS
+report is stored as part of the audit rather than separately.
 
 `Http` returns a plain object rather than a `Response`: core would have to await
 the body anyway, the header map is easier to read than `Headers`, and a snapshot

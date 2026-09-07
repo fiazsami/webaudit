@@ -1,6 +1,8 @@
 import type { DomDocumentLike, DomParser } from "core";
 import { parseHTML } from "linkedom";
 
+import { extractArticle } from "./article.js";
+
 /**
  * The Node host's DOM capability (docs/01).
  *
@@ -22,5 +24,7 @@ export function createLinkedomParser(): DomParser {
       const { document } = parseHTML(html) as { document: DomDocumentLike };
       return document;
     },
+
+    extractArticle,
   };
 }

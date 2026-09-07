@@ -12,6 +12,7 @@ import type {
   AuditStore,
 } from "core";
 
+import { extractArticle } from "./article.js";
 import {
   envelope,
   FetchReplySchema,
@@ -84,6 +85,7 @@ function createDomParser(): DomParser {
     parse(html: string) {
       return parser.parseFromString(html, "text/html");
     },
+    extractArticle,
   };
 }
 

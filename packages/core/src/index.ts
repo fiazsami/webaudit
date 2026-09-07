@@ -12,10 +12,13 @@ export const VERSION = "0.0.0";
 // The seam (docs/01)
 export type {
   AuditStore,
+  CachedExtraction,
   Capabilities,
   Clock,
   DomParser,
+  ExtractedArticle,
   Http,
+  PolicyCacheKey,
   HttpRequestInit,
   HttpResponse,
   ProgressEvent,
@@ -145,5 +148,51 @@ export { audit } from "./audit/run.js";
 export type { AuditOptions } from "./audit/run.js";
 export { AuditResultSchema, AuditSummarySchema } from "./audit/schema.js";
 export type { AuditResult, AuditSummary } from "./audit/schema.js";
+
+// Terms of service pipeline (docs/05)
+export { runTosPipeline } from "./tos/pipeline.js";
+export type { TosPipelineOptions } from "./tos/pipeline.js";
+export { discoverPolicies } from "./tos/discover.js";
+export type { DiscoverOptions, PolicyCandidate } from "./tos/discover.js";
+export { chunkPolicy } from "./tos/chunk.js";
+export { chunkBudget, countTokens as countPolicyTokens } from "./tos/tokens.js";
+export {
+  CATEGORY_WEIGHT,
+  dedupeClauses,
+  groupByCategory,
+  rankClauses,
+  scoreClause,
+  topConcerns,
+} from "./tos/merge.js";
+export { normalizeForMatch, quoteAppearsIn, verifyClauses } from "./tos/verify.js";
+export {
+  PolicyLabelsSchema,
+  PolicyLabelSchema,
+  scoreAgainstLabels,
+} from "./tos/labels.js";
+export type { LabelScore, PolicyLabel, PolicyLabels } from "./tos/labels.js";
+export { buildExtractPrompt, EXTRACT_SYSTEM_PROMPT } from "./tos/prompt.js";
+export {
+  ClauseCategorySchema,
+  ClauseExtractionSchema,
+  ClauseSchema,
+  ConcernSchema,
+  PolicyChunkSchema,
+  PolicyDocumentSchema,
+  PolicySourceSchema,
+  TosLimitationSchema,
+  TosReportSchema,
+} from "./tos/schema.js";
+export type {
+  Clause,
+  ClauseCategory,
+  ClauseExtraction,
+  Concern,
+  PolicyChunk,
+  PolicyDocument,
+  PolicySource,
+  TosLimitation,
+  TosReport,
+} from "./tos/schema.js";
 
 export { stableHash } from "./hash.js";

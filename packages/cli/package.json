@@ -15,12 +15,15 @@
     "clean": "rm -rf dist"
   },
   "dependencies": {
+    "@mozilla/readability": "^0.6.0",
     "core": "workspace:*",
     "linkedom": "^0.18.13",
+    "turndown": "^7.2.4",
     "zod": "catalog:"
   },
   "devDependencies": {
     "@types/node": "catalog:",
+    "@types/turndown": "^5.0.6",
     "typescript": "catalog:",
     "vitest": "catalog:"
   }

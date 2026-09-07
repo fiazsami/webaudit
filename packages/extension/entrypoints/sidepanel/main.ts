@@ -2,6 +2,7 @@ import {
   audit,
   explainFindings,
   PageSnapshotSchema,
+  runTosPipeline,
   type AuditResult,
   type Capabilities,
   type PageSnapshot,
@@ -24,6 +25,7 @@ import {
   type WebLlmProvider,
 } from "../../lib/webllm-provider.js";
 import { renderFindings } from "./render.js";
+import { renderTosReport } from "./render-tos.js";
 
 /**
  * The side panel is the compute host (docs/01, docs/08): it assembles
@@ -47,9 +49,12 @@ const modelNote = requireElement<HTMLParagraphElement>("model-note");
 const modelProgress = requireElement<HTMLProgressElement>("model-progress");
 const modelProgressText = requireElement<HTMLParagraphElement>("model-progress-text");
 const explainButton = requireElement<HTMLButtonElement>("explain");
+const readTermsButton = requireElement<HTMLButtonElement>("read-terms");
+const tosEl = requireElement<HTMLElement>("tos");
 
 let running = false;
 let lastResult: AuditResult | undefined;
+let lastSnapshot: PageSnapshot | undefined;
 let provider: WebLlmProvider | undefined;
 
 populateModels();
@@ -66,6 +71,11 @@ modelSelect.addEventListener("change", () => {
 explainButton.addEventListener("click", () => {
   if (running) return;
   void explainCurrentFindings();
+});
+
+readTermsButton.addEventListener("click", () => {
+  if (running) return;
+  void readTerms();
 });
 
 void showActiveTab();
@@ -120,7 +130,10 @@ async function runAudit(): Promise<void> {
     await store.putAudit(result);
 
     lastResult = result;
+    lastSnapshot = snapshot;
     explainButton.disabled = result.findings.length === 0;
+    readTermsButton.disabled = false;
+    tosEl.replaceChildren();
     findingsEl.append(renderFindings(result.findings));
     setStatus(
       `${String(result.findings.length)} findings in ${String(
@@ -245,6 +258,51 @@ async function explainCurrentFindings(): Promise<void> {
   } finally {
     running = false;
     explainButton.disabled = false;
+    auditButton.disabled = false;
+  }
+}
+
+/**
+ * Reading a policy is minutes of work on a local model (docs/05), so it is its
+ * own action rather than something the audit does unasked.
+ */
+async function readTerms(): Promise<void> {
+  if (lastSnapshot === undefined) return;
+  running = true;
+  readTermsButton.disabled = true;
+  auditButton.disabled = true;
+  tosEl.replaceChildren();
+
+  try {
+    const engine = ensureProvider();
+    setEngineLine("Loading model…");
+
+    const store = createIdbStore(await openWebAuditDb());
+    const capabilities = createExtensionCapabilities({
+      auditId: newMessageId(),
+      store,
+      provider: engine,
+      onProgress: (event) => {
+        if (event.message !== undefined) setEngineLine(event.message);
+      },
+    });
+
+    const report = await runTosPipeline(lastSnapshot, { capabilities });
+
+    modelProgress.hidden = true;
+    modelProgressText.hidden = true;
+    tosEl.append(renderTosReport(report));
+    setEngineLine(
+      report.clauses.length === 0
+        ? "No clauses extracted"
+        : `${String(report.clauses.length)} clauses extracted`,
+    );
+  } catch (error) {
+    setStatus(error instanceof Error ? error.message : String(error), "error");
+    setEngineLine("Reading the terms failed");
+  } finally {
+    running = false;
+    readTermsButton.disabled = false;
     auditButton.disabled = false;
   }
 }

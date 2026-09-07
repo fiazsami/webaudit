@@ -251,3 +251,64 @@ progress {
   letter-spacing: 0.04em;
   text-transform: uppercase;
 }
+
+.tos:empty {
+  display: none;
+}
+
+.tos h2 {
+  margin: 1.2rem 0 0.4rem;
+  font-size: 0.95rem;
+}
+
+.tos h3 {
+  margin: 0.9rem 0 0.35rem;
+  font-size: 0.78rem;
+  color: var(--muted);
+  font-weight: 600;
+}
+
+.tos-summary {
+  margin: 0 0 0.5rem;
+}
+
+.tos-limitations {
+  margin: 0 0 0.6rem;
+  padding-left: 1rem;
+  color: var(--muted);
+  font-size: 0.72rem;
+}
+
+.tos-sources {
+  margin: 0.8rem 0 0;
+  color: var(--muted);
+  font-size: 0.68rem;
+  word-break: break-all;
+}
+
+.clause {
+  margin-bottom: 0.4rem;
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--sev);
+  border-radius: 5px;
+  background: var(--panel);
+}
+
+.clause > summary {
+  padding: 0.45rem 0.6rem;
+  cursor: pointer;
+  display: flex;
+  gap: 0.5rem;
+  align-items: baseline;
+}
+
+/* The verbatim quote. It was verified against the source before it got here,
+   and showing it is what makes that verification useful to a reader. */
+.quote {
+  margin: 0.5rem 0 0;
+  padding: 0.4rem 0.6rem;
+  border-left: 2px solid var(--line);
+  background: var(--bg);
+  border-radius: 0 4px 4px 0;
+  font-style: italic;
+}

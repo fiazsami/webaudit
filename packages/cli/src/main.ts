@@ -31,6 +31,7 @@ async function main(argv: readonly string[]): Promise<number> {
       "tracker-db": { type: "string" },
       replay: { type: "string" },
       explain: { type: "boolean", default: false },
+      terms: { type: "boolean", default: false },
       help: { type: "boolean", short: "h", default: false },
     },
   });
@@ -64,6 +65,7 @@ async function main(argv: readonly string[]): Promise<number> {
       : { trackerDbPath: values["tracker-db"] }),
     ...(values.replay === undefined ? {} : { replayPath: values.replay }),
     explain: values.explain,
+    terms: values.terms,
   });
 
   return 0;

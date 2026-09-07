@@ -1,4 +1,12 @@
-import { SEVERITY_ORDER, type AuditResult, type Finding, type Severity } from "core";
+import {
+  groupByCategory,
+  SEVERITY_ORDER,
+  type AuditResult,
+  type Finding,
+  type Severity,
+  type Clause,
+  type TosReport,
+} from "core";
 
 /**
  * Human-readable output. Deliberately plain text: it is read in a terminal and
@@ -75,5 +83,58 @@ function wrap(text: string, width: number): string[] {
   }
   if (current !== "") lines.push(current);
 
+  return lines;
+}
+
+/**
+ * The ToS report as text (docs/05 stage 8).
+ *
+ * Every clause prints its verbatim quote and where it came from. That is the
+ * whole value: the quotes were verified against the source before they got
+ * here, and printing them is what lets a reader check the claim.
+ */
+export function formatTosReport(report: TosReport): string {
+  const lines: string[] = ["", "─── What the terms say ───", ""];
+  lines.push(report.overallSummary);
+
+  if (report.limitations.length > 0) {
+    lines.push("");
+    for (const limitation of report.limitations) {
+      lines.push(`  ! ${limitation}`);
+    }
+  }
+
+  if (report.topConcerns.length > 0) {
+    lines.push("", "Worth knowing about:");
+    for (const clause of report.topConcerns) {
+      lines.push(...formatClause(clause));
+    }
+  }
+
+  const rest = report.clauses.filter(
+    (clause) => !report.topConcerns.some((top) => top.quote === clause.quote),
+  );
+  for (const group of groupByCategory(rest)) {
+    lines.push("", `${group.category}:`);
+    for (const clause of group.clauses) {
+      lines.push(...formatClause(clause));
+    }
+  }
+
+  lines.push("");
+  for (const source of report.sources) {
+    lines.push(`  read from ${source.url}`);
+  }
+  lines.push("");
+
+  return lines.join("\n");
+}
+
+function formatClause(clause: Clause): string[] {
+  const lines = [``, `  [${clause.concern.toUpperCase()}] ${clause.summary}`];
+  for (const line of wrap(clause.quote, 68)) {
+    lines.push(`    "${line}`);
+  }
+  lines.push(`    — ${clause.headingPath}`);
   return lines;
 }

@@ -1,13 +1,19 @@
 import { readFile } from "node:fs/promises";
 
-import { audit, PageSnapshotSchema, type AuditResult } from "core";
+import {
+  audit,
+  PageSnapshotSchema,
+  runTosPipeline,
+  type AuditResult,
+  type TosReport,
+} from "core";
 
 import { createNodeCapabilities } from "../capabilities/index.js";
 import { loadHstsPreloadList } from "../hsts-preload.js";
 import { loadLibraryDb } from "../library-db.js";
 import { loadTrackerDb } from "../tracker-db.js";
 import { loadReplayProvider } from "../replay.js";
-import { formatReport } from "../report.js";
+import { formatReport, formatTosReport } from "../report.js";
 
 export interface AuditCommandOptions {
   snapshotPath: string;
@@ -25,6 +31,8 @@ export interface AuditCommandOptions {
   replayPath?: string;
   /** Explain findings, which needs --replay in this host. */
   explain?: boolean;
+  /** Run the ToS pipeline. Fetches the site's policy pages (docs/05). */
+  terms?: boolean;
   outDir?: string;
   /** Skip writing the result to the store. */
   noStore: boolean;
@@ -72,6 +80,11 @@ export async function runAuditCommand(
       "--explain needs --replay <recording.json>: this host has no model (docs/01).",
     );
   }
+  if (options.terms === true && provider === undefined) {
+    throw new Error(
+      "--terms needs --replay <recording.json>: this host has no model (docs/01).",
+    );
+  }
 
   const capabilities = createNodeCapabilities({
     verbose: options.verbose,
@@ -99,9 +112,19 @@ export async function runAuditCommand(
     await capabilities.store.putAudit(result);
   }
 
-  process.stdout.write(
-    options.json ? `${JSON.stringify(result, null, 2)}\n` : formatReport(result),
-  );
+  let tosReport: TosReport | undefined;
+  if (options.terms === true) {
+    tosReport = await runTosPipeline(snapshot, { capabilities });
+  }
+
+  if (options.json) {
+    process.stdout.write(
+      `${JSON.stringify(tosReport === undefined ? result : { ...result, tosReport }, null, 2)}\n`,
+    );
+  } else {
+    process.stdout.write(formatReport(result));
+    if (tosReport !== undefined) process.stdout.write(formatTosReport(tosReport));
+  }
 
   return result;
 }

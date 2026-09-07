@@ -43,13 +43,20 @@ minutes, not cents. See docs/05.
 `AuditStore` in `core` is the interface over this. The CLI implements the same
 interface against the filesystem.
 
-As of M1 it carries audit history only — `putAudit`, `getAudit`, `listAudits`
-(docs/01) — because that is all there is to store. The policy cache, keyed by
-content hash and model, and the ToS report store arrive with the pipeline that
-fills them (M5). `AuditResult` grows the same way: `tosReport` in M5, `trace` in
-M6. Widening the schema before the producer exists would mean either an
-unvalidated `unknown` crossing a boundary, which hard rule 2 forbids, or a
-guess at a shape we would then have to change.
+As of M5 it carries audit history and the policy cache — `putAudit`,
+`getAudit`, `listAudits`, `getCachedExtraction`, `putCachedExtraction`
+(docs/01). `AuditResult` still grows later: `trace` in M6.
+
+The policy cache is keyed by `[contentHash, modelId]`, because the same text
+read by a different model is a different result. Two things about it are worth
+stating:
+
+- It is **not an optimisation**. Spike S2 measured 90–120 seconds of prefill for
+  one policy on the default model, so a cache miss is the difference between a
+  tool someone uses twice and one they use once.
+- A **truncated reading is never cached**. Storing a partial extraction as
+  though it were complete would be wrong on every later run, silently — the
+  worst kind of wrong this project can produce.
 
 ### Eviction
 

@@ -26,6 +26,8 @@ Options:
                   host gets a model: Node has no WebGPU.
   --explain       Have the model write each finding's explanation.
                   Requires --replay here.
+  --terms         Fetch and read the site's policy pages (docs/05).
+                  Requires --replay here.
   --verbose       Print progress and debug output to stderr.
   -h, --help      Show this message.
 

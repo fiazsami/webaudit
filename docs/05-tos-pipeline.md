@@ -30,10 +30,18 @@ stay on allowed domains.
 
 ### 3. Extract text
 
-`@mozilla/readability` on a DOM from `capabilities.dom` (native `DOMParser` in
-the extension, `linkedom` in the CLI) → `turndown` → markdown. Keep
-heading structure; it's the best chunk boundary signal. Store the markdown
-with a content hash so unchanged policies are not re-analysed.
+`@mozilla/readability` → `turndown` → markdown, keeping heading structure,
+which is the best chunk boundary signal there is. Stored with a content hash so
+unchanged policies are not re-analysed.
+
+**This is a host capability, not something core does.** The plan was for core to
+run readability against a document from `capabilities.dom`, but both libraries
+need a real DOM — far more of one than core's minimal port exposes — and core
+has no DOM types at all (hard rule 1). So `DomParser` gained
+`extractArticle(html, url)`: the extension implements it with the browser's
+`DOMParser`, the CLI with linkedom, and core receives markdown. The pipeline
+logic that matters — chunking, prompting, verification, merging, ranking —
+stays pure and testable.
 
 ### 4. Chunk
 
@@ -141,10 +149,23 @@ This is why the stage is worth caching aggressively and why progress reporting
 per chunk matters — the user is watching a progress bar, not waiting on an API.
 
 - Deduplicate near-identical clauses across overlapping chunks (same category
-  - quote overlap > 60%).
+  plus quote containment or >60% prefix overlap). The longer quote wins, on the
+  grounds that it has more of the clause in it.
 - Group by category.
-- If total clause text is small enough, one more model call to produce a
-  category-level synthesis; otherwise per-category calls.
+- **Quote verification happens here, and it is the most important step in the
+  pipeline.** Every quote is checked against the chunk it came from, and dropped
+  if it is not there. A model that invents a clause and a page that injects one
+  produce the same artefact — text claiming to be in the policy that is not —
+  and both fail the same check. Matching normalises whitespace, markdown escapes
+  and typographic punctuation, because turndown's output and a model's copy of
+  it differ in ways that are not about meaning. It does not loosen to "roughly
+  similar": a near-miss is still a quote a reader would go looking for and not
+  find.
+
+The synthesis call this section originally planned is **not** implemented. At 20
+tokens a second the user has already waited minutes, and a count of what was
+found says more than a paragraph of generated prose about it. The overall
+summary is computed deterministically. Revisit if the evals show otherwise.
 
 ### 7. Rank
 

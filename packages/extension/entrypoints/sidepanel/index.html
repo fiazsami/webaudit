@@ -22,9 +22,10 @@
 
     <section class="model" aria-label="Model">
       <div class="model-row">
-        <label for="model">Explanations</label>
+        <label for="model">Model</label>
         <select id="model"></select>
         <button id="explain" type="button" disabled>Explain findings</button>
+        <button id="read-terms" type="button" disabled>Read the terms</button>
       </div>
       <p id="model-note" class="model-note"></p>
       <progress id="model-progress" max="100" value="0" hidden></progress>
@@ -32,6 +33,8 @@
     </section>
 
     <main id="findings" aria-label="Findings"></main>
+
+    <section id="tos" class="tos" aria-label="Terms of service"></section>
 
     <footer>
       <details id="raw">

@@ -3,10 +3,22 @@ import { join } from "node:path";
 
 import {
   AuditResultSchema,
+  ClauseSchema,
   type AuditResult,
   type AuditStore,
   type AuditSummary,
+  type CachedExtraction,
+  type PolicyCacheKey,
 } from "core";
+import { z } from "zod";
+
+const CachedExtractionSchema = z.object({
+  contentHash: z.string(),
+  modelId: z.string(),
+  url: z.string(),
+  clauses: z.array(ClauseSchema),
+  createdAt: z.number(),
+});
 
 /**
  * The Node host's storage capability (docs/01): one JSON file per audit under
@@ -15,6 +27,12 @@ import {
  */
 export function createFileStore(root: string): AuditStore {
   const dir = join(root, "audits");
+  const policyDir = join(root, "policies");
+
+  /** Content hash and model together: the same text read by a different model
+   * is a different result (docs/09). */
+  const cacheFile = (key: PolicyCacheKey): string =>
+    join(policyDir, `${key.contentHash}-${key.modelId.replace(/[^\w.-]/g, "_")}.json`);
 
   return {
     async putAudit(result: AuditResult): Promise<void> {
@@ -54,6 +72,25 @@ export function createFileStore(root: string): AuditStore {
       }
 
       return summaries.sort((a, b) => b.startedAt - a.startedAt);
+    },
+
+    async getCachedExtraction(
+      key: PolicyCacheKey,
+    ): Promise<CachedExtraction | undefined> {
+      try {
+        const raw = await readFile(cacheFile(key), "utf8");
+        return CachedExtractionSchema.parse(JSON.parse(raw));
+      } catch (error) {
+        if (isMissingFile(error)) return undefined;
+        // A cache entry we cannot parse is one from an older build. Treat it as
+        // absent rather than failing the run.
+        return undefined;
+      }
+    },
+
+    async putCachedExtraction(entry: CachedExtraction): Promise<void> {
+      await mkdir(policyDir, { recursive: true });
+      await writeFile(cacheFile(entry), `${JSON.stringify(entry, null, 2)}\n`, "utf8");
     },
   };
 }
