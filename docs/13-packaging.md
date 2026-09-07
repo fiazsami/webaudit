@@ -58,8 +58,14 @@ view in a full tab.
 ## Requirements
 
 A Chromium browser with WebGPU. Measured on Chrome 152 on an Apple M4; anything
-with working WebGPU and enough VRAM for the model should do. Firefox is an open
-question (docs/11 M8).
+with working WebGPU and enough VRAM for the model should do.
+
+Firefox 155 has working WebGPU including `shader-f16`, and `pnpm --filter
+extension exec wxt build -b firefox` produces an MV2 build with the side panel
+mapped to `sidebar_action`. Whether WebLLM runs there is untested — the platform
+was measured, the library was not. Try it with `about:debugging` → **This
+Firefox** → **Load Temporary Add-on**, choosing the manifest in
+`packages/extension/.output/firefox-mv2/`.
 
 ## A local page to try it on
 

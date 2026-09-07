@@ -1,10 +1,20 @@
 import { defineConfig } from "wxt";
 
+/**
+ * Chrome-only permissions. Firefox builds target MV2 (WXT's default for it), so
+ * there is no service worker to outlive and `chrome.offscreen` does not exist —
+ * an MV2 background page persists on its own. `sidePanel` is Chrome's name for
+ * what Firefox calls `sidebar_action`, which WXT translates from the entrypoint
+ * rather than from this list. Asking for either there produces a warning and
+ * nothing else. See docs/11 M8.
+ */
+const CHROME_ONLY_PERMISSIONS = ["sidePanel", "offscreen"];
+
 // docs/08 — permissions, and the CSP loosening WebLLM's WASM runtime needs
 // (recorded as docs/12 T8).
 export default defineConfig({
   srcDir: ".",
-  manifest: {
+  manifest: ({ browser }) => ({
     name: "WebAudit",
     description: "Local website auditing. Nothing leaves your machine.",
     // Gives the extension a toolbar button; setPanelBehavior needs one to open
@@ -12,13 +22,12 @@ export default defineConfig({
     action: { default_title: "Audit this page" },
     permissions: [
       "activeTab",
-      "sidePanel",
       "storage",
       "cookies",
       "scripting",
-      // Spike S3, and M8 if it clears: an offscreen document is the only way
-      // an audit can outlive the side panel (docs/11).
-      "offscreen",
+      // sidePanel, and — for spike S3 and M8 if it clears — offscreen, which is
+      // the only way an audit could outlive the side panel on Chrome (docs/11).
+      ...(browser === "firefox" ? [] : CHROME_ONLY_PERMISSIONS),
     ],
     host_permissions: ["<all_urls>"],
     // Chrome refuses automated navigation to an extension page, so the S2 and
@@ -45,5 +54,5 @@ export default defineConfig({
         "connect-src 'self' https://huggingface.co https://*.huggingface.co https://*.hf.co https://raw.githubusercontent.com",
       ].join("; "),
     },
-  },
+  }),
 });

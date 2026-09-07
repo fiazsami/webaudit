@@ -152,5 +152,13 @@ were.
   `chrome.offscreen` exists only in the background worker, and Chrome 152
   refuses both `--load-extension` and CDP access to a service worker, so this
   needs a person. The workbench has a one-click probe for it.
-- Firefox. Its WebGPU support differs and may rule it out. Not yet checked, and
-  worth checking rather than assuming.
+- Whether WebLLM itself runs on Firefox. The platform does: Firefox 155 has
+  working WebGPU with `shader-f16`, measured headed. Its
+  `maxStorageBufferBindingSize` is 2 GB against Chrome's 4 GB, which matters for
+  larger models and not for the 1.5B default. The probe measured the platform,
+  not the library.
+
+  Worth recording how nearly this went wrong: the first run was headless and
+  reported no adapter, which would have been published as "Firefox rules itself
+  out". Headless Firefox has no GPU. That is the third time in this project that
+  a convenient measurement was an artifact of how it was taken.

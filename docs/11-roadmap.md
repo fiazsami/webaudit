@@ -151,7 +151,33 @@ research notes are not, and are done: `docs/13-packaging.md` and
 - Move the runtime from the side panel to an offscreen document so audits
   survive the panel closing.
 - Auto-audit on navigation (opt-in).
-- Firefox assessment — WebGPU support differs and may rule it out.
+- Firefox assessment — **done, and the answer is not what this line assumed.**
+  Measured on Firefox 155, macOS, headed:
+
+  |                               |                                                  |
+  | ----------------------------- | ------------------------------------------------ |
+  | `navigator.gpu`               | present                                          |
+  | adapter / device              | both acquired                                    |
+  | `shader-f16`                  | supported — the q4f16 models need it             |
+  | `maxStorageBufferBindingSize` | 2,147,483,644 (Chrome 152 reports 4,294,967,292) |
+
+  WebGPU does not rule Firefox out. The 2 GB binding limit against Chrome's 4 GB
+  is the real difference and is worth remembering when a larger model is
+  considered; the 1.5B default is well inside it.
+
+  A first headless run reported `requestAdapter returned null`, which would have
+  been a wrong conclusion published as fact. Headless Firefox has no GPU. The
+  headed run is the one that counts.
+
+  **Firefox also sidesteps M8's whole problem.** WXT targets MV2 there, so the
+  background is a persistent page rather than a service worker that Chrome
+  reclaims — there is nothing to outlive and `chrome.offscreen` does not exist.
+  `sidePanel` and `offscreen` are now conditional in the manifest, since asking
+  for them on Firefox produces a warning and nothing else.
+
+  What remains unverified is whether WebLLM itself runs there — the probe
+  measured the platform, not the library.
+
 - Packaging and load-unpacked instructions.
 - `docs/research-notes.md`: what worked, which models are usable, injection
   findings, where the architecture was wrong.
