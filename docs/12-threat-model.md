@@ -189,6 +189,14 @@ and the same pages render audit output derived from untrusted content.
   vendors' domains is a wider grant than the original list pretended to be, and
   the honest reason to accept it is that a narrower one does not work.
 
+- The audit's own allowed-domain list separates two things that were once
+  conflated: whether an entry is a real host, and whether it may match
+  subdomains. Only the second can over-reach, so subdomain matching is limited
+  to dotted names that are not IP addresses. `localhost` matches `localhost` and
+  not `evil.localhost`; a public suffix is refused as an entry outright. The
+  first version refused `localhost` altogether, which meant the extension could
+  not fetch the headers of a page served on it.
+
 ## Residual risk
 
 Small local models are more susceptible to injection than frontier models, and

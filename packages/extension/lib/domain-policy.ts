@@ -11,15 +11,15 @@
 const ALLOWED_PROTOCOLS = new Set(["http:", "https:"]);
 
 /**
- * Refused as an allowlist entry.
+ * Names that are not sites, only categories of site.
  *
- * An allowlist is built from the audited page's own hostname, so a bare public
- * suffix should never appear in one. If a bug ever put "com" or "co.uk" there,
- * subdomain matching would silently open the entire suffix. This is a short
- * denylist rather than a real public-suffix list — `tldts` arrives in M3 for the
- * trackers analyzer and this should switch to it then.
+ * An allowlist is built from the audited page's own hostname, so one of these
+ * should never appear in it. If a bug ever put "com" there, subdomain matching
+ * would open the entire suffix. This is a short denylist rather than a real
+ * public-suffix list — `tldts` is already a dependency for the trackers
+ * analyzer and this should switch to it.
  */
-const REFUSED_ENTRIES = new Set([
+const PUBLIC_SUFFIXES = new Set([
   "com",
   "org",
   "net",
@@ -38,7 +38,6 @@ const REFUSED_ENTRIES = new Set([
   "co.jp",
   "com.br",
   "co.in",
-  "localhost",
 ]);
 
 export type DomainVerdict =
@@ -50,9 +49,26 @@ export function normalizeAllowedDomain(domain: string): string | undefined {
     .toLowerCase()
     .replace(/^\.+/, "")
     .replace(/\.+$/, "");
-  if (normalized === "" || REFUSED_ENTRIES.has(normalized)) return undefined;
-  if (!normalized.includes(".")) return undefined;
+
+  if (normalized === "") return undefined;
+  // A suffix is a category of site, not a site. Nothing else is refused here:
+  // `localhost`, an intranet name and an IP address are all real hosts someone
+  // may legitimately be auditing, and refusing them meant refusing to fetch the
+  // very page under audit.
+  if (PUBLIC_SUFFIXES.has(normalized)) return undefined;
   return normalized;
+}
+
+/**
+ * May this entry match subdomains, or only itself?
+ *
+ * Subdomain matching is the part that can over-reach, so it is limited to
+ * dotted names that are not IP addresses. `localhost` matches `localhost` and
+ * nothing else; `example.com` also matches `legal.example.com`.
+ */
+function allowsSubdomains(domain: string): boolean {
+  if (!domain.includes(".")) return false;
+  return !/^\d{1,3}(\.\d{1,3}){3}$/.test(domain);
 }
 
 /** Drop anything unusable so a bad entry cannot widen the list. */
@@ -88,9 +104,10 @@ export function checkUrlAllowed(
   if (hostname === "") return { allowed: false, reason: "URL has no host" };
 
   for (const domain of allowedDomains) {
-    if (hostname === domain || hostname.endsWith(`.${domain}`)) {
-      return { allowed: true, hostname };
-    }
+    const matches =
+      hostname === domain ||
+      (allowsSubdomains(domain) && hostname.endsWith(`.${domain}`));
+    if (matches) return { allowed: true, hostname };
   }
 
   return { allowed: false, reason: `${hostname} is not in this audit's allowlist` };

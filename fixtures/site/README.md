@@ -22,6 +22,16 @@ pnpm serve-fixture
 | `policy-presence/no-privacy-policy-link`    | no privacy link                                 |
 | `policy-presence/no-terms-link`             | no terms link                                   |
 
+The header and CSP analyzers fire too, against whatever the local server sends
+— `python3 -m http.server` sends almost nothing, so expect
+`headers/csp-missing`, `headers/x-content-type-options-missing`,
+`headers/referrer-policy-missing` and `headers/framing-not-restricted`.
+
+If you instead see `runner/analyzer-skipped` for headers and csp, the background
+worker refused to refetch the page. That was a real bug once: the allowlist
+derived from the page's own hostname rejected `localhost`, so the one page built
+to exercise the header analyzers was the one page that could not.
+
 Cookie rules do not fire here: the page sets none. To exercise those, add a
 `Set-Cookie` header in front of it or visit a site that sets cookies.
 
