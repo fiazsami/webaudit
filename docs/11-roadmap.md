@@ -144,7 +144,9 @@ trace view are built; seeing them in a browser is part of the browser check
 
 ## M8 — Offscreen, auto-audit, polish
 
-_Gated on spike S3._
+_The offscreen migration and auto-audit are gated on spike S3. Packaging and the
+research notes are not, and are done: `docs/13-packaging.md` and
+`docs/research-notes.md`._
 
 - Move the runtime from the side panel to an offscreen document so audits
   survive the panel closing.
@@ -189,6 +191,20 @@ Timeboxed. Each writes its result back into the doc it affects.
   document, which `chrome.offscreen` reason applies (`WORKERS` is the closest;
   there is no WebGPU reason), and whether Chrome closes it on idle. Fallback:
   background service worker with MLC's heartbeat keep-alive.
+
+  **Blocked on a person, and it was worth establishing why.** `chrome.offscreen`
+  exists only in the background service worker, and on Chrome 152 that context
+  cannot be reached: `--load-extension` is ignored (verified with a profile
+  inspection, not assumed), and CDP's `Extensions.loadUnpacked` loads an
+  extension whose service worker never becomes a target. The route that worked
+  for S2 — serving the build over localhost — does not help, because there is no
+  extension context there at all.
+
+  What is settled: `browser.offscreen` is present in the type surface and
+  `WORKERS` is the reason to try. What is not: whether WebGPU works there, and
+  whether Chrome reclaims the document. The workbench's Models view has a
+  one-click probe that creates the document and reports a heartbeat every five
+  seconds; a gap longer than fifteen means Chrome closed it.
 
 ## Explicitly deferred
 

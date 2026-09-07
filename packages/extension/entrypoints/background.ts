@@ -78,6 +78,17 @@ async function handle(request: Request): Promise<Reply> {
       );
     case "cookies.get":
       return { type: "cookies.list", payload: await readCookies(request.payload.url) };
+    case "s3.start": {
+      const url = await startS3Probe();
+      return { type: "cookies.list", payload: [{ name: url }] };
+    }
+
+    case "s3.report":
+      // Spike S3: the offscreen probe reporting in. Kept in session storage so
+      // the side panel can read it without the worker having to stay alive —
+      // which is the very thing being measured.
+      return recordS3Report(request.payload);
+
     case "snapshot.build":
       // Background → content script only; the worker never receives it.
       throw new MessageError("invalid-message", "snapshot.build is not for the worker");
@@ -220,6 +231,46 @@ async function fetchForAudit(
       body: await response.text(),
     },
   };
+}
+
+/**
+ * Spike S3 (docs/11): can an offscreen document run WebGPU, and does Chrome
+ * reclaim it when idle?
+ *
+ * Neither question can be answered from a terminal — `chrome.offscreen` exists
+ * only in this context, and Chrome 152 refuses both `--load-extension` and CDP
+ * access to an extension's service worker. So the measurement is here, one
+ * message away, and the side panel shows the result.
+ */
+async function startS3Probe(): Promise<string> {
+  const url = browser.runtime.getURL("/spike-s3.html");
+
+  const existing = await browser.offscreen.hasDocument?.();
+  if (existing === true) await browser.offscreen.closeDocument();
+
+  await browser.storage.session.set({ "s3:reports": [], "s3:createdAt": Date.now() });
+
+  // WORKERS is the closest documented reason; there is no WebGPU one. Whether
+  // Chrome accepts it for this purpose is part of what S3 answers.
+  await browser.offscreen.createDocument({
+    url,
+    // "WORKERS" is the closest documented reason; there is no WebGPU one.
+    // Typed loosely because the enum's shape varies between the browser type
+    // packages, and the string is what the API actually takes.
+    reasons: ["WORKERS"] as never,
+    justification:
+      "Measuring whether WebGPU is available in an offscreen document and how long Chrome keeps it (spike S3).",
+  });
+
+  return url;
+}
+
+async function recordS3Report(payload: unknown): Promise<Reply> {
+  const stored = await browser.storage.session.get("s3:reports");
+  const reports = Array.isArray(stored["s3:reports"]) ? stored["s3:reports"] : [];
+  reports.push(payload);
+  await browser.storage.session.set({ "s3:reports": reports });
+  return { type: "cookies.list", payload: [] };
 }
 
 async function readCookies(url: string): Promise<CookieRef[]> {

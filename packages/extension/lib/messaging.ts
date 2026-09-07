@@ -60,11 +60,39 @@ export const BuildSnapshotRequestSchema = z.object({
   payload: z.object({ url: z.url() }),
 });
 
+/**
+ * Spike S3's offscreen probe reporting in (docs/11). Present in normal builds
+ * because the offscreen document is a real entrypoint; it is only ever created
+ * on request.
+ */
+export const S3ReportSchema = z.object({
+  type: z.literal("s3.report"),
+  payload: z.object({
+    kind: z.string(),
+    at: z.number(),
+    aliveMs: z.number(),
+    gpu: z.object({
+      available: z.boolean(),
+      vendor: z.string().optional(),
+      architecture: z.string().optional(),
+      error: z.string().optional(),
+    }),
+  }),
+});
+
+/** Ask the worker to start the S3 offscreen probe (docs/11). */
+export const S3StartSchema = z.object({
+  type: z.literal("s3.start"),
+  payload: z.object({}).default({}),
+});
+
 export const RequestSchema = z.discriminatedUnion("type", [
   CaptureRequestSchema,
   FetchRequestSchema,
   CookiesRequestSchema,
   BuildSnapshotRequestSchema,
+  S3ReportSchema,
+  S3StartSchema,
 ]);
 export type Request = z.infer<typeof RequestSchema>;
 

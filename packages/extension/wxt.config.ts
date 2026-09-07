@@ -10,7 +10,16 @@ export default defineConfig({
     // Gives the extension a toolbar button; setPanelBehavior needs one to open
     // the side panel from.
     action: { default_title: "Audit this page" },
-    permissions: ["activeTab", "sidePanel", "storage", "cookies", "scripting"],
+    permissions: [
+      "activeTab",
+      "sidePanel",
+      "storage",
+      "cookies",
+      "scripting",
+      // Spike S3, and M8 if it clears: an offscreen document is the only way
+      // an audit can outlive the side panel (docs/11).
+      "offscreen",
+    ],
     host_permissions: ["<all_urls>"],
     // Chrome refuses automated navigation to an extension page, so the S2 and
     // evals drivers cannot open their harnesses without this. Gated on an env

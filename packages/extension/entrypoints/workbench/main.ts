@@ -7,6 +7,7 @@ import {
 
 import { createIdbStore, openWebAuditDb } from "../../lib/store-idb.js";
 import { MODEL_CHOICES } from "../../lib/models.js";
+import { loadSettings, saveSettings, type Settings } from "../../lib/settings.js";
 import { formatMs, renderTrace } from "./render-trace.js";
 
 /**
@@ -18,7 +19,7 @@ import { formatMs, renderTrace } from "./render-trace.js";
  */
 
 const views = new Map<string, HTMLElement>(
-  ["dashboard", "history", "trace", "models"].map((name) => [
+  ["dashboard", "history", "trace", "models", "settings"].map((name) => [
     name,
     requireElement(name),
   ]),
@@ -54,6 +55,9 @@ async function show(name: string): Promise<void> {
       break;
     case "models":
       renderModels();
+      break;
+    case "settings":
+      await renderSettings();
       break;
   }
 }
@@ -189,6 +193,75 @@ async function pickAuditForTrace(): Promise<AuditResult | undefined> {
   return undefined;
 }
 
+/**
+ * Spike S3 (docs/11): does WebGPU work in an offscreen document, and does
+ * Chrome reclaim it when idle?
+ *
+ * A button rather than a script because neither question can be answered from a
+ * terminal — `chrome.offscreen` exists only in the background worker, and
+ * Chrome 152 refuses both `--load-extension` and CDP access to an extension's
+ * service worker. Someone has to click it, so the least that can be done is
+ * make it one click.
+ */
+function renderS3(view: HTMLElement): void {
+  const heading = document.createElement("h2");
+  heading.textContent = "Spike S3 — offscreen document";
+  const explain = note(
+    "Creates an offscreen document and has it report WebGPU availability every 5 seconds. Leave this tab open: the question is whether Chrome reclaims the document when it goes idle.",
+  );
+
+  const button = document.createElement("button");
+  button.type = "button";
+  button.textContent = "Start the probe";
+
+  const output = document.createElement("pre");
+  output.className = "empty";
+
+  let poll: ReturnType<typeof setInterval> | undefined;
+
+  button.addEventListener("click", () => {
+    button.disabled = true;
+    output.textContent = "starting…";
+
+    void browser.runtime
+      .sendMessage({ id: "s3", type: "s3.start", payload: {} })
+      .then(async () => {
+        if (poll !== undefined) clearInterval(poll);
+        poll = setInterval(() => void refresh(), 2000);
+        await refresh();
+      })
+      .catch((error: unknown) => {
+        output.textContent = `failed: ${String(error)}`;
+        button.disabled = false;
+      });
+  });
+
+  async function refresh(): Promise<void> {
+    const stored = await browser.storage.session.get(["s3:reports", "s3:createdAt"]);
+    const reports = Array.isArray(stored["s3:reports"]) ? stored["s3:reports"] : [];
+    const createdAt =
+      typeof stored["s3:createdAt"] === "number" ? stored["s3:createdAt"] : 0;
+    const last = reports.at(-1) as
+      { at?: number; gpu?: { available?: boolean } } | undefined;
+
+    const sinceLast = last?.at === undefined ? 0 : Date.now() - last.at;
+    output.textContent = [
+      `reports: ${String(reports.length)}`,
+      `alive for: ${formatMs(Date.now() - createdAt)}`,
+      `WebGPU in offscreen: ${last?.gpu?.available === true ? "yes" : last === undefined ? "(no report yet)" : "NO"}`,
+      last?.gpu?.available === true ? `adapter: ${JSON.stringify(last.gpu)}` : "",
+      // Heartbeats are every 5s; a longer gap means Chrome reclaimed it.
+      sinceLast > 15_000
+        ? `LAST HEARTBEAT ${formatMs(sinceLast)} AGO — the document appears to have been closed.`
+        : "heartbeat is current",
+    ]
+      .filter((line) => line !== "")
+      .join("\n");
+  }
+
+  view.append(heading, explain, button, output);
+}
+
 function renderModels(): void {
   const view = views.get("models");
   if (view === undefined) return;
@@ -216,6 +289,84 @@ function renderModels(): void {
       })),
     ),
   );
+
+  renderS3(view);
+}
+
+/** Budgets, allowed domains and the history cap (docs/09). */
+async function renderSettings(): Promise<void> {
+  const view = views.get("settings");
+  if (view === undefined) return;
+
+  const settings = await loadSettings();
+  view.replaceChildren(heading("Settings"));
+
+  const form = document.createElement("form");
+  form.className = "settings";
+
+  const fields: Array<[keyof Settings, string, string]> = [
+    ["maxSteps", "Model calls per audit", "number"],
+    ["maxNetworkFetches", "Network fetches per audit", "number"],
+    ["historyCap", "Audits to keep", "number"],
+    ["extraAllowedDomains", "Extra allowed domains (comma separated)", "text"],
+  ];
+
+  const inputs = new Map<keyof Settings, HTMLInputElement>();
+
+  for (const [key, label, type] of fields) {
+    const row = document.createElement("label");
+    row.className = "setting";
+    const name = document.createElement("span");
+    name.textContent = label;
+    const input = document.createElement("input");
+    input.type = type;
+    const value = settings[key];
+    input.value = Array.isArray(value) ? value.join(", ") : String(value);
+    inputs.set(key, input);
+    row.append(name, input);
+    form.append(row);
+  }
+
+  const warning = note(
+    "Every extra allowed domain widens what one audit may fetch. The background worker enforces this list on its own authority (docs/12 T2), so it is the real boundary rather than a hint.",
+  );
+
+  const save = document.createElement("button");
+  save.type = "submit";
+  save.textContent = "Save";
+
+  const status = document.createElement("span");
+  status.className = "empty";
+
+  form.addEventListener("submit", (event) => {
+    event.preventDefault();
+    const domains = (inputs.get("extraAllowedDomains")?.value ?? "")
+      .split(",")
+      .map((domain) => domain.trim())
+      .filter((domain) => domain !== "");
+
+    const next: Settings = {
+      ...settings,
+      maxSteps: Number(inputs.get("maxSteps")?.value ?? settings.maxSteps),
+      maxNetworkFetches: Number(
+        inputs.get("maxNetworkFetches")?.value ?? settings.maxNetworkFetches,
+      ),
+      historyCap: Number(inputs.get("historyCap")?.value ?? settings.historyCap),
+      extraAllowedDomains: domains,
+    };
+
+    void saveSettings(next)
+      .then(() => {
+        status.textContent = "Saved.";
+      })
+      .catch((error: unknown) => {
+        // The schema rejects anything that would make a run unbounded.
+        status.textContent = `Not saved: ${error instanceof Error ? error.message : String(error)}`;
+      });
+  });
+
+  form.append(save, status);
+  view.append(form, warning);
 }
 
 // --- small builders -------------------------------------------------------

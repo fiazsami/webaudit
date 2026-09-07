@@ -66,6 +66,8 @@ See `docs/01-architecture.md`.
 | `docs/10-dependencies.md`          | Third-party repositories and licensing notes          |
 | `docs/11-roadmap.md`               | Milestones in build order, and spikes                 |
 | `docs/12-threat-model.md`          | What we are defending against                         |
+| `docs/13-packaging.md`             | Building the extension and loading it from source     |
+| `docs/research-notes.md`           | What worked, what the numbers said, what was wrong    |
 
 ## Status
 
@@ -102,7 +104,13 @@ perfectly, and the 0.5B model paraphrases or invents 62% of its quotes. Quote
 verification caught all of them. The failure mode of a small model here is not
 malformed output a parser rejects — it is well-formed output that is not true.
 
-Still to come: offscreen documents and auto-audit (M8).
+`docs/research-notes.md` is the retrospective: what held up, what the
+measurements said, and the five things the design docs got wrong before any code
+was written.
+
+Still to come: moving the runtime to an offscreen document so audits survive the
+panel closing, and auto-audit on navigation. Both wait on spike S3, which needs
+a browser — the workbench has a one-click probe for it.
 
 Milestones are in `docs/11-roadmap.md`; work is tracked in
 [beads](https://github.com/gastownhall/beads) — `bd ready`.
