@@ -107,11 +107,11 @@ A Chromium browser with WebGPU. Firefox support is an open question
 from HuggingFace and the compiled model library from `raw.githubusercontent.com`.
 That is the only substantial network egress in the system.
 
-It is **not** currently verified with SRI hashes, despite what an earlier version
-of this file said. WebLLM has the mechanism, but none of its 163 prebuilt models
-ship integrity hashes, so the hashes have to be produced and pinned by us —
-measured and written up in spike S2, tracked for M4, and stated honestly in
-`docs/12` T7 until it is done.
+The config, tokenizer, and model-library WASM are verified against SRI hashes we
+compute and commit ourselves (`pnpm build-model-integrity`), because none of
+WebLLM's 163 prebuilt models ship any. **The weight shards are not verified** —
+WebLLM has no mechanism for it, and the gigabytes are exactly the part that goes
+unchecked. `docs/12` T7 says what that does and does not buy.
 
 ## Licence
 

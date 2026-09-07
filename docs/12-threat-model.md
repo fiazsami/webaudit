@@ -140,10 +140,21 @@ come from HuggingFace — now through its Xet backend on regional hosts such as
 `raw.githubusercontent.com`. The GitHub fetch is the more interesting one for
 this threat, because it is executable code rather than data.
 
-- Pin per-model SRI `integrity` hashes with `onFailure: "error"`, so a
-  substituted or corrupted weight file fails loudly rather than running. **Not
-  yet done — the hashes have to be produced by us (see the M4 issue).** Cover
-  `model_lib` as well as the weights; it is the WASM.
+- Pin per-model SRI `integrity` hashes with `onFailure: "error"`. **Done in M4**
+  — `pnpm build-model-integrity` computes them and they are committed at
+  `packages/extension/lib/model-integrity.json`, because a control that exists
+  only on the machine that generated it is not a control. Models we have no
+  hashes for are left out of the config entirely rather than offered unverified.
+
+- **The weights are still not verified, and cannot be.** WebLLM calls
+  `verifyIntegrity` in exactly three places: the `mlc-chat-config.json`, the
+  tokenizer files, and the model-library `.wasm`. There is no field for the
+  weight shards, which are the gigabytes this threat is nominally about. What
+  pinning buys is real — the `.wasm` is the executable part, and a swapped
+  tokenizer or config would change how the model behaves — but a poisoned weight
+  file would pass. Closing that needs either upstream support or fetching the
+  weights ourselves and checking them before handing them to WebLLM, which is
+  not something to bolt on quietly.
 - The download is visible in the UI (docs/07 `model.progress`) — it should never
   be a surprise.
 - The requests go to two CDNs and reveal which model the user is fetching. They

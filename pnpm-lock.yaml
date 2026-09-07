@@ -41,6 +41,9 @@ importers:
       '@eslint/js':
         specifier: 'catalog:'
         version: 10.0.1(eslint@10.10.0(jiti@2.7.0))
+      '@mlc-ai/web-llm':
+        specifier: ^0.2.84
+        version: 0.2.84
       eslint:
         specifier: 'catalog:'
         version: 10.10.0(jiti@2.7.0)

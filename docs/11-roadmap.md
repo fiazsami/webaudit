@@ -78,6 +78,11 @@ _Gated on spike S2._
 Done when: explanations render in the side panel, and a recorded trace replays
 green in Node tests on a machine with no GPU.
 
+Status: the replay half is done and is a test — `packages/cli/src/__tests__/replay.test.ts`
+runs against `fixtures/recordings/` with no model present. The adapter, the
+model manager, the curated model set, and SRI pinning are done. Explanations
+rendering in the panel is part of the browser check (web-rhp.7).
+
 ## M5 — ToS pipeline
 
 - Discover, fetch, extract, chunk, extract-clauses, merge, rank, report

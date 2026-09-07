@@ -1,0 +1,37 @@
+{
+  "note": "Covers config, tokenizer and model_lib only. WebLLM does not verify weight shards (docs/12 T7).",
+  "webllmVersion": "prebuilt",
+  "integrity": {
+    "Qwen2.5-1.5B-Instruct-q4f16_1-MLC": {
+      "config": "sha256-faSVQhLT8hqRzD5pPRefYyE/1XNWeWhH9l1/lUeKH54=",
+      "model_lib": "sha256-D861C7r0fv3DH86WtywRXct/UiHIWr5qn8At2p0db8M=",
+      "tokenizer": {
+        "tokenizer.json": "sha256-wDghF+oynN8JcEETL21zWSS2l5JNb2/DlFcT6WzodTk=",
+        "vocab.json": "sha256-yhDX6fs+0YV13R4neiV5wW0QjjLydDloSvoOELFECRA=",
+        "merges.txt": "sha256-WZurVAdQiHdLFzP96GXVvXR8vMelR8W8EmEOh04m9eM=",
+        "tokenizer_config.json": "sha256-UhRgDuRcoviHzi7t6JEDeKARHqmdZXQovLzpR3jmWpI="
+      },
+      "onFailure": "error"
+    },
+    "Qwen2.5-0.5B-Instruct-q4f16_1-MLC": {
+      "config": "sha256-VDnAO99O58/g+Kl6ZYgBiwFE3BKAxxu66ihTzbq4dLk=",
+      "model_lib": "sha256-YRtYT9RK8niUFjlWA5Zaa8B08hJxiK9Zf03aAW+9qxk=",
+      "tokenizer": {
+        "tokenizer.json": "sha256-wDghF+oynN8JcEETL21zWSS2l5JNb2/DlFcT6WzodTk=",
+        "vocab.json": "sha256-yhDX6fs+0YV13R4neiV5wW0QjjLydDloSvoOELFECRA=",
+        "merges.txt": "sha256-WZurVAdQiHdLFzP96GXVvXR8vMelR8W8EmEOh04m9eM=",
+        "tokenizer_config.json": "sha256-UhRgDuRcoviHzi7t6JEDeKARHqmdZXQovLzpR3jmWpI="
+      },
+      "onFailure": "error"
+    },
+    "Llama-3.1-8B-Instruct-q4f16_1-MLC": {
+      "config": "sha256-B06ZELdcsxiUJ0uaAwZvZY98FT5+NzdwxgIt6A+d5y0=",
+      "model_lib": "sha256-u9Cv7qHVsddBaEQmuY5uKFS+Q5fDfrNEGZ+xKz5IkgI=",
+      "tokenizer": {
+        "tokenizer.json": "sha256-u8GQTTUWnFQt/74fdYmlmU7HQm2eW2CdB7q4dvMul6s=",
+        "tokenizer_config.json": "sha256-JOim3CVHFktwAuMSXxC0FRBWRPzwK/mti2dMh7HqrtY="
+      },
+      "onFailure": "error"
+    }
+  }
+}

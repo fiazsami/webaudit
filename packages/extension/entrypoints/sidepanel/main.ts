@@ -16,6 +16,7 @@ import {
   parseReply,
   SnapshotReplySchema,
 } from "../../lib/messaging.js";
+import { createVerifiedAppConfig } from "../../lib/model-integrity.js";
 import { DEFAULT_MODEL_ID, findModel, MODEL_CHOICES } from "../../lib/models.js";
 import { createIdbStore, openWebAuditDb } from "../../lib/store-idb.js";
 import {
@@ -189,6 +190,9 @@ function describeSelectedModel(): void {
 function ensureProvider(): WebLlmProvider {
   provider ??= createWebLlmProvider({
     modelId: modelSelect.value,
+    // Verified rather than prebuilt: WebLLM's own records carry no hashes, so
+    // without this the download is unchecked (docs/12 T7).
+    appConfig: createVerifiedAppConfig(),
     onProgress: (report) => {
       modelProgress.hidden = false;
       modelProgressText.hidden = false;

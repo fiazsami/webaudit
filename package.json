@@ -14,6 +14,7 @@
     "build-hsts-preload": "node scripts/build-hsts-preload.mjs",
     "build-library-db": "node scripts/build-library-db.mjs",
     "build-tracker-db": "node scripts/build-tracker-db.mjs",
+    "build-model-integrity": "node scripts/build-model-integrity.mjs",
     "typecheck": "pnpm -r typecheck",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
@@ -22,6 +23,7 @@
   },
   "devDependencies": {
     "@eslint/js": "catalog:",
+    "@mlc-ai/web-llm": "^0.2.84",
     "eslint": "catalog:",
     "globals": "catalog:",
     "prettier": "catalog:",
