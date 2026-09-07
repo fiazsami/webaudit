@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="script-src 'self' 'wasm-unsafe-eval'; object-src 'self'; connect-src 'self' https://huggingface.co https://*.huggingface.co https://*.hf.co https://raw.githubusercontent.com"
+    />
+    <title>WebAudit — evals</title>
+    <style>
+      body {
+        font:
+          13px/1.6 ui-monospace,
+          monospace;
+        margin: 1.5rem;
+        max-width: 60rem;
+      }
+      pre {
+        white-space: pre-wrap;
+        word-break: break-word;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Model comparison</h1>
+    <p>
+      Runs the labelled policy fixtures against a model and scores the result (docs/05).
+      Driven over CDP; results are read from
+      <code>window.__evals</code>.
+    </p>
+    <pre id="log"></pre>
+    <script type="module" src="./main.ts"></script>
+  </body>
+</html>

@@ -1,0 +1,273 @@
+:root {
+  --bg: #ffffff;
+  --fg: #1a1a1a;
+  --muted: #5c5c5c;
+  --line: #e0e0e0;
+  --panel: #f7f7f7;
+  --accent: #33618a;
+  --critical: #8b0000;
+  --high: #b34700;
+  --medium: #8a6d00;
+  --low: #33618a;
+  --info: #5c5c5c;
+  --model: #5a3d8a;
+  --tool: #1f6b4a;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #17181a;
+    --fg: #e8e8e8;
+    --muted: #a0a0a0;
+    --line: #303236;
+    --panel: #1f2124;
+    --accent: #8fc4f5;
+    --critical: #ff8a80;
+    --high: #ffb26b;
+    --medium: #ffd970;
+    --low: #8fc4f5;
+    --info: #a0a0a0;
+    --model: #c4a7f0;
+    --tool: #7fd6ac;
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--fg);
+  font:
+    14px/1.6 system-ui,
+    sans-serif;
+}
+
+header {
+  padding: 1rem 1.5rem 0;
+  border-bottom: 1px solid var(--line);
+}
+
+h1 {
+  margin: 0 0 0.6rem;
+  font-size: 1.1rem;
+}
+
+nav {
+  display: flex;
+  gap: 0.25rem;
+}
+
+nav button {
+  padding: 0.45rem 0.9rem;
+  border: none;
+  border-bottom: 2px solid transparent;
+  background: none;
+  color: var(--muted);
+  font: inherit;
+  cursor: pointer;
+}
+
+nav button.active {
+  color: var(--fg);
+  border-bottom-color: var(--accent);
+}
+
+main {
+  padding: 1.25rem 1.5rem 3rem;
+  max-width: 68rem;
+}
+
+h2 {
+  margin: 0 0 0.75rem;
+  font-size: 1rem;
+}
+
+.empty {
+  color: var(--muted);
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+}
+
+th,
+td {
+  text-align: left;
+  padding: 0.45rem 0.6rem;
+  border-bottom: 1px solid var(--line);
+  vertical-align: top;
+}
+
+th {
+  color: var(--muted);
+  font-weight: 600;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+tbody tr {
+  cursor: pointer;
+}
+
+tbody tr:hover {
+  background: var(--panel);
+}
+
+.counts {
+  display: inline-flex;
+  gap: 0.35rem;
+}
+
+.count {
+  padding: 0.05rem 0.4rem;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  border: 1px solid currentcolor;
+}
+
+/* --- the trace view: the main research payoff (docs/09) --- */
+
+.trace-summary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.25rem;
+  margin-bottom: 1.25rem;
+  padding: 0.75rem 0.9rem;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--panel);
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+}
+
+.stat .label {
+  color: var(--muted);
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.stat .value {
+  font-size: 1.05rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.step {
+  display: grid;
+  grid-template-columns: 2.5rem 6rem 1fr 6rem;
+  gap: 0.75rem;
+  padding: 0.55rem 0.6rem;
+  border-bottom: 1px solid var(--line);
+  align-items: start;
+}
+
+.step:hover {
+  background: var(--panel);
+}
+
+.step .index {
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+  font-size: 0.8rem;
+}
+
+.step .kind {
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.step[data-kind="model"] .kind {
+  color: var(--model);
+}
+.step[data-kind="tool"] .kind {
+  color: var(--tool);
+}
+.step[data-kind="budget"] .kind {
+  color: var(--high);
+}
+.step[data-kind="error"] .kind {
+  color: var(--critical);
+}
+
+.step .body {
+  min-width: 0;
+}
+
+.step .cost {
+  color: var(--muted);
+  font-size: 0.75rem;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+
+.reasoning {
+  margin: 0 0 0.2rem;
+}
+
+.step pre {
+  margin: 0.3rem 0 0;
+  padding: 0.4rem 0.55rem;
+  background: var(--panel);
+  border-radius: 4px;
+  font-size: 0.75rem;
+  white-space: pre-wrap;
+  word-break: break-word;
+  max-height: 14rem;
+  overflow: auto;
+}
+
+.step .tool-name {
+  font-weight: 600;
+}
+
+/* A bar showing where the time actually went. */
+.timeline {
+  display: flex;
+  height: 0.5rem;
+  margin-bottom: 1rem;
+  border-radius: 999px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+}
+
+.timeline span {
+  display: block;
+}
+
+.timeline .model {
+  background: var(--model);
+}
+.timeline .tool {
+  background: var(--tool);
+}
+.timeline .other {
+  background: var(--line);
+}
+
+.legend {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+  color: var(--muted);
+  font-size: 0.75rem;
+}
+
+.legend .swatch {
+  display: inline-block;
+  width: 0.7rem;
+  height: 0.7rem;
+  border-radius: 2px;
+  margin-right: 0.3rem;
+  vertical-align: -1px;
+}

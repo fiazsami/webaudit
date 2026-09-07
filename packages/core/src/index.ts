@@ -219,4 +219,20 @@ export {
   ORCHESTRATOR_PROMPT,
 } from "./agent/prompts.js";
 
+// Evals (docs/05, docs/11 M7)
+export { overallScore, scoreExtraction } from "./evals/score.js";
+export type { ScoreInput } from "./evals/score.js";
+export {
+  EvalFixtureResultSchema,
+  EvalMetricsSchema,
+  EvalModelResultSchema,
+  EvalRunSchema,
+} from "./evals/schema.js";
+export type {
+  EvalFixtureResult,
+  EvalMetrics,
+  EvalModelResult,
+  EvalRun,
+} from "./evals/schema.js";
+
 export { stableHash } from "./hash.js";

@@ -92,7 +92,17 @@ instructions never reach the orchestrator's context at all. Four injection
 fixtures assert exactly that, and the test was verified to fail when the
 mechanism was deliberately broken.
 
-Still to come: the workbench and evals (M7).
+A full-page workbench reads the same store: dashboard, history, and a trace view
+that shows what the agent decided, what it was shown, what each step cost, and
+where the time went.
+
+**The model comparison is committed** (`evals/results/`). The first run says
+something worth knowing: both Qwen2.5-0.5B and 1.5B hold the output schema
+perfectly, and the 0.5B model paraphrases or invents 62% of its quotes. Quote
+verification caught all of them. The failure mode of a small model here is not
+malformed output a parser rejects — it is well-formed output that is not true.
+
+Still to come: offscreen documents and auto-audit (M8).
 
 Milestones are in `docs/11-roadmap.md`; work is tracked in
 [beads](https://github.com/gastownhall/beads) — `bd ready`.

@@ -1,0 +1,162 @@
+{
+  "environment": "Apple M4, macOS 26, Chrome 152, WebGPU on Metal 3",
+  "startedAt": "2026-09-07T14:40:05.476Z",
+  "models": [
+    {
+      "modelId": "Qwen2.5-0.5B-Instruct-q4f16_1-MLC",
+      "loadMs": 1328,
+      "fixtures": [
+        {
+          "fixture": "fixture-shop",
+          "metrics": {
+            "recall": 0.1,
+            "quoteAccuracy": 0.375,
+            "schemaAdherence": 1,
+            "falseAlarms": 0,
+            "clausesExtracted": 6,
+            "clausesDropped": 10,
+            "chunks": 15,
+            "inputTokens": 5240,
+            "outputTokens": 1299,
+            "wallMs": 51573
+          },
+          "missed": [
+            {
+              "category": "user-content-licence",
+              "substring": "irrevocable, perpetual"
+            },
+            {
+              "category": "data-collection",
+              "substring": "device\nidentifiers"
+            },
+            {
+              "category": "data-sharing",
+              "substring": "advertising partners"
+            },
+            {
+              "category": "data-retention",
+              "substring": "indefinitely"
+            },
+            {
+              "category": "auto-renewal",
+              "substring": "renew automatically"
+            },
+            {
+              "category": "unilateral-changes",
+              "substring": "at any time without notice"
+            },
+            {
+              "category": "arbitration",
+              "substring": "class action"
+            },
+            {
+              "category": "liability",
+              "substring": "total liability"
+            },
+            {
+              "category": "age-restriction",
+              "substring": "at least 16"
+            }
+          ]
+        },
+        {
+          "fixture": "social-app",
+          "metrics": {
+            "recall": 0.2,
+            "quoteAccuracy": 0.38461538461538464,
+            "schemaAdherence": 1,
+            "falseAlarms": 0,
+            "clausesExtracted": 5,
+            "clausesDropped": 8,
+            "chunks": 11,
+            "inputTokens": 3796,
+            "outputTokens": 984,
+            "wallMs": 31103
+          },
+          "missed": [
+            {
+              "category": "data-collection",
+              "substring": "date of birth"
+            },
+            {
+              "category": "data-sharing",
+              "substring": "law enforcement"
+            },
+            {
+              "category": "data-retention",
+              "substring": "up to 90 days"
+            },
+            {
+              "category": "age-restriction",
+              "substring": "under 13"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "modelId": "Qwen2.5-1.5B-Instruct-q4f16_1-MLC",
+      "loadMs": 35138,
+      "fixtures": [
+        {
+          "fixture": "fixture-shop",
+          "metrics": {
+            "recall": 0.5,
+            "quoteAccuracy": 1,
+            "schemaAdherence": 1,
+            "falseAlarms": 2,
+            "clausesExtracted": 15,
+            "clausesDropped": 0,
+            "chunks": 15,
+            "inputTokens": 5240,
+            "outputTokens": 1680,
+            "wallMs": 116767
+          },
+          "missed": [
+            {
+              "category": "user-content-licence",
+              "substring": "irrevocable, perpetual"
+            },
+            {
+              "category": "auto-renewal",
+              "substring": "renew automatically"
+            },
+            {
+              "category": "unilateral-changes",
+              "substring": "at any time without notice"
+            },
+            {
+              "category": "arbitration",
+              "substring": "class action"
+            },
+            {
+              "category": "age-restriction",
+              "substring": "at least 16"
+            }
+          ]
+        },
+        {
+          "fixture": "social-app",
+          "metrics": {
+            "recall": 0.8,
+            "quoteAccuracy": 0.9090909090909091,
+            "schemaAdherence": 1,
+            "falseAlarms": 2,
+            "clausesExtracted": 10,
+            "clausesDropped": 1,
+            "chunks": 11,
+            "inputTokens": 3796,
+            "outputTokens": 1247,
+            "wallMs": 76933
+          },
+          "missed": [
+            {
+              "category": "age-restriction",
+              "substring": "under 13"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

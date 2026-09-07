@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>WebAudit — workbench</title>
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <header>
+      <h1>WebAudit workbench</h1>
+      <nav>
+        <button type="button" data-view="dashboard" class="active">Dashboard</button>
+        <button type="button" data-view="history">History</button>
+        <button type="button" data-view="trace">Trace</button>
+        <button type="button" data-view="models">Models</button>
+      </nav>
+    </header>
+
+    <main>
+      <section id="dashboard" class="view"></section>
+      <section id="history" class="view" hidden></section>
+      <section id="trace" class="view" hidden></section>
+      <section id="models" class="view" hidden></section>
+    </main>
+
+    <script type="module" src="./main.ts"></script>
+  </body>
+</html>

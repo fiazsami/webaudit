@@ -87,6 +87,15 @@ agentButton.addEventListener("click", () => {
 
 void showActiveTab();
 
+// A full tab, because the trace view needs the room (docs/09).
+requireElement<HTMLAnchorElement>("open-workbench").addEventListener(
+  "click",
+  (event) => {
+    event.preventDefault();
+    void browser.tabs.create({ url: browser.runtime.getURL("/workbench.html") });
+  },
+);
+
 auditButton.addEventListener("click", () => {
   if (running) return;
   void runAudit();

@@ -135,6 +135,13 @@ was verified to fail by deliberately leaking the policy body into a tool summary
 Done when: model comparison results land in `evals/results/` and are committed,
 so comparisons are part of the repo's history.
 
+Status: done. `evals/results/policy-extraction.json` holds a real two-model
+comparison run on an Apple M4, reproducible with `pnpm run-evals`. The headline:
+both models hold the schema perfectly, and the 0.5B model paraphrases or invents
+62% of its quotes — which quote verification caught. The workbench tab and its
+trace view are built; seeing them in a browser is part of the browser check
+(web-rhp.7).
+
 ## M8 — Offscreen, auto-audit, polish
 
 _Gated on spike S3._

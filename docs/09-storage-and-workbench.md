@@ -94,8 +94,18 @@ Views:
 3. **Trace** — step-by-step view of model calls and tool calls with token usage
    and timings. _This is the main research payoff — make it good._ It gets a
    full tab precisely because a side panel could not do it justice.
-4. **Models** — list available WebLLM models with size and context window,
-   download with progress, show what is cached, evict.
+
+   What "good" turned out to mean: unpacking the model's action rather than
+   printing its JSON, so a step reads as _"headers are invisible from inside the
+   page → chose fetchHeaders"_; showing what the model was actually shown behind
+   a disclosure, since that is the question after "why did it do that"; and a
+   proportional bar of where the time went, because on a local model thinking
+   dominates and one glance says that better than twelve durations.
+
+4. **Models** — list available WebLLM models with size and context window, and
+   what spike S2 measured for each. Downloading stays in the side panel, which
+   owns the engine: the workbench loads none, and giving it one to manage
+   downloads would undo the separation that lets it be a plain document.
 5. **Settings** — budgets, allowed domains, history cap.
 
 The workbench does not run audits and does not load an inference engine. It

@@ -17,6 +17,7 @@
     "build-model-integrity": "node scripts/build-model-integrity.mjs",
     "build-prompts": "node scripts/build-prompts.mjs",
     "record-agent-run": "node scripts/record-agent-run.mjs",
+    "run-evals": "node scripts/run-evals.mjs",
     "typecheck": "pnpm -r typecheck",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
@@ -30,6 +31,7 @@
     "eslint": "catalog:",
     "globals": "catalog:",
     "prettier": "catalog:",
+    "puppeteer-core": "^25.10.0",
     "typescript": "catalog:",
     "typescript-eslint": "catalog:"
   }

@@ -204,3 +204,33 @@ part of the repo's history.
 
 This is now the project's central research output: with only local models
 available, choosing the model is the only lever left.
+
+### First results (M7)
+
+Measured on an Apple M4, Chrome 152, WebGPU on Metal 3. Full numbers and
+reproduction steps in `evals/results/README.md`.
+
+| Model        | Recall | Verbatim quotes | Schema adherence | Per policy |
+| ------------ | ------ | --------------- | ---------------- | ---------- |
+| Qwen2.5-0.5B | 10–20% | **38%**         | 100%             | 31–52 s    |
+| Qwen2.5-1.5B | 50–80% | 91–100%         | 100%             | 77–117 s   |
+
+Three things fall out of this, and the second is the important one.
+
+**Schema adherence is not the bottleneck.** Both models produced valid
+`ClauseExtraction` JSON for every chunk. Grammar constraint in the WASM runtime
+works as well on a 0.5B model as on a 1.5B one, and the worry that small models
+could not hold a fixed schema was misplaced.
+
+**Verbatim quoting is the bottleneck, and quote verification is what makes the
+difference between a wrong report and no report.** The 0.5B model paraphrased or
+invented 62% of its quotes; verification dropped every one. Without that check
+its output would have been fluent, plausible, and largely unsupported by the
+document it claimed to quote — which is worse than extracting nothing. The
+failure mode of a small model here is not malformed output a parser rejects; it
+is well-formed output that is not true, and only checking the quote against the
+source tells them apart.
+
+**Both models missed `age-restriction` every time.** That is a prompt problem,
+not a model one: the category exists but nothing in the instructions suggests an
+age limit is worth reporting.
