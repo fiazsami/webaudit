@@ -82,3 +82,4 @@
 {"id":"int-ff6f6270","kind":"field_change","created_at":"2026-09-07T14:51:31.236614Z","actor":"Fiaz Sami","issue_id":"web-g99.6","extra":{"field":"status","new_value":"closed","old_value":"in_progress","reason":"Closed"}}
 {"id":"int-e6f4eb6d","kind":"field_change","created_at":"2026-09-07T14:51:31.486572Z","actor":"Fiaz Sami","issue_id":"web-kbc.1","extra":{"field":"status","new_value":"closed","old_value":"in_progress","reason":"Closed"}}
 {"id":"int-e98ccae8","kind":"field_change","created_at":"2026-09-07T14:51:31.746856Z","actor":"Fiaz Sami","issue_id":"web-kbc.2","extra":{"field":"status","new_value":"closed","old_value":"in_progress","reason":"Closed"}}
+{"id":"int-6fe70c0a","kind":"field_change","created_at":"2026-09-07T14:55:02.802088Z","actor":"Fiaz Sami","issue_id":"web-kbc.3","extra":{"field":"status","new_value":"closed","old_value":"in_progress","reason":"Closed"}}
