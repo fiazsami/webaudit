@@ -1,4 +1,11 @@
-import { audit, PageSnapshotSchema, type Capabilities, type PageSnapshot } from "core";
+import {
+  audit,
+  explainFindings,
+  PageSnapshotSchema,
+  type AuditResult,
+  type Capabilities,
+  type PageSnapshot,
+} from "core";
 
 import { createExtensionCapabilities } from "../../lib/capabilities.js";
 import { loadAnalyzerDatabases } from "../../lib/databases.js";
@@ -9,7 +16,12 @@ import {
   parseReply,
   SnapshotReplySchema,
 } from "../../lib/messaging.js";
+import { DEFAULT_MODEL_ID, findModel, MODEL_CHOICES } from "../../lib/models.js";
 import { createIdbStore, openWebAuditDb } from "../../lib/store-idb.js";
+import {
+  createWebLlmProvider,
+  type WebLlmProvider,
+} from "../../lib/webllm-provider.js";
 import { renderFindings } from "./render.js";
 
 /**
@@ -28,8 +40,32 @@ const statusLine = requireElement<HTMLParagraphElement>("status");
 const siteUrl = requireElement<HTMLParagraphElement>("site-url");
 const findingsEl = requireElement<HTMLElement>("findings");
 const rawJson = requireElement<HTMLPreElement>("raw-json");
+const engineLine = requireElement<HTMLParagraphElement>("engine");
+const modelSelect = requireElement<HTMLSelectElement>("model");
+const modelNote = requireElement<HTMLParagraphElement>("model-note");
+const modelProgress = requireElement<HTMLProgressElement>("model-progress");
+const modelProgressText = requireElement<HTMLParagraphElement>("model-progress-text");
+const explainButton = requireElement<HTMLButtonElement>("explain");
 
 let running = false;
+let lastResult: AuditResult | undefined;
+let provider: WebLlmProvider | undefined;
+
+populateModels();
+
+modelSelect.addEventListener("change", () => {
+  // Switching models discards the engine rather than holding two sets of
+  // weights on the GPU.
+  void provider?.unload();
+  provider = undefined;
+  describeSelectedModel();
+  setEngineLine("Analyzers only — no model loaded");
+});
+
+explainButton.addEventListener("click", () => {
+  if (running) return;
+  void explainCurrentFindings();
+});
 
 void showActiveTab();
 
@@ -82,6 +118,8 @@ async function runAudit(): Promise<void> {
     });
     await store.putAudit(result);
 
+    lastResult = result;
+    explainButton.disabled = result.findings.length === 0;
     findingsEl.append(renderFindings(result.findings));
     setStatus(
       `${String(result.findings.length)} findings in ${String(
@@ -119,6 +157,96 @@ async function captureSnapshot(tabId: number, auditId: string): Promise<PageSnap
   }
   // Validated again on arrival: it crossed a boundary (hard rule 2).
   return PageSnapshotSchema.parse(parsed.data.payload);
+}
+
+function populateModels(): void {
+  for (const model of MODEL_CHOICES) {
+    const option = document.createElement("option");
+    option.value = model.id;
+    option.textContent = model.recommended
+      ? `${model.label} (recommended)`
+      : model.label;
+    modelSelect.append(option);
+  }
+  modelSelect.value = DEFAULT_MODEL_ID;
+  describeSelectedModel();
+}
+
+/** The download is gigabytes; it should never start as a surprise (docs/12 T7). */
+function describeSelectedModel(): void {
+  const model = findModel(modelSelect.value);
+  if (model === undefined) {
+    modelNote.textContent = "";
+    return;
+  }
+  const speed =
+    model.measured === undefined
+      ? ""
+      : ` About ${String(Math.round(model.measured.decodeTokensPerSec))} words/sec on an M4.`;
+  modelNote.textContent = `First use downloads about ${String(model.downloadMB)} MB. ${model.note}${speed}`;
+}
+
+function ensureProvider(): WebLlmProvider {
+  provider ??= createWebLlmProvider({
+    modelId: modelSelect.value,
+    onProgress: (report) => {
+      modelProgress.hidden = false;
+      modelProgressText.hidden = false;
+      modelProgress.value = Math.round((report.progress ?? 0) * 100);
+      modelProgressText.textContent = report.text;
+    },
+  });
+  return provider;
+}
+
+/**
+ * Explanations are a separate action rather than part of the audit.
+ *
+ * At the throughput spike S2 measured — around 20 tokens a second on the
+ * default model — explaining a page's worth of findings takes long enough that
+ * it should be something a person asks for, not something that happens while
+ * they wait for findings that were already ready.
+ */
+async function explainCurrentFindings(): Promise<void> {
+  if (lastResult === undefined) return;
+  running = true;
+  explainButton.disabled = true;
+  auditButton.disabled = true;
+
+  try {
+    const engine = ensureProvider();
+    setEngineLine("Loading model…");
+
+    const total = lastResult.findings.length;
+    const explained = await explainFindings(lastResult.findings, {
+      provider: engine,
+      logger: console,
+      onProgress: (done) => {
+        setEngineLine(`Explaining ${String(done)} of ${String(total)}…`);
+      },
+    });
+
+    lastResult = { ...lastResult, findings: explained };
+    findingsEl.replaceChildren(renderFindings(explained));
+
+    const store = createIdbStore(await openWebAuditDb());
+    await store.putAudit(lastResult);
+
+    modelProgress.hidden = true;
+    modelProgressText.hidden = true;
+    setEngineLine(`Model ready — ${findModel(modelSelect.value)?.label ?? ""}`);
+  } catch (error) {
+    setStatus(error instanceof Error ? error.message : String(error), "error");
+    setEngineLine("Model failed to load");
+  } finally {
+    running = false;
+    explainButton.disabled = false;
+    auditButton.disabled = false;
+  }
+}
+
+function setEngineLine(message: string): void {
+  engineLine.textContent = message;
 }
 
 /**

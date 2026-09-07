@@ -79,6 +79,20 @@ function renderFinding(finding: Finding): HTMLElement {
 
   body.append(text, meta);
 
+  if (finding.explanation !== undefined) {
+    const explanation = document.createElement("p");
+    explanation.className = "explanation";
+    const label = document.createElement("span");
+    label.className = "explanation-label";
+    // Provenance stated, not implied. The rest of a finding is deterministic
+    // and testable; this sentence is not (docs/03).
+    label.textContent = "Written by the model";
+    const prose = document.createElement("span");
+    prose.textContent = finding.explanation;
+    explanation.append(label, prose);
+    body.append(explanation);
+  }
+
   if (finding.evidence.length > 0) {
     const evidence = document.createElement("ul");
     evidence.className = "evidence";

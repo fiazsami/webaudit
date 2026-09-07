@@ -93,8 +93,13 @@ async function webgpuInfo(): Promise<WebGpuInfo> {
   }
 }
 
+/**
+ * The same worker the real provider uses (`lib/webllm.worker.ts`), not a copy.
+ * Two of them would mean two 6 MB bundles, and the spike measuring something
+ * subtly different from what ships.
+ */
 function createWorker(): Worker {
-  return new Worker(new URL("./engine.worker.ts", import.meta.url), {
+  return new Worker(new URL("../../lib/webllm.worker.ts", import.meta.url), {
     type: "module",
   });
 }

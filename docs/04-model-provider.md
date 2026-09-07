@@ -84,21 +84,30 @@ tool-calling path, and `supportsToolCalls` should report `false` for WebLLM.
 `@mlc-ai/web-llm`, Apache-2.0. Runs quantized models in the browser over WebGPU
 with an OpenAI-shaped API.
 
-Because it needs WebGPU, this adapter **cannot live in `packages/core`'s Node
-path** (hard rule 1). It ships as a browser-only entry point that the extension
-imports and Node never touches.
+Because it needs WebGPU, this adapter cannot live in `packages/core` — and the
+implementation went further than this doc originally planned. The first idea was
+a browser-only entry point inside core. But core's enforcement of hard rule 1 is
+precisely that its tsconfig has no DOM types, and this adapter needs `Worker`,
+WebGPU, and WebLLM's own DOM-typed API. Carving an exception into core would
+weaken the invariant that makes the rule checkable at all.
 
-| Interface member               | WebLLM                                                                            |
-| ------------------------------ | --------------------------------------------------------------------------------- |
-| `id`                           | `webllm:<mlc model id>`                                                           |
-| `capabilities().contextTokens` | the model record's `context_window_size` override                                 |
-| `supportsJsonSchema`           | `true` — grammar-constrained in the WASM runtime, not prompt-coaxed               |
-| `supportsToolCalls`            | `false` — `tools`/`tool_choice` are upstream WIP                                  |
-| `supportsStreaming`            | `true`                                                                            |
-| `costPer1k*`                   | `undefined`                                                                       |
-| `complete({ schema })`         | `response_format` with the JSON Schema from `zod-to-json-schema`                  |
-| `complete({ signal })`         | `interruptGenerate()` — **verify: not in the published API reference. Spike S2.** |
-| `countTokens`                  | `gpt-tokenizer` estimate, reconciled against the `usage` the response returns     |
+So it lives at `packages/extension/lib/webllm-provider.ts`. A provider is a
+capability the host supplies (docs/01), which makes the host the right place for
+its implementation — the same reasoning that puts linkedom in the CLI and
+`DOMParser` in the extension. `RecordingProvider` stays in core, because it is
+pure.
+
+| Interface member               | WebLLM                                                                        |
+| ------------------------------ | ----------------------------------------------------------------------------- |
+| `id`                           | `webllm:<mlc model id>`                                                       |
+| `capabilities().contextTokens` | the model record's `context_window_size` override                             |
+| `supportsJsonSchema`           | `true` — grammar-constrained in the WASM runtime, not prompt-coaxed           |
+| `supportsToolCalls`            | `false` — `tools`/`tool_choice` are upstream WIP                              |
+| `supportsStreaming`            | `true`                                                                        |
+| `costPer1k*`                   | `undefined`                                                                   |
+| `complete({ schema })`         | `response_format` with the JSON Schema from `z.toJSONSchema()` — no extra dep |
+| `complete({ signal })`         | `interruptGenerate()`, plus discarding the engine — see below                 |
+| `countTokens`                  | a chars/4 estimate for now; see the note below                                |
 
 Engine construction runs in a Web Worker (`CreateWebWorkerMLCEngine`) so a long
 prefill does not freeze the side panel UI.
@@ -110,8 +119,18 @@ model downloads gigabytes of weights from the HuggingFace CDN. `initProgressCall
 feeds the `model.progress` channel in docs/07 and the model manager in docs/09.
 
 Set the per-model SRI `integrity` field with `onFailure: "error"`. This is the
-mitigation for docs/12 T7 — weights are the one large thing we pull from the
-network, and they should be verified.
+mitigation for docs/12 T7 — but note that **none of WebLLM's prebuilt models
+carry one**, so it only exists once we supply an `appConfig` with hashes we
+computed ourselves. The adapter takes `appConfig` for exactly that.
+
+### `countTokens` is an estimate, and that is a debt
+
+WebLLM exposes no tokenizer, so the adapter counts `text.length / 4`. That is
+adequate for budget arithmetic, where being roughly right and conservative is
+fine, and it is _not_ adequate for the ToS pipeline's chunk sizing, where
+underestimating means a chunk that overflows the context window. M5 should
+either adopt `gpt-tokenizer` (docs/10) or size chunks against the `usage` counts
+the previous call returned.
 
 ### Structured output strategy
 

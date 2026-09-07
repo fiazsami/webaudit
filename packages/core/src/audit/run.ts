@@ -3,6 +3,7 @@ import { runAnalyzers } from "../analyzers/run.js";
 import type { LibraryDatabase } from "../analyzers/libraries/schema.js";
 import type { Analyzer, AnalyzerContext, TrackerDatabase } from "../analyzers/types.js";
 import type { Capabilities } from "../capabilities.js";
+import { explainFindings } from "../explain/index.js";
 import { stableHash } from "../hash.js";
 import { PageSnapshotSchema, type PageSnapshot } from "../snapshot/schema.js";
 import { type AuditResult } from "./schema.js";
@@ -26,6 +27,10 @@ export interface AuditOptions {
   trackerDb?: TrackerDatabase;
   /** Built by `pnpm build-library-db` (docs/10). */
   libraryDb?: LibraryDatabase;
+  /** Have the model write each finding's explanation (docs/03). */
+  explain?: boolean;
+  /** Cap how many findings are explained; each costs a model call. */
+  explainLimit?: number;
 }
 
 export async function audit(
@@ -60,7 +65,28 @@ export async function audit(
     ...(options.libraryDb === undefined ? {} : { libraryDb: options.libraryDb }),
   };
 
-  const findings = await runAnalyzers(validated, ctx, list);
+  let findings = await runAnalyzers(validated, ctx, list);
+
+  if (options.explain === true && findings.length > 0) {
+    capabilities.progress.emit({
+      stage: "explain",
+      total: findings.length,
+      message: `Explaining ${String(findings.length)} findings`,
+    });
+    findings = await explainFindings(findings, {
+      provider: capabilities.provider,
+      logger: capabilities.logger,
+      ...(options.explainLimit === undefined ? {} : { limit: options.explainLimit }),
+      onProgress: (done) => {
+        capabilities.progress.emit({
+          stage: "explain",
+          current: done,
+          total: findings.length,
+        });
+      },
+    });
+  }
+
   const finishedAt = capabilities.clock.now();
 
   capabilities.progress.emit({

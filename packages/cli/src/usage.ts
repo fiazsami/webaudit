@@ -22,6 +22,10 @@ Options:
   --tracker-db <path>
                   Tracker database from \`pnpm build-tracker-db\`
                   (default: data/tracker-db.json if present).
+  --replay <path> A recorded model session (docs/04). The only way this
+                  host gets a model: Node has no WebGPU.
+  --explain       Have the model write each finding's explanation.
+                  Requires --replay here.
   --verbose       Print progress and debug output to stderr.
   -h, --help      Show this message.
 

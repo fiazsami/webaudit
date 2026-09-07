@@ -33,6 +33,34 @@ export type {
   ToolSpec,
 } from "./providers/types.js";
 
+// Recording and replay — how anything model-shaped is tested without a GPU
+// (hard rule 6).
+export {
+  createRecordingProvider,
+  createReplayProvider,
+  MissingRecordingError,
+  ModelExchangeSchema,
+  ModelRecordingSchema,
+  RecordedRequestSchema,
+  requestKey,
+} from "./providers/recording.js";
+export type {
+  ModelExchange,
+  ModelRecording,
+  RecordedRequest,
+  RecordingProvider,
+} from "./providers/recording.js";
+
+// Explanations (docs/03) — the only field a model writes.
+export {
+  buildExplainPrompt,
+  EXPLAIN_SYSTEM_PROMPT,
+  explainFinding,
+  explainFindings,
+  ExplanationSchema,
+} from "./explain/index.js";
+export type { Explanation, ExplainOptions } from "./explain/index.js";
+
 // Snapshot (docs/02)
 export {
   CookieRefSchema,

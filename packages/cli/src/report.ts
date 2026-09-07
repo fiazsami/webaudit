@@ -25,6 +25,14 @@ export function formatReport(result: AuditResult): string {
     for (const line of wrap(finding.summary, 74)) {
       lines.push(`  ${line}`);
     }
+    // Marked, because it is the one part a model wrote. A reader should never
+    // have to guess which sentences are deterministic (docs/03).
+    if (finding.explanation !== undefined) {
+      lines.push("");
+      for (const line of wrap(finding.explanation, 70)) {
+        lines.push(`  model │ ${line}`);
+      }
+    }
     for (const item of finding.evidence.slice(0, 5)) {
       const where = item.location === undefined ? "" : `  (${item.location})`;
       lines.push(`  · ${item.kind}: ${item.value}${where}`);

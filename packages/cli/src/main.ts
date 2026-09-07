@@ -29,6 +29,8 @@ async function main(argv: readonly string[]): Promise<number> {
       "hsts-preload": { type: "string" },
       "library-db": { type: "string" },
       "tracker-db": { type: "string" },
+      replay: { type: "string" },
+      explain: { type: "boolean", default: false },
       help: { type: "boolean", short: "h", default: false },
     },
   });
@@ -60,6 +62,8 @@ async function main(argv: readonly string[]): Promise<number> {
     ...(values["tracker-db"] === undefined
       ? {}
       : { trackerDbPath: values["tracker-db"] }),
+    ...(values.replay === undefined ? {} : { replayPath: values.replay }),
+    explain: values.explain,
   });
 
   return 0;

@@ -74,6 +74,30 @@ describe("renderFindings", () => {
     expect(host.textContent).toContain("onerror");
   });
 
+  it("marks a model-written explanation as such", () => {
+    const host = render([
+      { ...finding(), explanation: "Anyone on the network can read the password." },
+    ]);
+    const explanation = host.querySelector(".explanation");
+
+    // A reader must be able to tell which sentences a model wrote.
+    expect(explanation?.textContent).toContain("Written by the model");
+    expect(explanation?.textContent).toContain("read the password");
+  });
+
+  it("renders no explanation block when the model did not write one", () => {
+    expect(render([finding()]).querySelector(".explanation")).toBeNull();
+  });
+
+  it("treats a model-written explanation as text, not markup", () => {
+    // The model reads page-controlled evidence, so its output is untrusted too.
+    const host = render([
+      { ...finding(), explanation: '<img src=x onerror="alert(1)">' },
+    ]);
+    expect(host.querySelector("img")).toBeNull();
+    expect(host.textContent).toContain("onerror");
+  });
+
   it("marks reference links so they cannot reach back into the panel", () => {
     const host = render([finding({ references: ["https://example.com/docs"] })]);
     const link = host.querySelector("a");

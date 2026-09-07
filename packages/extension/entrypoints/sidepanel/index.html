@@ -14,11 +14,22 @@
       </div>
       <div class="controls">
         <button id="audit" type="button">Audit this page</button>
-        <p id="engine" class="engine">Model: not loaded (analyzers only)</p>
+        <p id="engine" class="engine">Analyzers only — no model loaded</p>
       </div>
     </header>
 
     <p id="status" class="status" role="status" aria-live="polite"></p>
+
+    <section class="model" aria-label="Model">
+      <div class="model-row">
+        <label for="model">Explanations</label>
+        <select id="model"></select>
+        <button id="explain" type="button" disabled>Explain findings</button>
+      </div>
+      <p id="model-note" class="model-note"></p>
+      <progress id="model-progress" max="100" value="0" hidden></progress>
+      <p id="model-progress-text" class="model-note" hidden></p>
+    </section>
 
     <main id="findings" aria-label="Findings"></main>
 

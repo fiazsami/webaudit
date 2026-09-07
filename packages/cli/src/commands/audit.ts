@@ -6,6 +6,7 @@ import { createNodeCapabilities } from "../capabilities/index.js";
 import { loadHstsPreloadList } from "../hsts-preload.js";
 import { loadLibraryDb } from "../library-db.js";
 import { loadTrackerDb } from "../tracker-db.js";
+import { loadReplayProvider } from "../replay.js";
 import { formatReport } from "../report.js";
 
 export interface AuditCommandOptions {
@@ -20,6 +21,10 @@ export interface AuditCommandOptions {
   libraryDbPath?: string;
   /** Built by `pnpm build-tracker-db`; absent skips the analyzer (docs/03). */
   trackerDbPath?: string;
+  /** A recorded model session. The only way this host gets a model (docs/04). */
+  replayPath?: string;
+  /** Explain findings, which needs --replay in this host. */
+  explain?: boolean;
   outDir?: string;
   /** Skip writing the result to the store. */
   noStore: boolean;
@@ -57,9 +62,21 @@ export async function runAuditCommand(
     );
   }
 
+  const provider =
+    options.replayPath === undefined
+      ? undefined
+      : await loadReplayProvider(options.replayPath);
+
+  if (options.explain === true && provider === undefined) {
+    throw new Error(
+      "--explain needs --replay <recording.json>: this host has no model (docs/01).",
+    );
+  }
+
   const capabilities = createNodeCapabilities({
     verbose: options.verbose,
     ...(options.outDir === undefined ? {} : { outDir: options.outDir }),
+    ...(provider === undefined ? {} : { provider }),
   });
 
   const libraryDb = await loadLibraryDb(
@@ -73,6 +90,7 @@ export async function runAuditCommand(
   const result = await audit(snapshot, {
     capabilities,
     noAgent: true,
+    explain: options.explain === true,
     ...(libraryDb === undefined ? {} : { libraryDb }),
     ...(trackerDb === undefined ? {} : { trackerDb }),
   });
