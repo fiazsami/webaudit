@@ -57,3 +57,4 @@
 {"id":"int-2e299bbe","kind":"field_change","created_at":"2026-09-07T01:12:58.529112Z","actor":"Fiaz Sami","issue_id":"web-poi.4","extra":{"field":"status","new_value":"closed","old_value":"in_progress","reason":"Closed"}}
 {"id":"int-0245ec8e","kind":"field_change","created_at":"2026-09-07T01:12:58.78719Z","actor":"Fiaz Sami","issue_id":"web-poi.7","extra":{"field":"status","new_value":"closed","old_value":"in_progress","reason":"Closed"}}
 {"id":"int-93807a94","kind":"field_change","created_at":"2026-09-07T01:12:59.045152Z","actor":"Fiaz Sami","issue_id":"web-poi.8","extra":{"field":"status","new_value":"closed","old_value":"in_progress","reason":"Closed"}}
+{"id":"int-e38dbc51","kind":"field_change","created_at":"2026-09-07T01:15:28.723778Z","actor":"Fiaz Sami","issue_id":"web-poi.1","extra":{"field":"status","new_value":"closed","old_value":"in_progress","reason":"Closed"}}

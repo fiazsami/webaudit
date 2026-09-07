@@ -69,15 +69,15 @@ See `docs/01-architecture.md`.
 
 ## Status
 
-Milestones 0–3, pending a browser check. `core` has the snapshot schema and
-builder, nine deterministic analyzers, and `audit()`. The CLI runs them over
-saved snapshots; the extension captures a page, refetches its headers through
-the background worker, stores results in IndexedDB, and renders findings in the
-side panel.
+Milestones 0–4, pending a browser check. `core` has the snapshot schema and
+builder, nine deterministic analyzers, `audit()`, and record/replay for model
+calls. The CLI runs analyzers over saved snapshots and replays recorded model
+sessions. The extension captures a page, refetches its headers through the
+background worker, runs the model on WebGPU through WebLLM, and renders findings
+with plain-language explanations in the side panel.
 
-No model yet — the WebLLM provider and explanations are M4, the ToS pipeline M5,
-and the agent loop M6. M4 is gated on spike S2, which needs a machine with a
-WebGPU browser.
+Still to come: the ToS pipeline (M5), the agent loop (M6), and the workbench and
+evals (M7).
 
 Milestones are in `docs/11-roadmap.md`; work is tracked in
 [beads](https://github.com/gastownhall/beads) — `bd ready`.

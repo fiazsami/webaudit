@@ -45,15 +45,20 @@ to Tracker Radar for richer metadata, document the licence.
 
 ### Optional build-time data
 
-Both of these are downloaded by a script into `data/`, which is gitignored.
+Most of these are downloaded by a script into `data/`, which is gitignored.
+`build-model-integrity` is the exception: its output is 2 KB and it is a
+security control, so it is committed at
+`packages/extension/lib/model-integrity.json` and ships in the extension. A
+control that exists only on the machine that generated it is not a control.
 Neither is required: an analyzer without its data says so rather than reporting
 a clean result.
 
-| Script                    | Source                                           | Size                                       | Licence             |
-| ------------------------- | ------------------------------------------------ | ------------------------------------------ | ------------------- |
-| `pnpm build-hsts-preload` | Chromium `transport_security_state_static.json`  | 94,644 entries; 6.2 MB raw, 740 KB gzipped | BSD-3-Clause        |
-| `pnpm build-library-db`   | `RetireJS/retire.js` `jsrepository-v4.json`      | 60 libraries; 166 KB raw, 30 KB gzipped    | Apache-2.0          |
-| `pnpm build-tracker-db`   | DuckDuckGo Tracker Data Set (from tracker-radar) | 1,028 trackers; 116 KB raw, 18 KB gzipped  | **CC BY-NC-SA 4.0** |
+| Script                       | Source                                           | Size                                           | Licence                     |
+| ---------------------------- | ------------------------------------------------ | ---------------------------------------------- | --------------------------- |
+| `pnpm build-hsts-preload`    | Chromium `transport_security_state_static.json`  | 94,644 entries; 6.2 MB raw, 740 KB gzipped     | BSD-3-Clause                |
+| `pnpm build-library-db`      | `RetireJS/retire.js` `jsrepository-v4.json`      | 60 libraries; 166 KB raw, 30 KB gzipped        | Apache-2.0                  |
+| `pnpm build-tracker-db`      | DuckDuckGo Tracker Data Set (from tracker-radar) | 1,028 trackers; 116 KB raw, 18 KB gzipped      | **CC BY-NC-SA 4.0**         |
+| `pnpm build-model-integrity` | HuggingFace + `binary-mlc-llm-libs`              | 3 models; 2 KB — **committed, not gitignored** | hashes of others' artifacts |
 
 The tracker database is the one with a licence constraint. CC BY-NC-SA 4.0 is
 non-commercial, which is fine for research and is exactly why it is downloaded
