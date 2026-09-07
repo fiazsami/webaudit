@@ -5,6 +5,7 @@ import {
   type Finding,
   type Severity,
   type Clause,
+  type AuditTrace,
   type TosReport,
 } from "core";
 
@@ -137,4 +138,51 @@ function formatClause(clause: Clause): string[] {
   }
   lines.push(`    — ${clause.headingPath}`);
   return lines;
+}
+
+/**
+ * The trace as text (docs/06).
+ *
+ * The workbench renders this properly (docs/09); here it is a flat list, which
+ * is enough to see what the loop decided and what it cost.
+ */
+export function formatTrace(trace: AuditTrace): string {
+  const lines: string[] = ["", "─── What the agent did ───", ""];
+
+  for (const step of trace.steps) {
+    switch (step.kind) {
+      case "model":
+        lines.push(`  ${String(step.index)}. think   ${truncate(step.response, 90)}`);
+        break;
+      case "tool":
+        lines.push(
+          `  ${String(step.index)}. tool    ${step.name} — ${truncate(step.summary, 70)}`,
+        );
+        break;
+      case "budget":
+        lines.push(`  ${String(step.index)}. budget  ${step.limit}: ${step.message}`);
+        break;
+      case "error":
+        lines.push(
+          `  ${String(step.index)}. error   ${step.name ?? ""} ${step.message}`,
+        );
+        break;
+    }
+  }
+
+  const used = trace.budgetUsed;
+  lines.push(
+    "",
+    `  stopped by ${trace.stoppedBy} · ${String(used.steps)} steps · ` +
+      `${String(used.fetches)} fetches · ${String(used.inputTokens)} input tokens · ` +
+      `${String(used.wallMs)}ms`,
+    "",
+  );
+
+  return lines.join("\n");
+}
+
+function truncate(text: string, width: number): string {
+  const flat = text.replace(/\s+/g, " ").trim();
+  return flat.length <= width ? flat : `${flat.slice(0, width - 1)}…`;
 }

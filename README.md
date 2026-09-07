@@ -81,7 +81,18 @@ markdown, chunks on headings, extracts clauses into a fixed schema, and
 **verifies every quote against the source, dropping any it cannot find** — which
 is what catches both a hallucinated clause and one a page tried to inject.
 
-Still to come: the agent loop (M6), and the workbench and evals (M7).
+The agent loop ties it together: a hand-written think → act → observe
+orchestrator that fetches the headers, re-runs the analyzers now they are
+possible, reads the policies, and explains what matters — inside a budget, with
+every decision recorded in a replayable trace.
+
+A site being audited cannot steer the audit of itself. Policy text is read
+inside a tool and comes back as counts and schema-validated clauses, so injected
+instructions never reach the orchestrator's context at all. Four injection
+fixtures assert exactly that, and the test was verified to fail when the
+mechanism was deliberately broken.
+
+Still to come: the workbench and evals (M7).
 
 Milestones are in `docs/11-roadmap.md`; work is tracked in
 [beads](https://github.com/gastownhall/beads) — `bd ready`.

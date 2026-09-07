@@ -3,6 +3,8 @@ import { runAnalyzers } from "../analyzers/run.js";
 import type { LibraryDatabase } from "../analyzers/libraries/schema.js";
 import type { Analyzer, AnalyzerContext, TrackerDatabase } from "../analyzers/types.js";
 import type { Capabilities } from "../capabilities.js";
+import { defaultBudget, type Budget } from "../agent/budget.js";
+import { runAgent } from "../agent/orchestrator.js";
 import { explainFindings } from "../explain/index.js";
 import { stableHash } from "../hash.js";
 import { PageSnapshotSchema, type PageSnapshot } from "../snapshot/schema.js";
@@ -31,6 +33,12 @@ export interface AuditOptions {
   explain?: boolean;
   /** Cap how many findings are explained; each costs a model call. */
   explainLimit?: number;
+  /**
+   * Run the agent loop after the analyzers (docs/06). Mutually exclusive with
+   * `noAgent`, which is now a real choice rather than the only mode.
+   */
+  budget?: Budget;
+  signal?: AbortSignal;
 }
 
 export async function audit(
@@ -38,12 +46,7 @@ export async function audit(
   options: AuditOptions,
 ): Promise<AuditResult> {
   const { capabilities } = options;
-
-  if (options.noAgent !== true) {
-    throw new Error(
-      "audit() currently supports noAgent: true only — the agent loop is M6 (docs/11).",
-    );
-  }
+  const withAgent = options.noAgent !== true;
 
   // Hard rule 2: everything crossing into core is validated, including a
   // snapshot a host claims it built with our own builder.
@@ -87,8 +90,6 @@ export async function audit(
     });
   }
 
-  const finishedAt = capabilities.clock.now();
-
   capabilities.progress.emit({
     stage: "analyzers",
     current: list.length,
@@ -96,13 +97,47 @@ export async function audit(
     message: `${String(findings.length)} findings`,
   });
 
+  // Derived rather than random, so a replayed run keeps the same id.
+  const auditId = stableHash(`${validated.url}|${String(startedAt)}`);
+
+  let agent: Awaited<ReturnType<typeof runAgent>> | undefined;
+  if (withAgent) {
+    const budget =
+      options.budget ??
+      defaultBudget({
+        capabilities: await capabilities.provider.capabilities(),
+        allowedDomains: [hostnameOf(validated.url)],
+      });
+
+    agent = await runAgent(validated, {
+      capabilities,
+      budget,
+      auditId,
+      findings,
+      ...(options.trackerDb === undefined ? {} : { trackerDb: options.trackerDb }),
+      ...(options.libraryDb === undefined ? {} : { libraryDb: options.libraryDb }),
+      ...(options.signal === undefined ? {} : { signal: options.signal }),
+    });
+    findings = agent.findings;
+  }
+
+  const finishedAt = capabilities.clock.now();
+
   return {
-    // Derived rather than random: core has no entropy source it is allowed to
-    // reach for, and a derived id keeps a replayed run identical to the original.
-    auditId: stableHash(`${validated.url}|${String(startedAt)}`),
+    auditId,
     url: validated.url,
     startedAt,
     finishedAt,
     findings,
+    ...(agent?.tosReport === undefined ? {} : { tosReport: agent.tosReport }),
+    ...(agent === undefined ? {} : { trace: agent.trace, summary: agent.summary }),
   };
+}
+
+function hostnameOf(url: string): string {
+  try {
+    return new URL(url).hostname;
+  } catch {
+    return "";
+  }
 }

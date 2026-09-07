@@ -13,7 +13,7 @@ import { loadHstsPreloadList } from "../hsts-preload.js";
 import { loadLibraryDb } from "../library-db.js";
 import { loadTrackerDb } from "../tracker-db.js";
 import { loadReplayProvider } from "../replay.js";
-import { formatReport, formatTosReport } from "../report.js";
+import { formatReport, formatTosReport, formatTrace } from "../report.js";
 
 export interface AuditCommandOptions {
   snapshotPath: string;
@@ -48,10 +48,10 @@ export interface AuditCommandOptions {
 export async function runAuditCommand(
   options: AuditCommandOptions,
 ): Promise<AuditResult> {
-  if (!options.noAgent) {
+  if (!options.noAgent && options.replayPath === undefined) {
     throw new Error(
-      "--no-agent is required: this host cannot run a model (Node has no WebGPU). " +
-        "The agent loop arrives in M6; see docs/11.",
+      "Running the agent loop needs --replay <recording.json>: this host has no " +
+        "model (Node has no WebGPU). Use --no-agent for analyzers only.",
     );
   }
 
@@ -102,7 +102,7 @@ export async function runAuditCommand(
 
   const result = await audit(snapshot, {
     capabilities,
-    noAgent: true,
+    noAgent: options.noAgent,
     explain: options.explain === true,
     ...(libraryDb === undefined ? {} : { libraryDb }),
     ...(trackerDb === undefined ? {} : { trackerDb }),
@@ -123,7 +123,9 @@ export async function runAuditCommand(
     );
   } else {
     process.stdout.write(formatReport(result));
-    if (tosReport !== undefined) process.stdout.write(formatTosReport(tosReport));
+    const report = tosReport ?? result.tosReport;
+    if (report !== undefined) process.stdout.write(formatTosReport(report));
+    if (result.trace !== undefined) process.stdout.write(formatTrace(result.trace));
   }
 
   return result;

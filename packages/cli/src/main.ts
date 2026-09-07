@@ -2,6 +2,7 @@
 import { parseArgs } from "node:util";
 
 import { runAuditCommand } from "./commands/audit.js";
+import { runSnapshotCommand } from "./commands/snapshot.js";
 import { USAGE } from "./usage.js";
 
 async function main(argv: readonly string[]): Promise<number> {
@@ -9,6 +10,24 @@ async function main(argv: readonly string[]): Promise<number> {
 
   if (command === undefined || command === "--help" || command === "-h") {
     process.stdout.write(USAGE);
+    return 0;
+  }
+
+  if (command === "snapshot") {
+    const { values: snapshotValues, positionals: snapshotArgs } = parseArgs({
+      args: [...argv.slice(1)],
+      allowPositionals: true,
+      options: { out: { type: "string" } },
+    });
+    const url = snapshotArgs[0];
+    if (url === undefined) {
+      process.stderr.write(`webaudit: snapshot needs a URL\n\n${USAGE}`);
+      return 1;
+    }
+    await runSnapshotCommand({
+      url,
+      ...(snapshotValues.out === undefined ? {} : { out: snapshotValues.out }),
+    });
     return 0;
   }
 

@@ -61,9 +61,44 @@ describe("audit", () => {
     expect(result.finishedAt).toBeGreaterThan(result.startedAt);
   });
 
-  it("refuses the agent mode that does not exist yet", async () => {
+  it("runs the agent loop when noAgent is not set", async () => {
+    const { capabilities } = testCapabilities({
+      provider: {
+        id: "scripted:audit",
+        capabilities: () =>
+          Promise.resolve({
+            contextTokens: 4096,
+            supportsJsonSchema: true,
+            supportsToolCalls: false,
+            supportsStreaming: false,
+          }),
+        countTokens: (text: string) => text.length,
+        complete: () =>
+          Promise.resolve({
+            json: {
+              reasoning: "nothing to do",
+              tool: "finish",
+              input: { summary: "done" },
+            },
+            usage: { inputTokens: 10, outputTokens: 5 },
+          }),
+      },
+    });
+
+    const result = await audit(snapshotWith(), { capabilities });
+
+    expect(result.trace).toBeDefined();
+    expect(result.trace?.stoppedBy).toBe("finish");
+    expect(result.summary).toBe("done");
+  });
+
+  it("produces no trace when the agent is skipped", async () => {
     const { capabilities } = testCapabilities();
-    await expect(audit(snapshotWith(), { capabilities })).rejects.toThrow(/M6/);
+    const result = await audit(snapshotWith(), { capabilities, noAgent: true });
+
+    // An analyzers-only audit legitimately has no trace, which is why the field
+    // is optional rather than empty.
+    expect(result.trace).toBeUndefined();
   });
 
   it("validates the snapshot even when a host claims it is well formed", async () => {

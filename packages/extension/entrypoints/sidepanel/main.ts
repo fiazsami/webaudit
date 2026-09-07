@@ -1,5 +1,6 @@
 import {
   audit,
+  defaultBudget,
   explainFindings,
   PageSnapshotSchema,
   runTosPipeline,
@@ -50,6 +51,7 @@ const modelProgress = requireElement<HTMLProgressElement>("model-progress");
 const modelProgressText = requireElement<HTMLParagraphElement>("model-progress-text");
 const explainButton = requireElement<HTMLButtonElement>("explain");
 const readTermsButton = requireElement<HTMLButtonElement>("read-terms");
+const agentButton = requireElement<HTMLButtonElement>("agent");
 const tosEl = requireElement<HTMLElement>("tos");
 
 let running = false;
@@ -76,6 +78,11 @@ explainButton.addEventListener("click", () => {
 readTermsButton.addEventListener("click", () => {
   if (running) return;
   void readTerms();
+});
+
+agentButton.addEventListener("click", () => {
+  if (running) return;
+  void runFullAudit();
 });
 
 void showActiveTab();
@@ -133,6 +140,7 @@ async function runAudit(): Promise<void> {
     lastSnapshot = snapshot;
     explainButton.disabled = result.findings.length === 0;
     readTermsButton.disabled = false;
+    agentButton.disabled = false;
     tosEl.replaceChildren();
     findingsEl.append(renderFindings(result.findings));
     setStatus(
@@ -260,6 +268,72 @@ async function explainCurrentFindings(): Promise<void> {
     explainButton.disabled = false;
     auditButton.disabled = false;
   }
+}
+
+/**
+ * The full agent audit (docs/06): the loop decides what to investigate, fetches
+ * headers, re-runs the analyzers, reads the policies, and explains what matters.
+ *
+ * Its own button for the same reason the others are: it is minutes of work on a
+ * local model, and someone should choose to spend them.
+ */
+async function runFullAudit(): Promise<void> {
+  if (lastSnapshot === undefined) return;
+  running = true;
+  setButtonsDisabled(true);
+  tosEl.replaceChildren();
+
+  try {
+    const engine = ensureProvider();
+    setEngineLine("Loading model…");
+
+    const store = createIdbStore(await openWebAuditDb());
+    const capabilities = createExtensionCapabilities({
+      auditId: newMessageId(),
+      store,
+      provider: engine,
+      onProgress: (event) => {
+        if (event.message !== undefined) setEngineLine(event.message);
+      },
+    });
+
+    const databases = await loadAnalyzerDatabases();
+    const result = await audit(lastSnapshot, {
+      capabilities,
+      budget: defaultBudget({
+        capabilities: await engine.capabilities(),
+        allowedDomains: [new URL(lastSnapshot.url).hostname],
+      }),
+      ...databases,
+    });
+
+    lastResult = result;
+    await store.putAudit(result);
+
+    modelProgress.hidden = true;
+    modelProgressText.hidden = true;
+    findingsEl.replaceChildren(renderFindings(result.findings));
+    if (result.tosReport !== undefined) {
+      tosEl.replaceChildren(renderTosReport(result.tosReport));
+    }
+    setStatus(result.summary ?? `${String(result.findings.length)} findings`);
+    setEngineLine(
+      `Stopped by ${result.trace?.stoppedBy ?? "unknown"} after ${String(result.trace?.budgetUsed.steps ?? 0)} steps`,
+    );
+  } catch (error) {
+    setStatus(error instanceof Error ? error.message : String(error), "error");
+    setEngineLine("The audit did not finish");
+  } finally {
+    running = false;
+    setButtonsDisabled(false);
+  }
+}
+
+function setButtonsDisabled(disabled: boolean): void {
+  auditButton.disabled = disabled;
+  explainButton.disabled = disabled;
+  readTermsButton.disabled = disabled;
+  agentButton.disabled = disabled;
 }
 
 /**

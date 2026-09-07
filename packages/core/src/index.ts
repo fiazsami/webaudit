@@ -195,4 +195,28 @@ export type {
   TosReport,
 } from "./tos/schema.js";
 
+// Agent loop (docs/06)
+export { runAgent, AgentActionSchema } from "./agent/orchestrator.js";
+export type {
+  AgentAction,
+  AgentResult,
+  OrchestratorOptions,
+} from "./agent/orchestrator.js";
+export {
+  BudgetExceeded,
+  BudgetSchema,
+  BudgetTracker,
+  defaultBudget,
+} from "./agent/budget.js";
+export type { Budget, BudgetKind, BudgetUsed } from "./agent/budget.js";
+export { AGENT_TOOLS } from "./agent/tools.js";
+export type { Tool, ToolContext } from "./agent/types.js";
+export { AuditTraceSchema, TraceRecorder, TraceStepSchema } from "./agent/trace.js";
+export type { AuditTrace, TraceStep } from "./agent/trace.js";
+export {
+  buildSystemPrompt,
+  describeSnapshot,
+  ORCHESTRATOR_PROMPT,
+} from "./agent/prompts.js";
+
 export { stableHash } from "./hash.js";

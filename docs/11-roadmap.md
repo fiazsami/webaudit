@@ -114,6 +114,17 @@ check (web-rhp.7).
 Done when: an end-to-end audit completes within budget on a real site, and the
 injection fixtures provably do not alter tool choices.
 
+Status: done. An audit of mozilla.org runs the full loop —
+`fetchHeaders → runAnalyzers → discoverPolicies → analyzePolicies →
+explainFinding → finish` — in 6 steps of 10 and 2 fetches of 5, producing 19
+findings and 5 clauses from 3 real policy pages
+(`fixtures/recordings/agent-mozilla-org.json`).
+
+The injection fixtures assert the stronger claim: not only is the tool sequence
+unchanged, the injected text never reaches the orchestrator's context at all,
+because policy content is read inside a tool and comes back as counts. That test
+was verified to fail by deliberately leaking the policy body into a tool summary.
+
 ## M7 — Workbench and evals
 
 - Full-page workbench tab: dashboard, history, **trace view** (docs/09). The

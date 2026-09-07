@@ -6,10 +6,12 @@
 export const USAGE = `webaudit — local website auditing (Node host)
 
 Usage:
-  webaudit audit <snapshot.json> --no-agent [options]
+  webaudit snapshot <url> [--out <path>]
+  webaudit audit <snapshot.json> [--no-agent] [options]
 
 Options:
-  --no-agent      Required. Run deterministic analyzers only.
+  --no-agent      Run deterministic analyzers only. Without it the agent
+                  loop runs, which needs --replay in this host.
   --json          Emit the AuditResult as JSON instead of a report.
   --out <dir>     Where to write stored audits (default: ./out).
   --no-store      Do not write the result to the store.

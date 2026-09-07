@@ -1,0 +1,445 @@
+{
+  "schemaVersion": 1,
+  "capturedAt": "2026-09-07T14:09:38.727Z",
+  "url": "https://www.mozilla.org/en-US/",
+  "title": "Mozilla - Internet for people, not profit (US)",
+  "protocol": "https:",
+  "scripts": [
+    {
+      "src": "https://transcend-cdn.com/cm/d556c3a1-e57c-4bdf-a490-390a1aebf6dd/airgap.js",
+      "attrs": {}
+    },
+    {
+      "src": "https://www.mozilla.org/media/js/site.a6a07233d547.js",
+      "attrs": {}
+    },
+    {
+      "src": "https://www.mozilla.org/media/js/gtm-snippet.cc9550e6b401.js",
+      "attrs": {}
+    },
+    {
+      "src": "https://www.mozilla.org/media/js/newsletter.d35e22990f3b.js",
+      "attrs": {}
+    },
+    {
+      "src": "https://www.mozilla.org/media/js/sentry.9f2fe29330f6.js",
+      "attrs": {}
+    },
+    {
+      "src": "https://www.mozilla.org/media/js/lib.f86d9ecbd086.js",
+      "attrs": {}
+    },
+    {
+      "src": "https://www.mozilla.org/media/js/fxa.8c097c9145ff.js",
+      "attrs": {}
+    },
+    {
+      "src": "https://www.mozilla.org/media/js/data.44609f062226.js",
+      "attrs": {}
+    },
+    {
+      "src": "https://www.mozilla.org/media/js/m24-ui.30741fa9d521.js",
+      "attrs": {}
+    },
+    {
+      "src": "https://www.mozilla.org/media/js/m24-animation.6371da6532a7.js",
+      "attrs": {}
+    },
+    {
+      "src": "https://www.mozilla.org/media/js/consent-banner.52b78cd4ba21.js",
+      "attrs": {}
+    }
+  ],
+  "forms": [
+    {
+      "action": "https://abdri3ttkb.execute-api.us-east-2.amazonaws.com/api/newsletter/mozillaorg",
+      "method": "POST",
+      "fieldTypes": [
+        "checkbox",
+        "hidden",
+        "email",
+        "checkbox"
+      ],
+      "hasPasswordField": false,
+      "autocompleteOff": false
+    },
+    {
+      "action": "https://www.mozilla.org/en-US/#",
+      "method": "GET",
+      "fieldTypes": [],
+      "hasPasswordField": false,
+      "autocompleteOff": false
+    }
+  ],
+  "iframes": [],
+  "links": [
+    {
+      "href": "https://www.mozilla.org/en-US/privacy/websites/cookie-settings/",
+      "text": "Cookie settings",
+      "policyHint": "privacy"
+    },
+    {
+      "href": "https://www.mozilla.org/en-US/",
+      "text": ""
+    },
+    {
+      "href": "https://www.mozilla.org/en-US/products/",
+      "text": "Products"
+    },
+    {
+      "href": "https://www.firefox.com/?utm_source=www.mozilla.org&utm_medium=referral&utm_campaign=nav&utm_content=products",
+      "text": "Firefox browsers"
+    },
+    {
+      "href": "https://www.mozilla.org/en-US/products/vpn/",
+      "text": "Mozilla VPN"
+    },
+    {
+      "href": "https://www.mozilla.org/en-US/products/monitor/",
+      "text": "Mozilla Monitor"
+    },
+    {
+      "href": "https://relay.firefox.com/?utm_source=www.mozilla.org&utm_medium=referral&utm_campaign=nav&utm_content=products",
+      "text": "Firefox Relay"
+    },
+    {
+      "href": "https://developer.mozilla.org/plus?utm_source=www.mozilla.org&utm_medium=referral&utm_campaign=nav&utm_content=products",
+      "text": "MDN Plus"
+    },
+    {
+      "href": "https://www.thunderbird.net/?utm_source=www.mozilla.org&utm_medium=referral&utm_campaign=nav&utm_content=products",
+      "text": "Thunderbird"
+    },
+    {
+      "href": "https://soloist.ai/?utm_source=www.mozilla.org&utm_medium=referral&utm_campaign=nav&utm_content=products",
+      "text": "Solo"
+    },
+    {
+      "href": "https://0din.ai/?utm_source=www.mozilla.org&utm_medium=referral&utm_campaign=nav&utm_content=products",
+      "text": "0DIN"
+    },
+    {
+      "href": "https://tabstack.ai/?utm_source=www.mozilla.org&utm_medium=referral&utm_campaign=nav&utm_content=products",
+      "text": "Tabstack"
+    },
+    {
+      "href": "https://www.mozilla.org/en-US/about/",
+      "text": "About us"
+    },
+    {
+      "href": "https://www.mozilla.org/en-US/about/manifesto/",
+      "text": "The Mozilla Manifesto"
+    },
+    {
+      "href": "https://www.mozilla.org/en-US/contribute/",
+      "text": "Get Involved"
+    },
+    {
+      "href": "https://blog.mozilla.org/?utm_source=www.mozilla.org&utm_medium=referral&utm_campaign=nav&utm_content=about-us",
+      "text": "Blog"
+    },
+    {
+      "href": "https://www.mozillafoundation.org/?utm_source=www.mozilla.org&utm_medium=referral&utm_campaign=nav&utm_content=about-us",
+      "text": "Mozilla Foundation"
+    },
+    {
+      "href": "https://www.mozilla.ai/?utm_source=www.mozilla.org&utm_medium=referral&utm_campaign=nav&utm_content=about-us",
+      "text": "Mozilla.ai"
+    },
+    {
+      "href": "https://mozilla.vc/?utm_source=www.mozilla.org&utm_medium=referral&utm_campaign=nav&utm_content=about-us",
+      "text": "Mozilla Ventures"
+    },
+    {
+      "href": "https://www.mozilla.org/en-US/advertising/",
+      "text": "Mozilla Advertising"
+    },
+    {
+      "href": "https://builders.mozilla.org/?utm_source=www.mozilla.org&utm_medium=referral&utm_campaign=nav&utm_content=about-us",
+      "text": "Mozilla Builders"
+    },
+    {
+      "href": "https://newproducts.mozilla.org/?utm_source=www.mozilla.org&utm_medium=referral&utm_campaign=nav&utm_content=about-us",
+      "text": "Mozilla New Products"
+    },
+    {
+      "href": "https://www.firefox.com/?utm_source=www.mozilla.org&utm_medium=referral&utm_campaign=home",
+      "text": "Firefox: Get the gold standard for browsing with speed, privacy and control.",
+      "policyHint": "privacy"
+    },
+    {
+      "href": "https://www.thunderbird.net/?utm_source=www.mozilla.org&utm_medium=referral&utm_campaign=home",
+      "text": "Thunderbird: Go chaos-free with one app for all your emails, calendars and contacts."
+    },
+    {
+      "href": "https://relay.firefox.com/??utm_source=www.mozilla.org&utm_medium=referral&utm_campaign=home",
+      "text": "Firefox Relay: Mask your email and phone number so you only get the messages you want."
+    },
+    {
+      "href": "https://soloist.ai/?utm_source=www.mozilla.org&utm_medium=referral&utm_campaign=home",
+      "text": "Solo: Instantly create a beautiful website so you can grow your business."
+    },
+    {
+      "href": "https://0din.ai/?utm_source=www.mozilla.org&utm_medium=referral&utm_campaign=home",
+      "text": "0DIN: Secure your AI by finding and fixing GenAI vulnerabilities before attackers do."
+    },
+    {
+      "href": "https://tabstack.ai/?utm_source=www.mozilla.org&utm_medium=referral&utm_campaign=home",
+      "text": "Tabstack: Reliably automate web tasks with a simple developer-focused API."
+    },
+    {
+      "href": "https://www.mozillafoundation.org/en/?form=Mozilla-Website-Homepage&utm_source=www.mozilla.org&utm_medium=referral&utm_campaign=home",
+      "text": "Donate"
+    },
+    {
+      "href": "https://datacollective.mozillafoundation.org/?utm_source=www.mozilla.org&utm_medium=referral&utm_campaign=home",
+      "text": "Mozilla Data Collective",
+      "rel": "external noopener"
+    },
+    {
+      "href": "https://newsletter.ownersnotrenters.com/",
+      "text": "Owners, Not Renters",
+      "rel": "external noopener"
+    },
+    {
+      "href": "https://www.cnbc.com/2026/01/27/mozilla-building-an-ai-rebel-alliance-to-take-on-openai-anthropic-.html",
+      "text": "A Rebel Alliance?",
+      "rel": "external noopener"
+    },
+    {
+      "href": "https://mozilla.vc/?utm_source=www.mozilla.org&utm_medium=referral&utm_campaign=home",
+      "text": "Mozilla Ventures",
+      "rel": "external noopener"
+    },
+    {
+      "href": "https://www.youtube.com/watch?v=BoFUABRULxg",
+      "text": "A Double Bottom Line for Tech",
+      "rel": "external noopener"
+    },
+    {
+      "href": "https://otari.ai/",
+      "text": "Otari",
+      "rel": "external noopener"
+    },
+    {
+      "href": "https://www.fastcompany.com/91490055/mozillas-new-ai-strategy-marks-a-return-to-its-rebel-alliance-roots",
+      "text": "Article Fast Company News Mozilla’s new AI strategy marks a return to its ‘rebel alliance’ roots"
+    },
+    {
+      "href": "https://blog.mozilla.org/en/mozilla/mila-open-source-sovereign-ai/?utm_source=www.mozilla.org&utm_medium=referral&utm_campaign=home",
+      "text": "Article Mozilla Open Source AI Mozilla and Mila announce strategic research partnership"
+    },
+    {
+      "href": "https://youtu.be/KS5dcvZXuUg?si=rh9tyBUEOoUA4ypf",
+      "text": "Video Mozilla Products Why Firefox is Letting You Turn Off AI"
+    },
+    {
+      "href": "https://www.lemonde.fr/en/economy/article/2026/02/18/ai-summit-in-india-pushes-a-third-way-between-us-and-china_6750615_19.html",
+      "text": "Article Le Monde News AI summit in India pushes a 'third way' between US and China"
+    },
+    {
+      "href": "https://mozilla.vc/human-agents-of-impact-are-shaping-the-algorithm-for-good-ai/?utm_source=www.mozilla.org&utm_medium=referral&utm_campaign=home",
+      "text": "Video Impact Alpha Products (Human) agents of impact are shaping the algorithm for ‘good AI’"
+    },
+    {
+      "href": "https://restofworld.org/2026/ai-data-collectives-mozilla/",
+      "text": "Article Rest of World News Fed up with Big Tech, communities turn to data collectives for control"
+    },
+    {
+      "href": "https://www.mozillafoundation.org/en/what-we-do/grantmaking/incubator/democracy-ai-cohort/?utm_source=www.mozilla.org&utm_medium=referral&utm_campaign=home",
+      "text": "Article Mozilla Foundation Open Source AI Our first Democracy x AI incubator cohort is announced"
+    },
+    {
+      "href": "https://www.marketplace.org/episode/2026/06/17/who-should-get-an-ai-kill-switch",
+      "text": "Article Marketplace Privacy & Security Who should get an AI kill switch?",
+      "policyHint": "privacy"
+    },
+    {
+      "href": "https://fortune.com/2026/06/29/open-source-ai-mozilla-middle-powers-canada-eu-mark-surman/",
+      "text": "Article Mark Surman Artificial Intelligence Mozilla President: meet the open source ‘rebel alliance’ that could break Big Tech’s grip on AI"
+    },
+    {
+      "href": "https://www.theregister.com/software/2026/04/16/mozilla-takes-on-enterprise-ai-providers-with-thunderbolt/5228261",
+      "text": "Article The Register Products Mozilla throws Thunderbolt at enterprise AI providers"
+    },
+    {
+      "href": "https://www.nytimes.com/2026/04/15/opinion/mythos-open-souce-internet.html",
+      "text": "Article Raffi Krikorian Privacy & Security New York Times: It’s the End of the Internet As We Know It",
+      "policyHint": "privacy"
+    },
+    {
+      "href": "https://stateof.mozilla.org/?utm_source=www.mozilla.org&utm_medium=referral&utm_campaign=home",
+      "text": "Read the report",
+      "rel": "external noopener"
+    },
+    {
+      "href": "https://stateofopensource.ai/",
+      "text": "Open Source AI Is Winning"
+    },
+    {
+      "href": "https://www.mozillafoundation.org/en/nothing-personal/?utm_source=www.mozilla.org&utm_medium=referral&utm_campaign=home",
+      "text": "Nothing Personal"
+    },
+    {
+      "href": "https://www.mozilla.org/en-US/privacy/websites/",
+      "text": "this Privacy Notice",
+      "policyHint": "privacy"
+    },
+    {
+      "href": "https://www.mozilla.org/en-US/about/leadership/",
+      "text": "Leadership"
+    },
+    {
+      "href": "https://blog.mozilla.org/category/mozilla/news/?utm_source=www.mozilla.org&utm_medium=referral&utm_campaign=footer&utm_content=company",
+      "text": "Press Center"
+    },
+    {
+      "href": "https://www.mozilla.org/en-US/careers/",
+      "text": "Careers"
+    },
+    {
+      "href": "https://shop.mozilla.com/?utm_source=www.mozilla.org&utm_medium=referral&utm_campaign=footer&utm_content=company",
+      "text": "Merch Store"
+    },
+    {
+      "href": "https://www.mozilla.org/en-US/contact/",
+      "text": "Contact"
+    },
+    {
+      "href": "https://support.mozilla.org/?utm_source=www.mozilla.org&utm_medium=referral&utm_campaign=footer&utm_content=support",
+      "text": "Product Help"
+    },
+    {
+      "href": "https://bugzilla.mozilla.org/?utm_source=www.mozilla.org&utm_medium=referral&utm_campaign=footer&utm_content=support",
+      "text": "File a Bug"
+    },
+    {
+      "href": "https://pontoon.mozilla.org/?utm_source=www.mozilla.org&utm_medium=referral&utm_campaign=footer&utm_content=support",
+      "text": "Localize Mozilla"
+    },
+    {
+      "href": "https://www.mozilla.org/en-US/security/",
+      "text": "Security"
+    },
+    {
+      "href": "https://www.firefox.com/channel/desktop/developer/?utm_source=www.mozilla.org&utm_medium=referral&utm_campaign=footer",
+      "text": "Developer Edition"
+    },
+    {
+      "href": "https://www.firefox.com/browsers/enterprise/?utm_source=www.mozilla.org&utm_medium=referral&utm_campaign=footer",
+      "text": "Enterprise"
+    },
+    {
+      "href": "https://firefox-source-docs.mozilla.org/devtools-user/?utm_source=www.mozilla.org&utm_medium=referral&utm_campaign=footer&utm_content=developers",
+      "text": "Tools",
+      "rel": "external"
+    },
+    {
+      "href": "https://developer.mozilla.org/?utm_source=www.mozilla.org&utm_medium=referral&utm_campaign=footer",
+      "text": "MDN"
+    },
+    {
+      "href": "https://www.firefox.com/firefox/155.0.1/releasenotes/?utm_source=www.mozilla.org&utm_medium=referral&utm_campaign=footer",
+      "text": "Firefox Release Notes"
+    },
+    {
+      "href": "https://bsky.app/profile/mozilla.org",
+      "text": "Bluesky (@mozilla.org)"
+    },
+    {
+      "href": "https://www.instagram.com/mozilla/",
+      "text": "Instagram (@mozilla)"
+    },
+    {
+      "href": "https://www.linkedin.com/company/mozilla-corporation/",
+      "text": "LinkedIn (@mozilla)"
+    },
+    {
+      "href": "https://www.tiktok.com/@mozilla",
+      "text": "TikTok (@mozilla)"
+    },
+    {
+      "href": "https://open.spotify.com/show/0vT7LJMeVDxyQ2ZamHKu08?si=_uDRD6bRR_6M5YZyISGXgA",
+      "text": "Spotify (@mozilla)"
+    },
+    {
+      "href": "https://bsky.app/profile/firefox.com",
+      "text": "Bluesky (@firefox.com)"
+    },
+    {
+      "href": "https://www.instagram.com/firefox/",
+      "text": "Instagram (@firefox)"
+    },
+    {
+      "href": "https://www.youtube.com/user/firefoxchannel",
+      "text": "YouTube (@firefoxchannel)"
+    },
+    {
+      "href": "https://www.tiktok.com/@firefox",
+      "text": "TikTok (@firefox)"
+    },
+    {
+      "href": "https://www.mozillafoundation.org/?form=moco-donate-footer",
+      "text": "Donate"
+    },
+    {
+      "href": "https://www.mozilla.org/locales/",
+      "text": "All languages"
+    },
+    {
+      "href": "https://www.mozillafoundation.org/?utm_source=www.mozilla.org&utm_medium=referral&utm_campaign=footer",
+      "text": "Mozilla Foundation",
+      "rel": "external noopener"
+    },
+    {
+      "href": "https://www.mozilla.org/en-US/foundation/licensing/website-content/",
+      "text": "Creative Commons license",
+      "rel": "license"
+    },
+    {
+      "href": "https://www.mozilla.org/en-US/about/legal/",
+      "text": "Legal",
+      "policyHint": "other"
+    },
+    {
+      "href": "https://www.mozilla.org/en-US/about/governance/policies/participation/",
+      "text": "Community Participation Guidelines",
+      "policyHint": "other"
+    },
+    {
+      "href": "https://www.mozilla.org/en-US/about/this-site/",
+      "text": "About this site"
+    }
+  ],
+  "metaTags": {
+    "viewport": "width=device-width, initial-scale=1",
+    "msvalidate.01": "B7B177115A634927D608514DA17B2574",
+    "google-site-verification": "U9a6gH32vLIykvntaDToj-ytYhlZ1AfAgVEKstixQIE",
+    "description": "We’re working to put control of the internet back in the hands of the people using it.",
+    "og:type": "website",
+    "og:site_name": "Mozilla",
+    "og:locale": "en_US",
+    "og:url": "https://www.mozilla.org/en-US/",
+    "og:image": "https://www.mozilla.org/media/img/m24/og.3a69dffad83e.png",
+    "og:title": "Mozilla - Internet for people, not profit (US)",
+    "og:description": "We’re working to put control of the internet back in the hands of the people using it.",
+    "fb:page_id": "262134952380",
+    "twitter:card": "summary",
+    "twitter:site": "@mozilla",
+    "twitter:domain": "mozilla.org",
+    "twitter:app:name:googleplay": "Firefox",
+    "twitter:app:id:googleplay": "org.mozilla.firefox",
+    "twitter:app:name:iphone": "Firefox",
+    "twitter:app:id:iphone": "989804926",
+    "twitter:app:name:ipad": "Firefox",
+    "twitter:app:id:ipad": "989804926"
+  },
+  "hasMixedContent": false,
+  "textExcerpt": "Help us improve your Mozilla experience In addition to Cookies necessary for this site to function, we’d like your permission to set some additional Cookies to better understand your browsing needs and improve your experience. Rest assured — we value your privacy. Accept All Additional Cookies Reject All Additional Cookies Cookie settings Menu Products Close Products menu Firefox browsers Mozilla VPN Mozilla Monitor Firefox Relay MDN Plus Thunderbird Solo 0DIN Tabstack All products About us Close About us menu Our Mission About Mozilla The Mozilla Manifesto Get Involved Blog Our Work Mozilla Foundation Mozilla.ai Mozilla Ventures Mozilla Advertising Mozilla Builders Mozilla New Products Pause animation Play animation Welcome to Mozilla From trustworthy tech to policies that defend your digital rights, we put you first — always. Learn about us A stylized green flag on a black background, built from the ‘M’ for Mozilla and a pixel that is displaced to reference its original dinosaur logo. A stylized green flag on a black background, built from the ‘M’ for Mozilla and a pixel that is displaced to reference its original dinosaur logo. Love the internet again Break free from big tech — our products put you in control of a safer, more private internet experience. Firefox: Get the gold standard for browsing with speed, privacy and control. Thunderbird: Go chaos-free with one app for all your emails, calendars and contacts. Mozilla VPN: Keep your location and online adventures private — stream like a local, anywhere. Mozilla Monitor: Get a heads-up if your personal info is at risk and lock it down like a pro. Firefox Relay: Mask your email and phone number so you only get the messages you want. Solo: Instantly create a beautiful website so you can grow your business. 0DIN: Secure your AI by finding and fixing GenAI vulnerabilities before attackers do. Tabstack: Reliably automate web tasks with a simple developer-focused API. Explore our products Donate to Mozilla Foundation Mozilla Foundation is building a future where technology is powered by people, and open by design. That’s why we fuel community-centered tech through advocacy, education, funding, and innovation — to make sure that the future of tech is good for everyone. But that’s only possible if we do it together.We’re proudly non-profit. Will you donate to Mozilla today? Donate Join the movement: AI for the people Our mission is to make it easy for people to build with, and collaborate on, open-source, trustworthy AI. Mozilla Data Collective Product Mozilla Data Collective is rebuilding the AI data ecosystem with communities at the center. Join today Owners, Not Renters Product Join our new Open Source AI community. Sign up today A Rebel Alliance? Impact How Mozilla is taking on AI Industry Heavyweights. Read here. Mozilla Ventures Program Got an early-stage startup? Pitch your company to Mozilla Ventures and secure funding to drive positive change for the future of AI and the internet. Read more A Double Bottom Line for Tech Event Mark Surman discusses how we can build a tech ecosystem with a double bottom line — one that values both mission and money. Watch now Otari Product Otari eliminates the complexity of managing multiple AI providers by unifying routing, security, budgeting, failover, and auditing behind a single API endpoint. Get started You, AI and the internet — what’s really going on? Type Author(s) Topic Intro Article Fast Company News Mozilla’s new AI strategy marks a return to its ‘rebel alliance’ roots Article Mozilla Open Source AI Mozilla and Mila announce strategic research partnership Video Mozilla Products Why Firefox is Letting You Turn Off AI Article Le Monde News AI summit in India pushes a 'third way' between US and China Video Impact Alpha Products (Human) agents of impact are shaping the algorithm for ‘good AI’ Article Rest of World News Fed up with Big Tech, communities turn to data collectives for control Article Mozilla Foundation Open Source AI Our first Democracy x AI incubator cohort is announced Article Marketplace Privacy & Security Who should get an AI kill switch? Article Mark Surman Artificial Intelligence Mozilla President: meet the open source ‘rebel alliance’ that could break Big Tech’s grip on AI Article The Register Products Mozilla throws Thunderbolt at enterprise AI providers Article Raffi Krikorian Privacy & Security New York Times: It’s the End of the Internet As We Know It State of Mozilla We’re at a crossroads for the future of technology, with Big AI companies consolidating power. The 2025 State of Mozilla report is an invitation to choose a different future together. 2025 Read the report Explore issues shaping the future of the internet Open Source AI Is Winning At a critical moment for the future of AI, our inaugural, annual survey looks at where open AI is winning, and where it is exposed. Read the report Nothing Personal Our new magazine for independent thinkers, technologists, and creatives on the front lines of digital culture. Read Now Discover Mozilla products and initiatives. We promise to keep your email private and secure — no sharing, no selling, just great updates. Mozilla Foundation Get Firefox news Please enter a valid email address Please select a country or region Please select a language Please check at least one of the newsletter options. You must agree to the privacy notice We are sorry, but there was a problem with our system. Please try again later! Your email address: Select country or region: Afghanistan Akrotiri Albania Algeria American Samoa Andorra Angola Anguilla Antarctica Antigua and Barbuda Argentina Armenia Aruba Ashmore and Cartier Islands Australia Austria Azerbaijan Bahamas, The Bahrain Baker Island Bangladesh Barbados Bassas da India Belarus Belgium Belize Benin Bermuda Bhutan Bolivia Bosnia and Herzegovina Botswana Bouvet Island Brazil British Indian Ocean Territory Brunei Bulgaria Burkina Faso Burma Burundi Cambodia Cameroon Canada Cape Verde Caribbean Netherlands Cayman Islands Central African Republic Chad Chile China Christmas Island Clipperton Island Cocos (Keeling) Islands Colombia Comoros Congo (Brazzaville) Congo (Kinshasa) Cook Islands Coral Sea Islands Costa Rica Croatia Cuba Curaçao Cyprus Czechia Côte d’Ivoire Denmark Dhekelia Diego Garcia Djibouti Dominica Dominican Republic Ecuador Egypt El Salvador Equatorial Guinea Eritrea Estonia Eswatini Ethiopia Europa Island Falkland Islands (Islas Malvinas) Faroe Islands Fiji Finland France French Guiana French Polynesia French Southern and Antarctic Lands Gabon Gambia, The Gaza Strip Georgia Germany Ghana Gibraltar Glorioso Islands Greece Greenland Grenada Guadeloupe Guam Guatemala Guernsey Guinea Guinea-Bissau Guyana Haiti Heard Island and McDonald Islands Honduras Hong Kong Howland Island Hungary Iceland India Indonesia Iran Iraq Ireland Isle of Man Israel Italy Jamaica Jan Mayen Japan Jarvis Island Jersey Johnston Atoll Jordan Juan de Nova Island Kazakhstan Kenya Kingman Reef Kiribati Korea, North Korea, South Kosovo Kuwait Kyrgyzstan Laos Latvia Lebanon Lesotho Liberia Libya Liechtenstein Lithuania Luxembourg Macau Madagascar Malawi Malaysia Maldives Mali Malta Marshall Islands Martinique Mauritania Mauritius Mayotte Mexico Micronesia, Federated States of Midway Islands Moldova Monaco Mongolia Montenegro Montserrat Morocco Mozambique Namibia Nauru Navassa Island Nepal Netherlands New Caledonia New Zealand Nicaragua Niger Nigeria Niue Norfolk Island North Macedonia Northern Mariana Islands Norway Oman Pakistan Palau Palmyra Atoll Panama Papua New Guinea Paracel Islands Paraguay Peru Philippines Pitcairn Islands Poland Portugal Puerto Rico Qatar Romania Russia Rwanda Réunion Saint Barthélemy Saint Helena, Ascension, and Tristan da Cunha Saint Kitts and Nevis Saint Lucia Saint Martin Saint Pierre and Miquelon Saint Vincent and the Grenadines Samoa San Marino Saudi Arabia Senegal Serbia Seychelles Sierra Leone Singapore Sint Maarten Slovakia Slovenia Solomon Islands Somalia South Africa South Georgia and South Sandwich Islands South Sudan Spain Spratly Islands Sri Lanka Sudan Suriname Svalbard Sweden Switzerland Syria São Tomé and Príncipe Taiwan Tajikistan Tanzania Thailand Timor-Leste Togo Tokelau Tonga Trinidad and Tobago Tromelin Island Tunisia Turkey Turkmenistan Turks and Caicos Islands Tuvalu Uganda Ukraine United Arab Emirates United Kingdom United States Uruguay Uzbekistan Vanuatu Vatican City Venezuela Vietnam Virgin Islands, British Virgin Islands, U.S. Wake Island Wallis and Futuna West Bank Western Sahara Yemen Zambia Zimbabwe Select language: Deutsch English Español Français Polski Português I’m okay with Mozilla handling my info as explained in this Privacy Notice Sign Up Now Sending We will only send you Mozilla-related information. You can unsubscribe at any time. Thanks! If you haven’t previously confirmed a subscription to a Mozilla-related newsletter, you may have to do so. Please check your inbox or your spam filter for an email from us. Add trust to your ad buy. Learn more about Mozilla Ads Company Leadership Press Center Careers Merch Store Contact Support Product Help File a Bug Localize Mozilla Security Developers Developer Edition Enterprise Tools MDN Firefox Release Notes Follow @Mozilla Bluesky (@mozilla.org) Instagram (@mozilla) LinkedIn (@mozilla) TikTok (@mozilla) Spotify (@mozilla) Follow @Firefox Bluesky (@firefox.com) Instagram (@firefox) YouTube (@firefoxchannel) TikTok (@firefox) Donate All languages Language aragonés عربي Asturianu Azərbaycanca Беларуская Български বাংলা Bosanski Català Maya Kaqchikel Čeština Cymraeg Dansk Deutsch Dolnoserbšćina Ελληνικά English (Canadian) English (British) English Esperanto Español (de Argentina) Español (de Chile) Español (de España) Español (de México) Eesti keel Euskara فارسی suomi Français Frysk Gàidhlig Galego Avañe'ẽ ગુજરાતી (ભારત) עברית हिन्दी (भारत) Hrvatski Hornjoserbsce magyar Հայերեն Interlingua Bahasa Indonesia íslenska Italiano 日本語 ქართული Taqbaylit Қазақ 한국어 Ligure ພາສາລາວ Lietuvių മലയാളം मराठी Melayu မြန်မာဘာသာ Norsk bokmål Nederlands Norsk nynorsk ਪੰਜਾਬੀ (ਭਾਰਤ) Polski Português (do Brasil) Português (Europeu) rumantsch Română Русский Scots සිංහල slovenčina سرائیکی Slovenščina Shqip Српски Svenska தமிழ் Тоҷикӣ ไทย Türkçe Triqui Українська اُردو Tiếng Việt 中文 (简体) 正體中文 (繁體) Donate to the not-for-profit Mozilla Foundation. Portions of this content are ©1998–2026 by individual mozilla.org contributors. Content available under a Creative Commons license. Website Privacy Notice Cookies Legal Community Participation Guidelines About this site",
+  "cookies": [],
+  "thirdPartyRequests": [],
+  "limitations": [
+    "no-cookie-flags",
+    "no-webrequest-permission"
+  ]
+}

@@ -2,8 +2,8 @@
 
 The orchestrator decides what to investigate after deterministic analyzers have
 run. It's a plain think → act → observe loop, hand-written so its behaviour is
-fully inspectable. Build it **last** (Milestone 5) — every tool it calls should
-already exist and be tested.
+fully inspectable. Built **last** (M6) — every tool it calls already existed and
+was tested.
 
 ## Tool interface
 
@@ -114,15 +114,35 @@ records it in the trace, and forces a `finish`.
 
 ```
 1. context = system prompt + snapshot summary + analyzer findings (compact)
-2. repeat up to maxSteps:
-     resp = caps.provider.complete({ ..., tools })
-     if resp.toolCalls is empty → treat as finish with resp.text
-     for each call:
-        validate input against tool.input (zod); on failure, return error to model
-        result = tool.run(input, ctx)   // may throw BudgetExceeded
-        append { tool, input, resultSummary } to messages and trace
+2. while the budget allows another step:
+     resp = caps.provider.complete({ ..., schema: AgentAction })
+     validate the action; on failure, tell the model and continue
+     validate input against tool.input (zod); on failure, tell the model and continue
+     result = tool.run(input, ctx)   // may throw BudgetExceeded
+     append { tool, input, summary } to messages and trace
 3. assemble AuditResult
 ```
+
+**One action per turn, not a list of tool calls.** The sketch above assumed
+`resp.toolCalls`, which is native tool calling — and S2 established that WebLLM
+does not have it. The model returns one `AgentAction`:
+
+```ts
+export const AgentActionSchema = z.object({
+  reasoning: z.string().max(500),
+  tool: z.string(),
+  input: z.record(z.string(), z.unknown()).default({}),
+});
+```
+
+`input` is a loose record on purpose. Asking a 1.5B model to satisfy a
+discriminated union over seven input shapes is a lot; asking it for a tool name
+and an object is not. The named tool's own zod schema validates the object
+immediately afterwards, and a failure goes back as a correction rather than
+ending the run — which is the only reason the loop is a loop.
+
+The provider receives a _copy_ of the message history. Otherwise a recording
+made from the request would capture messages appended after the call.
 
 Rules:
 
@@ -131,9 +151,9 @@ Rules:
 - Untrusted text (policy content, page text) is never placed in the message
   history raw. It stays inside tools; the model sees schema-validated
   extractions.
-- Parallel tool calls are allowed when `sideEffects === "none"`, but note this
-  is close to a no-op in practice: one WebLLM engine serialises requests, so
-  only non-model tools actually overlap.
+- Parallel tool calls are not implemented. One action per turn, and one WebLLM
+  engine serialises requests anyway, so the theoretical gain was only ever over
+  non-model tools — none of which are slow enough to be worth the complexity.
 - `finish` is the only way to end early. Hitting `maxSteps` also ends.
 
 ## System prompt outline
@@ -151,31 +171,43 @@ Keep it in `agent/prompts/orchestrator.md` so it's reviewable:
    extractions. This statement is defence in depth, not the mechanism.
 6. When to stop.
 
+## What running it turned up
+
+**Stale skip findings.** The first analyzer pass has no headers, so several
+analyzers report themselves skipped. After `fetchHeaders`, `runAnalyzers` runs
+them for real — and the earlier "checks skipped: headers" finding was still in
+the accumulated set, so a report would say the header checks did not run _and_
+list their findings. `runAnalyzers` now drops the skip notes for analyzers that
+have since run, decided by which were not skipped this time rather than which
+produced findings: an analyzer that ran and found nothing has still run, and on
+a well-configured site that is the common case.
+
+**Recordings cover model calls, not network.** A recorded run replays the
+model; `http` still goes out. That is right — replaying a site's headers from a
+fixture would test the recording, not the audit — but it means a recording made
+against a live site needs that site reachable to replay. The hermetic fixture
+used in CI stubs `http` instead (`--offline` in `scripts/record-agent-run.mjs`).
+
 ## Trace
 
 ```ts
-export const AuditTrace = z.object({
+export const AuditTraceSchema = z.object({
   auditId: z.string(),
   modelId: z.string(),
-  startedAt: z.string(),
-  endedAt: z.string(),
-  steps: z.array(
-    z.object({
-      index: z.number(),
-      kind: z.enum(["model", "tool", "budget", "error"]),
-      name: z.string().optional(),
-      input: z.unknown(),
-      output: z.unknown(),
-      usage: z.object({ inputTokens: z.number(), outputTokens: z.number() }).optional(),
-      durationMs: z.number(),
-    }),
-  ),
+  startedAt: z.number(),
+  endedAt: z.number(),
+  // A discriminated union, not `input: unknown`. Hard rule 2 applies to a trace
+  // as much as anything else — it is read back off storage and rendered — and
+  // heterogeneous steps are expressible without giving up validation.
+  steps: z.array(TraceStepSchema), // model | tool | budget | error
   budgetUsed: z.object({
     steps: z.number(),
     fetches: z.number(),
     inputTokens: z.number(),
     wallMs: z.number(),
   }),
+  // Why it ended, which the sketch had no room for and the trace view needs.
+  stoppedBy: z.enum(["finish", "steps", "fetches", "inputTokens", "wallMs", "error"]),
 });
 ```
 
